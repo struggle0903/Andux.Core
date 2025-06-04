@@ -1,5 +1,5 @@
-﻿using Axion.Core.EfTrack;
-using EfFramework.Test.Entity;
+﻿using Andux.Core.EfTrack;
+using Andux.Core.Testing.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -8,7 +8,7 @@ namespace Nevo.Core.Testing
     /// <summary>
     /// app 应用上下文
     /// </summary>
-    public class AppDbContext : NovaDbContext
+    public class AppDbContext : AnduxDbContext
     {
         /// <summary>
         /// 构造函数

@@ -1,7 +1,6 @@
-﻿using Axion.Core.EfTrack.Entities;
-using Nevo.Core.EfFramework.Entities;
+﻿using Andux.Core.EfTrack;
 
-namespace EfFramework.Test.Entity
+namespace Andux.Core.Testing.Entity
 {
     public class User: BaseEntity<int>
     {

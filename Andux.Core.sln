@@ -7,13 +7,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructures", "Infrastr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTesting", "UnitTesting", "{3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.EfTrack", "src\Infrastructures\Axion.Core.EfTrack\Andux.Core.EfTrack.csproj", "{3524311E-E7A2-ECD7-5DE8-398EE5202135}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Testing", "src\UnitTesting\Axion.Core.Testing\Andux.Core.Testing.csproj", "{398FD30B-2D2D-4091-879B-0CC24CE18354}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Redis", "src\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj", "{FA0897D4-4480-4AFE-8BCE-00C9265E52E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Logger", "src\Infrastructures\Andux.Core.Logger\Andux.Core.Logger.csproj", "{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{D3D10FBF-DF03-4202-A239-559F1C89B97B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Common", "src\Common\Andux.Core.Common\Andux.Core.Common.csproj", "{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.EfTrack", "src\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj", "{45842A57-CD80-4DE9-B160-9025F2A929BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Release|Any CPU.Build.0 = Release|Any CPU
 		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,15 +37,24 @@ Global
 		{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3524311E-E7A2-ECD7-5DE8-398EE5202135} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{398FD30B-2D2D-4091-879B-0CC24CE18354} = {3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}
 		{FA0897D4-4480-4AFE-8BCE-00C9265E52E9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136} = {D3D10FBF-DF03-4202-A239-559F1C89B97B}
+		{45842A57-CD80-4DE9-B160-9025F2A929BB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB6281E-01BB-4320-8143-30ED12871150}
