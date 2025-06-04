@@ -1,0 +1,6 @@
+@Axion.Core.Testing_HostAddress = http://localhost:5001
+
+GET {{Axion.Core.Testing_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

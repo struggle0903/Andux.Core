@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructures", "Infrastructures", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTesting", "UnitTesting", "{3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.EfTrack", "src\Infrastructures\Axion.Core.EfTrack\Andux.Core.EfTrack.csproj", "{3524311E-E7A2-ECD7-5DE8-398EE5202135}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Testing", "src\UnitTesting\Axion.Core.Testing\Andux.Core.Testing.csproj", "{398FD30B-2D2D-4091-879B-0CC24CE18354}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3524311E-E7A2-ECD7-5DE8-398EE5202135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{398FD30B-2D2D-4091-879B-0CC24CE18354}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3524311E-E7A2-ECD7-5DE8-398EE5202135} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{398FD30B-2D2D-4091-879B-0CC24CE18354} = {3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5EB6281E-01BB-4320-8143-30ED12871150}
+	EndGlobalSection
+EndGlobal
