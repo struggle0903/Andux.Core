@@ -1,6 +1,29 @@
-@Axion.Core.Testing_HostAddress = http://localhost:5001
+### 添加用户
+POST http://localhost:5282/api/user/add
+Content-Type: application/json
 
-GET {{Axion.Core.Testing_HostAddress}}/weatherforecast/
-Accept: application/json
+### 批量添加用户
+POST http://localhost:5282/api/user/add-batch
+Content-Type: application/json
 
-###
+### 查询所有用户
+GET http://localhost:5282/api/user/list
+
+### 按名称查询用户
+GET http://localhost:5282/api/user/get?name=Alice
+
+### 更新用户（假设 Id 为 1）
+PUT http://localhost:5282/api/user/update?id=1
+Content-Type: application/json
+
+### 删除用户（假设 Id 为 1）
+DELETE http://localhost:5282/api/user/delete?id=1
+
+### 判断用户是否存在
+GET http://localhost:5282/api/user/exists?name=Alice
+
+### 统计成年人数量
+GET http://localhost:5282/api/user/count-adults
+
+### 使用事务添加用户
+POST http://localhost:5282/api/user/add-transactional

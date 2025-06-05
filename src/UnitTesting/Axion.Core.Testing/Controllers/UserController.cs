@@ -1,6 +1,6 @@
 ﻿using Andux.Core.Common.Result;
 using Andux.Core.EfTrack;
-using Andux.Core.Testing.Entity;
+using Andux.Core.Testing.Entitys;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers

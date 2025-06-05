@@ -1,9 +1,9 @@
 ﻿using Andux.Core.EfTrack;
-using Andux.Core.Testing.Entity;
+using Andux.Core.Testing.Entitys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Nevo.Core.Testing
+namespace Andux.Core.Testing
 {
     /// <summary>
     /// app 应用上下文
