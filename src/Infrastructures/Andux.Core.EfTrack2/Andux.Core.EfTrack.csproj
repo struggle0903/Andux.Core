@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+
+		<!-- NuGet 包信息 -->
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>andy.hu</Authors>
+		<Description>集成封装了Entity Framework核心功能，提供完善的仓储模式、工作单元支持及事务管理，内置审计字段和软删除机制，助力构建高效、可靠且可维护的数据访问层。</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
+	</ItemGroup>
+Andux.Core.Redis
+</Project>
