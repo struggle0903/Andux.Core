@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using Andux.Core.EfTrack.Entities;
 using Microsoft.Extensions.Options;
 
 namespace Andux.Core.EfTrack
@@ -49,26 +50,45 @@ namespace Andux.Core.EfTrack
             CancellationToken cancellationToken = default)
         {
             var context = eventData.Context;
-            if (context == null || !_options.EnableAuditing)
+            if (context == null)
                 return base.SavingChangesAsync(eventData, result, cancellationToken);
 
-            var entries = context.ChangeTracker.Entries<IAuditedEntity>();
             var dateNow = DateTime.Now;
 
-            // 从上下文中获取真实用户标识
-            var currentUser = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == _options.UserClaimsType)?.Value ?? string.Empty;
-
-            foreach (var entry in entries)
+            // 审计字段
+            if (_options.EnableAuditing)
             {
-                if (entry.State == EntityState.Added)
+                // 从上下文中获取真实用户标识
+                var currentUser = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == _options.UserClaimsType)?.Value ?? string.Empty;
+
+                var entries = context.ChangeTracker.Entries<IAuditedEntity>();
+                foreach (var entry in entries)
                 {
-                    entry.Entity.CreatedTime = dateNow;
-                    entry.Entity.CreatedBy = currentUser;
+                    if (entry.State == EntityState.Added)
+                    {
+                        entry.Entity.CreatedTime = dateNow;
+                        entry.Entity.CreatedBy = currentUser;
+                    }
+                    else if (entry.State == EntityState.Modified)
+                    {
+                        entry.Entity.UpdatedTime = dateNow;
+                        entry.Entity.UpdatedBy = currentUser;
+                    }
                 }
-                else if (entry.State == EntityState.Modified)
+            }
+
+            // 项目数据隔离字段
+            if (_options.EnableProject)
+            {
+                var currentProject = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == _options.ProjectClaimsType)?.Value ?? null;
+
+                var entries = context.ChangeTracker.Entries<IProject>();
+                foreach (var entry in entries)
                 {
-                    entry.Entity.UpdatedTime = dateNow;
-                    entry.Entity.UpdatedBy = currentUser;
+                    if (entry.State == EntityState.Added)
+                    {
+                        entry.Entity.ProjectId = currentProject != null ? long.Parse(currentProject): null;
+                    }
                 }
             }
 

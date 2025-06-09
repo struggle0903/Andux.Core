@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Threading.Tasks;
+using Andux.Core.EfTrack.Repository.Paged;
 
 namespace Andux.Core.EfTrack
 {
@@ -22,6 +23,17 @@ namespace Andux.Core.EfTrack
         /// 根据主键获取实体
         /// </summary>
         Task<T?> GetByIdAsync(object id);
+
+        /// <summary>
+        /// 分页查询数据
+        /// </summary>
+        /// <param name="pageParam">基础分页参数</param>
+        /// <param name="predicate">筛选条件</param>
+        /// <param name="orderBy">排序</param>
+        /// <returns></returns>
+        Task<PagedResult<T>> GetPagedAsync(BasePageParam pageParam,
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null);
 
         /// <summary>
         /// 获取所有实体

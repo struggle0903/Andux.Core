@@ -1,12 +1,26 @@
 using Andux.Core.EfTrack;
 using Andux.Core.Logger;
 using Andux.Core.Testing;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 注册 Cookie 身份认证
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.LoginPath = "/api/account/login";
+        options.LogoutPath = "/api/account/logout";
+        options.AccessDeniedPath = "/access-denied";
+        options.Cookie.Name = "Andux.Auth";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+        options.SlidingExpiration = true;
+    });
 
-builder.Services.AddControllers();
+
+builder.Services.AddAuthorization();
+builder.Services.AddControllers(); 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -28,7 +42,9 @@ builder.Services.AddSerilogLogging(builder.Configuration);
 
 #endregion
 
+
 var app = builder.Build();
+app.UseRouting();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,6 +55,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// 启用认证和授权中间件（顺序不能错）
+app.UseAuthentication(); // 必须先于 UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();

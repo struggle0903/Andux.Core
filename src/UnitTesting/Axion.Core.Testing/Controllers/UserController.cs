@@ -1,5 +1,6 @@
 ﻿using Andux.Core.Common.Result;
 using Andux.Core.EfTrack;
+using Andux.Core.EfTrack.Repository.Paged;
 using Andux.Core.Testing.Entitys;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,8 @@ namespace Andux.Core.Testing.Controllers
         /// <param name="userRepository"></param>
         /// <param name="unitOfWork"></param>
         public UserController(ILogger<UserController> logger,
-            IRepository<User> userRepository, IUnitOfWork unitOfWork)
+            IRepository<User> userRepository, 
+            IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _userRepository = userRepository;
@@ -30,7 +32,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<ApiResponse<string>>> AddUser()
         {
-            var user = new User { Name = "Alice", Age = 28 };
+            var user = new User { Name = "Alice", Age = 28};
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
@@ -54,6 +56,13 @@ namespace Andux.Core.Testing.Controllers
             await _userRepository.AddRangeAsync(users);
             await _unitOfWork.SaveChangesAsync();
             return ApiResponse<string>.Ok(null, "批量添加成功");
+        }
+
+        [HttpGet("getPage")]
+        public async Task<ActionResult<ApiResponse<PagedResult<User>>>> GetPagedAsync([FromQuery] BasePageParam param)
+        {
+            var list = await _userRepository.GetPagedAsync(param);
+            return ApiResponse<PagedResult<User>>.Ok(list);
         }
 
         [HttpGet("get")]
