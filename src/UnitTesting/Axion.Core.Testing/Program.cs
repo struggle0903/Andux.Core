@@ -1,5 +1,8 @@
 using Andux.Core.EfTrack;
 using Andux.Core.Logger;
+using Andux.Core.Redis.Extensions;
+using Andux.Core.Redis.Helper;
+using Andux.Core.Redis.Services;
 using Andux.Core.Testing;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -16,7 +19,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromHours(1);
         options.SlidingExpiration = true;
     });
-
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers(); 
@@ -42,9 +44,20 @@ builder.Services.AddSerilogLogging(builder.Configuration);
 
 #endregion
 
+#region Andux.Core.Redis
+builder.Services.AddRedisService(builder.Configuration);
+#endregion
 
 var app = builder.Build();
 app.UseRouting();
+
+#region 静态redis用法
+// 假设你用依赖注入拿到了 IRedisService 的实现
+var redisService = app.Services.GetRequiredService<IRedisService>();
+
+// 注入静态 RedisHelper
+RedisHelper.Configure(redisService);
+#endregion
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

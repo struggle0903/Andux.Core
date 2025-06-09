@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Andux.Core.Common\Andux.Core.Common.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj" />
+    <ProjectReference Include="..\..\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj" />
   </ItemGroup>
 
 </Project>
