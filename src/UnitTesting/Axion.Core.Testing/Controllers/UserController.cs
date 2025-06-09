@@ -9,16 +9,20 @@ namespace Andux.Core.Testing.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
+        private ILogger<UserController> _logger;
         private readonly IRepository<User> _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="userRepository"></param>
         /// <param name="unitOfWork"></param>
-        public UserController(IRepository<User> userRepository, IUnitOfWork unitOfWork)
+        public UserController(ILogger<UserController> logger,
+            IRepository<User> userRepository, IUnitOfWork unitOfWork)
         {
+            _logger = logger;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
@@ -29,6 +33,13 @@ namespace Andux.Core.Testing.Controllers
             var user = new User { Name = "Alice", Age = 28 };
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
+
+
+            //_logger.LogDebug("【add】用户已添加");
+            _logger.LogInformation("【add】用户已添加");
+            //_logger.LogError("【add】用户已添加");
+
+
             return ApiResponse<string>.Ok(null, "用户已添加");
         }
 
