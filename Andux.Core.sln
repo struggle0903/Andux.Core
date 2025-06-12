@@ -7,17 +7,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructures", "Infrastr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTesting", "UnitTesting", "{3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Testing", "src\UnitTesting\Axion.Core.Testing\Andux.Core.Testing.csproj", "{398FD30B-2D2D-4091-879B-0CC24CE18354}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Testing", "src\UnitTesting\Axion.Core.Testing\Andux.Core.Testing.csproj", "{398FD30B-2D2D-4091-879B-0CC24CE18354}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Redis", "src\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj", "{FA0897D4-4480-4AFE-8BCE-00C9265E52E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Redis", "src\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj", "{FA0897D4-4480-4AFE-8BCE-00C9265E52E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Logger", "src\Infrastructures\Andux.Core.Logger\Andux.Core.Logger.csproj", "{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Logger", "src\Infrastructures\Andux.Core.Logger\Andux.Core.Logger.csproj", "{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{D3D10FBF-DF03-4202-A239-559F1C89B97B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Common", "src\Common\Andux.Core.Common\Andux.Core.Common.csproj", "{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Common", "src\Common\Andux.Core.Common\Andux.Core.Common.csproj", "{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.EfTrack", "src\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj", "{45842A57-CD80-4DE9-B160-9025F2A929BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.EfTrack", "src\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj", "{45842A57-CD80-4DE9-B160-9025F2A929BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Utilities", "src\Infrastructures\Andux.Core.Utilities\Andux.Core.Utilities.csproj", "{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.RabbitMQ", "src\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj", "{226135D4-99E1-4BC7-9C44-6B069566659E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcDemo", "src\UnitTesting\GrpcDemo\GrpcDemo.csproj", "{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +51,18 @@ Global
 		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45842A57-CD80-4DE9-B160-9025F2A929BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226135D4-99E1-4BC7-9C44-6B069566659E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226135D4-99E1-4BC7-9C44-6B069566659E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226135D4-99E1-4BC7-9C44-6B069566659E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226135D4-99E1-4BC7-9C44-6B069566659E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +73,9 @@ Global
 		{1F2C9A9A-D786-479A-8E2C-EB6C0A59A15E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5B0EA0FB-1C5E-47EA-8951-BF8EFDE6D136} = {D3D10FBF-DF03-4202-A239-559F1C89B97B}
 		{45842A57-CD80-4DE9-B160-9025F2A929BB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{AB3998D9-3BD8-4AC9-B228-5548A91A06F2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{226135D4-99E1-4BC7-9C44-6B069566659E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D} = {3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB6281E-01BB-4320-8143-30ED12871150}

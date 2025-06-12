@@ -59,6 +59,14 @@ var redisService = app.Services.GetRequiredService<IRedisService>();
 RedisHelper.Configure(redisService);
 #endregion
 
+
+
+
+
+
+
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
