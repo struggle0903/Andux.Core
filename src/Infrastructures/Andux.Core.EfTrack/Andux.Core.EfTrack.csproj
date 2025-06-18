@@ -15,10 +15,20 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-		<PackageId>Andux.Core.EfTrack</PackageId>
+		<!--<PackageId>Andux.Core.EfTrack</PackageId>
 		<Version>2.0.0</Version>
 		<Authors>andy.hu</Authors>
 		<Description>在1.0.0版本的基础上新增了项目数据隔离(可理解为租户)功能。仓储接口新增数据分页功能。</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>2.0.1</Version>
+		<Authors>andy.hu</Authors>
+		<Description>在前一版本的基础上，扩展了多种仓储接口，新增了实体的包含（Includes）查询、聚合统计等功能，以提升数据访问的灵活性和表达能力。</Description>
 		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
 		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>

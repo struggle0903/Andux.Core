@@ -21,7 +21,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddControllers(); 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // 解决实体无限循环嵌套报错问题
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -58,13 +63,6 @@ var redisService = app.Services.GetRequiredService<IRedisService>();
 // 注入静态 RedisHelper
 RedisHelper.Configure(redisService);
 #endregion
-
-
-
-
-
-
-
 
 
 // Configure the HTTP request pipeline.

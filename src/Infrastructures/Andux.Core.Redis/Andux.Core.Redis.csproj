@@ -4,6 +4,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+	<!-- NuGet 包信息 -->
+	<PackageId>Andux.Core.Redis</PackageId>
+	<Version>1.0.0</Version>
+	<Authors>andy.hu</Authors>
+	<Description>基于StackExchange.Redis封装的库。提供统一的 Redis 操作接口，支持常用的字符串缓存读写、删除、判断、过期控制、自增自减、TTL 获取以及模式匹配 Key 搜索等功能，简化业务层对 Redis 的使用。额外还提供了 Redis 操作静态辅助类，适用于不方便通过依赖注入获取 IRedisService 的场景。</Description>
+	<PackageTags>StackExchange;Redis;Andux</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
