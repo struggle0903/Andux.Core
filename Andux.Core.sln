@@ -19,11 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Common", "src\Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.EfTrack", "src\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj", "{45842A57-CD80-4DE9-B160-9025F2A929BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Utilities", "src\Infrastructures\Andux.Core.Utilities\Andux.Core.Utilities.csproj", "{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Utilities", "src\Infrastructures\Andux.Core.Utilities\Andux.Core.Utilities.csproj", "{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.RabbitMQ", "src\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj", "{226135D4-99E1-4BC7-9C44-6B069566659E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.RabbitMQ", "src\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj", "{226135D4-99E1-4BC7-9C44-6B069566659E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcDemo", "src\UnitTesting\GrpcDemo\GrpcDemo.csproj", "{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcDemo", "src\UnitTesting\GrpcDemo\GrpcDemo.csproj", "{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.EventBus", "src\Infrastructures\Andux.Core.EventBus\Andux.Core.EventBus.csproj", "{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{AB3998D9-3BD8-4AC9-B228-5548A91A06F2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{226135D4-99E1-4BC7-9C44-6B069566659E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{1F18A862-F3A4-4B7A-96EA-1A8504EE757D} = {3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}
+		{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB6281E-01BB-4320-8143-30ED12871150}
