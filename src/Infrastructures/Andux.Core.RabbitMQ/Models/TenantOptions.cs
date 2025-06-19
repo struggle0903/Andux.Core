@@ -31,7 +31,8 @@
         /// <param name="tenantId"></param>
         public TenantOptions(string tenantId)
         {
-            TenantId = tenantId;
+            Password = Password ?? string.Empty;
+            TenantId = tenantId ?? string.Empty;
             VirtualHost = VirtualHost;
             UserName = $"{tenantId}";
         }

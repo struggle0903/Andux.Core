@@ -63,8 +63,19 @@ builder.Services.AddRedisService(builder.Configuration);
 
 #region Andux.Core.RabbitMQ
 
-// 添加RabbitMQ相关服务
-builder.Services.UseAnduxRabbitMQServices(builder.Configuration);
+// 添加RabbitMQ相关服务(非租户注册)
+builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
+    new("root") { Password = "mq@20241029!." },
+    new("bsb") { Password = "bsb@hyhf!.." },
+    new("sfm") { Password = "sfm@hyhf!.." }
+]);
+
+//// 添加RabbitMQ相关服务(租户模式)
+//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
+//    new("root") { Password = "mq@20241029!." },
+//    new("bsb") { Password = "bsb@hyhf!.." },
+//    new("sfm") { Password = "sfm@hyhf!.." }
+//]);
 
 // 5. 注册后台服务
 builder.Services.AddHostedService<OrderProcessingService>();

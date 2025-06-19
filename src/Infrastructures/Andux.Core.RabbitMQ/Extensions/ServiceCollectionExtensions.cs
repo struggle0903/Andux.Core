@@ -19,10 +19,11 @@ namespace Andux.Core.RabbitMQ.Extensions
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
+        /// <param name="tenantId"></param>
         /// <param name="tenantConfigs"></param>
         /// <returns></returns>
         public static IServiceCollection UseAnduxRabbitMQServices(this IServiceCollection services,
-            IConfiguration configuration, List<TenantOptions> tenantConfigs = null)
+            IConfiguration configuration, string? tenantId = null, List<TenantOptions>? tenantConfigs = null)
         {
             // 1. 注册配置
             var rabbitMQConfig = new RabbitMQOptions
@@ -40,7 +41,7 @@ namespace Andux.Core.RabbitMQ.Extensions
             services.AddSingleton(rabbitMQConfig);
 
             // 2. 注册租户上下文（作用域）
-            services.AddScoped<ITenantContext>(sp => new TenantContext("root"));
+            services.AddScoped<ITenantContext>(sp => new TenantContext(tenantId ?? string.Empty));
 
             // 3. 注册RabbitMQ核心服务
             services.AddSingleton<IRabbitMQConnectionProvider>(sp =>
@@ -57,18 +58,45 @@ namespace Andux.Core.RabbitMQ.Extensions
             services.AddScoped<IRabbitMQTenantService>(sp =>
             {
                 var tenantContext = sp.GetRequiredService<ITenantContext>();
-                var connectionProvider = sp.GetRequiredService<IRabbitMQConnectionProvider>();
-                var publisher = sp.GetRequiredService<IRabbitMQPublisher>();
-                var consumer = sp.GetRequiredService<IRabbitMQConsumer>();
-
-                return new RabbitMQTenantService(
-                    tenantContext.TenantId,
-                    connectionProvider,
-                    publisher,
-                    consumer);
+                return CreateRabbitMQTenantService(sp, tenantContext.TenantId);
             });
 
             return services;
+        }
+
+
+        /// <summary>
+        /// 获取指定 TenantId 的 RabbitMQTenantService
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        public static IRabbitMQTenantService GetRabbitMQTenantService(
+            this IServiceProvider serviceProvider,
+            string tenantId)
+        {
+            return CreateRabbitMQTenantService(serviceProvider, tenantId);
+        }
+
+        /// <summary>
+        /// 内部创建方法
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        private static IRabbitMQTenantService CreateRabbitMQTenantService(
+            IServiceProvider serviceProvider,
+            string tenantId)
+        {
+            var connectionProvider = serviceProvider.GetRequiredService<IRabbitMQConnectionProvider>();
+            var publisher = serviceProvider.GetRequiredService<IRabbitMQPublisher>();
+            var consumer = serviceProvider.GetRequiredService<IRabbitMQConsumer>();
+
+            return new RabbitMQTenantService(
+                tenantId,
+                connectionProvider,
+                publisher,
+                consumer);
         }
 
     }

@@ -77,6 +77,7 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
         /// <param name="exchangeName">目标交换机名称</param>
         /// <param name="messages">消息集合</param>
         /// <param name="persistent">是否持久化消息</param>
+        [Obsolete]
         public void PublishBatch<T>(string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
         {
             if (messages == null || !messages.Any())

@@ -18,19 +18,31 @@ namespace Andux.Core.RabbitMQ.Interfaces
         /// </summary>
         /// <param name="tenantId"></param>
         /// <returns></returns>
-        IConnection GetTenantConnection(string tenantId);
+        IConnection GetTenantConnection(string? tenantId);
 
         /// <summary>
         /// 创建通道
         /// </summary>
         /// <param name="tenantId"></param>
         /// <returns></returns>
-        IModel CreateChannel(string tenantId = null);
+        IModel CreateChannel(string? tenantId = null);
 
         /// <summary>
         /// 注册租户配置
         /// </summary>
         /// <param name="options"></param>
         void RegisterTenant(TenantOptions options);
+
+        /// <summary>
+        /// 获取当前所有活跃连接对象
+        /// </summary>
+        /// <returns>字典集合（Key: 租户ID，Value: RabbitMQ连接）</returns>
+        IReadOnlyDictionary<string, IConnection> GetAllConnections();
+
+        /// <summary>
+        /// 删除指定连接对象
+        /// </summary>
+        /// <param name="tenantId"></param>
+        void RemoveConnection(string tenantId);
     }
 }

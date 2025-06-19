@@ -16,6 +16,7 @@ namespace Andux.Core.Testing.Controllers
         private readonly IRepository<Product> _productRepository;
         private readonly IUnitOfWork _unitOfWork;
 
+        private readonly IRabbitMQConnectionProvider _connectionProvider;
         private readonly IRabbitMQTenantService _tenantService;
         private readonly IRabbitMQPublisher _inner;
 
@@ -27,12 +28,15 @@ namespace Andux.Core.Testing.Controllers
         /// <param name="orderItemRepository"></param>
         /// <param name="productRepository"></param>
         /// <param name="unitOfWork"></param>
+        /// <param name="connectionProvider"></param>
+        /// <param name="tenantService"></param>
         /// <param name="inner"></param>
         public OrderController(IRepository<Customer> customerRepository,
             IRepository<Order> orderRepository,
             IRepository<OrderItem> orderItemRepository,
             IRepository<Product> productRepository,
             IUnitOfWork unitOfWork,
+            IRabbitMQConnectionProvider connectionProvider,
             IRabbitMQTenantService tenantService,
             IRabbitMQPublisher inner)
         {
@@ -41,6 +45,7 @@ namespace Andux.Core.Testing.Controllers
             _orderItemRepository = orderItemRepository;
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
+            _connectionProvider = connectionProvider;
             _tenantService = tenantService;
             _inner = inner;
         }
@@ -226,6 +231,11 @@ namespace Andux.Core.Testing.Controllers
             // 分组统计每个产品的总数量
             var result = await _orderItemRepository.GetByIdAsync(1);
 
+           
+
+            //// 删除指定对象
+            //_connectionProvider.RemoveConnection(allConnections.FirstOrDefault().Key);
+
             try
             {
                 // 租户发布
@@ -235,6 +245,10 @@ namespace Andux.Core.Testing.Controllers
                 // 直接发布
                 _inner.PublishToQueue("andux.test.queue", result);
                 //_inner.PublishToExchange("Andux.Test", "andux.exchange.queue", result);
+
+                // 指定租户发布
+                //var sfmConnection = _connectionProvider.GetTenantConnection("sfm");
+              
             }
             catch (Exception e)
             {

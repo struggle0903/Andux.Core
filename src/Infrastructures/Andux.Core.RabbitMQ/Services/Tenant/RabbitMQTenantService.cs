@@ -12,12 +12,12 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
         public IRabbitMQConsumer Consumer { get; }
 
         public RabbitMQTenantService(
-            string tenantId,
+            string? tenantId,
             IRabbitMQConnectionProvider connectionProvider,
             IRabbitMQPublisher publisher,
             IRabbitMQConsumer consumer)
         {
-            TenantId = tenantId ?? throw new ArgumentNullException(nameof(tenantId));
+            TenantId = tenantId ?? string.Empty;
             Publisher = new TenantPublisherDecorator(publisher, tenantId);
             Consumer = new TenantConsumerDecorator(consumer, tenantId);
 
@@ -37,10 +37,11 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// 构造函数
             /// </summary>
             /// <param name="inner"></param>
-            public TenantPublisherDecorator(IRabbitMQPublisher inner, string tenantId)
+            /// <param name="tenantId"></param>
+            public TenantPublisherDecorator(IRabbitMQPublisher inner, string? tenantId)
             {
                 _inner = inner;
-                _tenantPrefix = $"{tenantId}_";
+                _tenantPrefix = tenantId is { Length: > 0 } ? $"{tenantId}_" : "";
             }
 
             /// <summary>
@@ -95,10 +96,11 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// 构造函数
             /// </summary>
             /// <param name="inner"></param>
-            public TenantConsumerDecorator(IRabbitMQConsumer inner, string tenantId)
+            /// <param name="tenantId"></param>
+            public TenantConsumerDecorator(IRabbitMQConsumer inner, string? tenantId)
             {
                 _inner = inner;
-                _tenantPrefix = $"{tenantId}_";
+                _tenantPrefix = tenantId is { Length: > 0 } ? $"{tenantId}_" : "";
             }
 
             /// <summary>
@@ -111,6 +113,19 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void StartConsuming<T>(string queueName, Func<T, Task> handler, bool autoAck = false) where T : class
             {
                 _inner.StartConsuming(GetTenantName(queueName), handler, autoAck);
+            }
+
+            /// <summary>
+            /// 消费指定租户的队列
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <param name="tenantId"></param>
+            /// <param name="queueName"></param>
+            /// <param name="handler"></param>
+            /// <param name="autoAck"></param>
+            public void StartConsuming<T>(string tenantId, string queueName, Func<T, Task> handler, bool autoAck = false) where T : class
+            {
+                _inner.StartConsuming(tenantId, GetTenantName(queueName), handler, autoAck);
             }
 
             /// <summary>

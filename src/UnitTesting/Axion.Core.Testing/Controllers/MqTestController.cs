@@ -10,16 +10,43 @@ namespace Andux.Core.Testing.Controllers
     {
         private readonly IRabbitMQTenantService _tenantService;
         private readonly IRabbitMQPublisher _inner;
+        private readonly IRabbitMQConnectionProvider _connectionProvider;
 
         /// <summary>
         /// 构造
         /// </summary>
         /// <param name="tenantService"></param>
         /// <param name="inner"></param>
-        public MqTestController(IRabbitMQTenantService tenantService, IRabbitMQPublisher inner)
+        /// <param name="connectionProvider"></param>
+        public MqTestController(IRabbitMQTenantService tenantService, IRabbitMQPublisher inner, IRabbitMQConnectionProvider connectionProvider)
         {
             _tenantService = tenantService;
             _inner = inner;
+            _connectionProvider = connectionProvider;
+        }
+
+        /// <summary>
+        /// 获取所有连接对象
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getConnections")]
+        public IActionResult GetConnections()
+        {
+            // 获取所有连接对象
+            var allConnections = _connectionProvider.GetAllConnections();
+            return Ok(allConnections);
+        }
+
+        /// <summary>
+        /// 删除指定连接对象
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("del")]
+        public IActionResult GetConnections(string tenantId)
+        {
+            // 获取所有连接对象
+            _connectionProvider.RemoveConnection(tenantId);
+            return Ok("已删除");
         }
 
         [HttpPost]
@@ -27,7 +54,6 @@ namespace Andux.Core.Testing.Controllers
         {
             // 自动使用当前租户的配置
             _tenantService.Publisher.PublishToQueue("andux.test.queue", order);
-
             return Accepted();
         }
 

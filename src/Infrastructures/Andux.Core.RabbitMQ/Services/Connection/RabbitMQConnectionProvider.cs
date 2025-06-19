@@ -15,7 +15,10 @@ namespace Andux.Core.RabbitMQ.Services.Connection
         private readonly ConcurrentDictionary<string, TenantOptions> _tenantOptions;
         private readonly ConcurrentDictionary<string, IConnection> _connections;
         private bool _disposed;
-        // 类级别添加锁对象
+        
+        /// <summary>
+        /// 连接对象锁
+        /// </summary>
         private readonly object _connectionLock = new object();
 
         /// <summary>
@@ -29,25 +32,43 @@ namespace Andux.Core.RabbitMQ.Services.Connection
             _connections = new ConcurrentDictionary<string, IConnection>();
         }
 
+        /// <summary>
+        /// 注册租户配置
+        /// </summary>
+        /// <param name="options"></param>
         public void RegisterTenant(TenantOptions options)
         {
             _tenantOptions[options.TenantId] = options;
         }
 
+        /// <summary>
+        /// 获取默认连接
+        /// </summary>
+        /// <returns></returns>
         public IConnection GetConnection()
         {
             return GetOrCreateConnection(null);
         }
 
-        public IConnection GetTenantConnection(string tenantId)
+        /// <summary>
+        /// 获取租户专属连接
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        public IConnection GetTenantConnection(string? tenantId)
         {
-            if (string.IsNullOrEmpty(tenantId))
-                throw new ArgumentException("Tenant ID cannot be null or empty");
+            //if (string.IsNullOrEmpty(tenantId))
+            //    throw new ArgumentException("Tenant ID cannot be null or empty");
 
             return GetOrCreateConnection(tenantId);
         }
 
-        public IModel CreateChannel(string tenantId = null)
+        /// <summary>
+        /// 创建通道
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        public IModel CreateChannel(string? tenantId = null)
         {
             var connection = string.IsNullOrEmpty(tenantId)
                 ? GetConnection()
@@ -56,7 +77,29 @@ namespace Andux.Core.RabbitMQ.Services.Connection
             return connection.CreateModel();
         }
 
-        private IConnection GetOrCreateConnection(string tenantId)
+        /// <summary>
+        /// 删除指定连接
+        /// </summary>
+        /// <param name="tenantId"></param>
+        public void RemoveConnection(string tenantId)
+        {
+            lock (_connectionLock)
+            {
+                if (_connections.TryGetValue(tenantId, out var conn))
+                {
+                    conn.Dispose();
+                    _connections.TryRemove(tenantId, out _);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取或创建连接
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        /// <exception cref="RabbitMQException"></exception>
+        private IConnection GetOrCreateConnection(string? tenantId)
         {
             var key = tenantId ?? "default";
 
@@ -98,19 +141,16 @@ namespace Andux.Core.RabbitMQ.Services.Connection
             }
         }
 
-        private void RemoveConnection(string key)
+        /// <summary>
+        /// 获取当前所有的连接对象
+        /// </summary>
+        /// <returns></returns>
+        public IReadOnlyDictionary<string, IConnection> GetAllConnections()
         {
-            lock (_connectionLock)
-            {
-                if (_connections.TryGetValue(key, out var conn))
-                {
-                    conn.Dispose();
-                    _connections.TryRemove(key, out _);
-                }
-            }
+            return _connections;
         }
 
-        private ConnectionFactory CreateConnectionFactory(string tenantId)
+        private ConnectionFactory CreateConnectionFactory(string? tenantId)
         {
             var options = string.IsNullOrEmpty(tenantId)
                 ? _globalOptions
@@ -144,12 +184,6 @@ namespace Andux.Core.RabbitMQ.Services.Connection
             };
         }
 
-        private void Reconnect(string key) => Task.Run(() =>
-        {
-            Thread.Sleep(5000);
-            GetOrCreateConnection(key == "default" ? null : key);
-        });
-
         public void Dispose()
         {
             if (_disposed) return;
@@ -160,5 +194,6 @@ namespace Andux.Core.RabbitMQ.Services.Connection
 
             _connections.Clear();
         }
+
     }
 }
