@@ -1,5 +1,6 @@
 ﻿using Andux.Core.EfTrack;
 using Andux.Core.EfTrack.Repository.Paged;
+using Andux.Core.RabbitMQ.Interfaces;
 using Andux.Core.Testing.Entitys;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,10 @@ namespace Andux.Core.Testing.Controllers
         private readonly IRepository<Product> _productRepository;
         private readonly IUnitOfWork _unitOfWork;
 
+        private readonly IRabbitMQConnectionProvider _connectionProvider;
+        private readonly IRabbitMQTenantService _tenantService;
+        private readonly IRabbitMQPublisher _inner;
+
         /// <summary>
         /// 
         /// </summary>
@@ -23,17 +28,26 @@ namespace Andux.Core.Testing.Controllers
         /// <param name="orderItemRepository"></param>
         /// <param name="productRepository"></param>
         /// <param name="unitOfWork"></param>
+        /// <param name="connectionProvider"></param>
+        /// <param name="tenantService"></param>
+        /// <param name="inner"></param>
         public OrderController(IRepository<Customer> customerRepository,
             IRepository<Order> orderRepository,
             IRepository<OrderItem> orderItemRepository,
             IRepository<Product> productRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IRabbitMQConnectionProvider connectionProvider,
+            IRabbitMQTenantService tenantService,
+            IRabbitMQPublisher inner)
         {
             _customerRepository = customerRepository;
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
+            _connectionProvider = connectionProvider;
+            _tenantService = tenantService;
+            _inner = inner;
         }
 
         /// <summary>
@@ -204,6 +218,43 @@ namespace Andux.Core.Testing.Controllers
                     TotalQuantity = g.Sum(x => x.Quantity)
                 }
             );
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// 发布订单
+        /// </summary>
+        [HttpGet("publish")]
+        public async Task<IActionResult> PublishOrderAsync()
+        {
+            // 分组统计每个产品的总数量
+            var result = await _orderItemRepository.GetByIdAsync(1);
+
+           
+
+            //// 删除指定对象
+            //_connectionProvider.RemoveConnection(allConnections.FirstOrDefault().Key);
+
+            try
+            {
+                // 租户发布
+                _tenantService.Publisher.PublishToQueue("andux.test.queue", result);
+                //_tenantService.Publisher.PublishToExchange("Andux.Test", "andux.exchange.queue", result);
+
+                // 直接发布
+                _inner.PublishToQueue("andux.test.queue", result);
+                //_inner.PublishToExchange("Andux.Test", "andux.exchange.queue", result);
+
+                // 指定租户发布
+                //var sfmConnection = _connectionProvider.GetTenantConnection("sfm");
+              
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             return Ok(result);
         }

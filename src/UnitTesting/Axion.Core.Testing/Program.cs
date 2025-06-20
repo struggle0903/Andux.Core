@@ -1,9 +1,17 @@
 using Andux.Core.EfTrack;
 using Andux.Core.Logger;
+using Andux.Core.RabbitMQ.Extensions;
+using Andux.Core.RabbitMQ.Interfaces;
+using Andux.Core.RabbitMQ.Models;
+using Andux.Core.RabbitMQ.Services.Connection;
+using Andux.Core.RabbitMQ.Services.Consumers;
+using Andux.Core.RabbitMQ.Services.Publishers;
+using Andux.Core.RabbitMQ.Services.Tenant;
 using Andux.Core.Redis.Extensions;
 using Andux.Core.Redis.Helper;
 using Andux.Core.Redis.Services;
 using Andux.Core.Testing;
+using Andux.Core.Testing.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,6 +61,29 @@ builder.Services.AddSerilogLogging(builder.Configuration);
 builder.Services.AddRedisService(builder.Configuration);
 #endregion
 
+#region Andux.Core.RabbitMQ
+
+// 添加RabbitMQ相关服务(非租户注册)
+builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
+    new("root") { Password = "mq@20241029!." },
+    new("bsb") { Password = "bsb@hyhf!.." },
+    new("sfm") { Password = "sfm@hyhf!.." }
+]);
+
+//// 添加RabbitMQ相关服务(租户模式)
+//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
+//    new("root") { Password = "mq@20241029!." },
+//    new("bsb") { Password = "bsb@hyhf!.." },
+//    new("sfm") { Password = "sfm@hyhf!.." }
+//]);
+
+// 5. 注册后台服务
+builder.Services.AddHostedService<OrderProcessingService>();
+
+#endregion
+
+builder.Services.AddHostedService<OrderProcessingService>();
+
 var app = builder.Build();
 app.UseRouting();
 
@@ -63,7 +94,6 @@ var redisService = app.Services.GetRequiredService<IRedisService>();
 // 注入静态 RedisHelper
 RedisHelper.Configure(redisService);
 #endregion
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
