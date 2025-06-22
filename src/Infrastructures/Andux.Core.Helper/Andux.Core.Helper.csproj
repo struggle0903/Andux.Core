@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
 
     <!-- NuGet 包信息 -->
-    <PackageId>Andux.Core.Helper</PackageId>
+    <!--<PackageId>Andux.Core.Helper</PackageId>
     <Version>1.0.0</Version>
     <Authors>andy.hu</Authors>
     <Description>一套专为 .NET 开发者打造的高效工具包，包含 HttpClient封装、数据验证、配置管理、性能监控、网络操作、反射操作 等常用功能，帮助您减少重复代码，提升开发效率！</Description>
@@ -14,10 +14,18 @@
     <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
     <!-- 新增正则表达式验证扩展 -->
+    <PackageId>Andux.Core.Helper</PackageId>
+    <Version>1.0.1</Version>
+    <Authors>andy.hu</Authors>
+    <Description>新增正则表达式的验证Helper类</Description>
+    <PackageTags>Regex;Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
+    <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
