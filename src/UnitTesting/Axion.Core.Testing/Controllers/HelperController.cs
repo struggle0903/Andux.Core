@@ -201,5 +201,34 @@ namespace Andux.Core.Testing.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// 正则表达式操作
+        /// </summary>
+        [HttpPut("regex")]
+        public IActionResult Regex()
+        {
+            var validator = Validator.Create()
+                .RegexMatch("example@test.com", "邮箱", @"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+                .ChineseIdCard("11010519491231002X", "身份证号")
+                .UnifiedSocialCreditCode("91310115MA1K41Y726", "统一信用代码")
+                .ChineseName("张三", "姓名")
+                .StrongPassword("Pass1234", "密码")
+                .BankCardNumber("6225888888888888", "银行卡号")
+                .Guid("9a48c9f7-7cb6-4bfc-b330-e9e8be7682ff", "标识")
+                .Money("98.50", "总金额")
+                .ChineseMobile("17363993766", "座机")
+                .LandlinePhone("010-12345678", "座机")
+                .HexColor("#FFAA33", "颜色代码")
+                .ToResult();
+
+            if (!validator.IsValid)
+            {
+                Console.WriteLine(string.Join(Environment.NewLine, validator.Errors));
+            }
+
+            return NoContent();
+        }
+
     }
 }
