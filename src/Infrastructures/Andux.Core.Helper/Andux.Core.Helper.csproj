@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- NuGet 包信息 -->
+    <PackageId>Andux.Core.Helper</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>andy.hu</Authors>
+    <Description>一套专为 .NET 开发者打造的高效工具包，包含 HttpClient封装、数据验证、配置管理、性能监控、网络操作、反射操作 等常用功能，帮助您减少重复代码，提升开发效率！</Description>
+    <PackageTags>Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
+    <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+
+    <!-- 新增正则表达式验证扩展 -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hardware.Info" Version="101.0.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.5" />
+  </ItemGroup>
+
+</Project>

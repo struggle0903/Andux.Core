@@ -45,30 +45,30 @@ namespace Andux.Core.Testing.Services
                         });
                         #endregion
 
-                        #region 消费指定租户消息
-                        consumer.StartConsuming<Order>("sfm", "andux.test.queue", order =>
-                        {
-                            _logger.LogInformation("进入消费指定租户消息sfm： {OrderId}", order.Id);
-                            return Task.CompletedTask;
-                        });
-                        consumer.StartConsuming<Order>("bsb", "andux.test.queue", order =>
-                        {
-                            _logger.LogInformation("进入消费指定租户消息bsb： {OrderId}", order.Id);
-                            return Task.CompletedTask;
-                        });
-                        #endregion
+                        //#region 消费指定租户消息
+                        //consumer.StartConsuming<Order>("sfm", "andux.test.queue", order =>
+                        //{
+                        //    _logger.LogInformation("进入消费指定租户消息sfm： {OrderId}", order.Id);
+                        //    return Task.CompletedTask;
+                        //});
+                        //consumer.StartConsuming<Order>("bsb", "andux.test.queue", order =>
+                        //{
+                        //    _logger.LogInformation("进入消费指定租户消息bsb： {OrderId}", order.Id);
+                        //    return Task.CompletedTask;
+                        //});
+                        //#endregion
 
-                        #region 租户消费者
+                        //#region 租户消费者
 
-                        // 实际消费逻辑
-                        tenantService.Consumer.StartConsuming<Order>("andux.test.queue", order =>
-                        {
-                            _logger.LogInformation(
-                                "[Tenant:{TenantId}] Processing order {OrderId}",
-                                tenantService.TenantId, order.Id);
-                            return Task.CompletedTask;
-                        });
-                        #endregion
+                        //// 实际消费逻辑
+                        //tenantService.Consumer.StartConsuming<Order>("andux.test.queue", order =>
+                        //{
+                        //    _logger.LogInformation(
+                        //        "[Tenant:{TenantId}] Processing order {OrderId}",
+                        //        tenantService.TenantId, order.Id);
+                        //    return Task.CompletedTask;
+                        //});
+                        //#endregion
                     }
                     catch (Exception ex)
                     {
