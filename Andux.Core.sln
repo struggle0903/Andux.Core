@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Common", "src\Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.EfTrack", "src\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj", "{45842A57-CD80-4DE9-B160-9025F2A929BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Utilities", "src\Infrastructures\Andux.Core.Utilities\Andux.Core.Utilities.csproj", "{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Helper", "src\Infrastructures\Andux.Core.Utilities\Andux.Core.Helper.csproj", "{AB3998D9-3BD8-4AC9-B228-5548A91A06F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.RabbitMQ", "src\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj", "{226135D4-99E1-4BC7-9C44-6B069566659E}"
 EndProject

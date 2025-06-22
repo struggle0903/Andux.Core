@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Extensions\Andux.Core.Extensions.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj" />
+    <ProjectReference Include="..\..\Infrastructures\Andux.Core.Utilities\Andux.Core.Helper.csproj" />
   </ItemGroup>
 
 </Project>
