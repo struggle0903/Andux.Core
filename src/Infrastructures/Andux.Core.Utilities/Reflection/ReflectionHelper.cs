@@ -2,6 +2,9 @@
 
 namespace Andux.Core.Helper.Reflection
 {
+    /// <summary>
+    /// 反射帮助类
+    /// </summary>
     public static class ReflectionHelper
     {
         /// <summary>
