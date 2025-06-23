@@ -1,4 +1,7 @@
 using Andux.Core.EfTrack;
+using Andux.Core.Helper.Config;
+using Andux.Core.Helper.Extensions;
+using Andux.Core.Helper.Http;
 using Andux.Core.Logger;
 using Andux.Core.RabbitMQ.Extensions;
 using Andux.Core.RabbitMQ.Interfaces;
@@ -106,6 +109,12 @@ builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
 
 // 5. 注册后台服务
 builder.Services.AddHostedService<OrderProcessingService>();
+
+#endregion
+
+#region Andux.Core.Helper
+
+builder.Services.UseAnduxHelper();
 
 #endregion
 
