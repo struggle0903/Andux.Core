@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Extensions", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Helper", "src\Infrastructures\Andux.Core.Helper\Andux.Core.Helper.csproj", "{A3ACA531-8C7B-4949-8F22-547E5DB1027D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.SignalR", "src\Infrastructures\Andux.Core.SignalR\Andux.Core.SignalR.csproj", "{159FEC4A-FEB4-44D4-810A-33517AF41D9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{A3ACA531-8C7B-4949-8F22-547E5DB1027D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3ACA531-8C7B-4949-8F22-547E5DB1027D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3ACA531-8C7B-4949-8F22-547E5DB1027D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{159FEC4A-FEB4-44D4-810A-33517AF41D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{159FEC4A-FEB4-44D4-810A-33517AF41D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{159FEC4A-FEB4-44D4-810A-33517AF41D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{159FEC4A-FEB4-44D4-810A-33517AF41D9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{95286649-0B22-4A69-BFF6-ABBCAA13318B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A3ACA531-8C7B-4949-8F22-547E5DB1027D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{159FEC4A-FEB4-44D4-810A-33517AF41D9F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB6281E-01BB-4320-8143-30ED12871150}

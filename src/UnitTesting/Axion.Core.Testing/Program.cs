@@ -1,24 +1,21 @@
 using Andux.Core.EfTrack;
-using Andux.Core.Helper.Config;
 using Andux.Core.Helper.Extensions;
-using Andux.Core.Helper.Http;
 using Andux.Core.Logger;
 using Andux.Core.RabbitMQ.Extensions;
-using Andux.Core.RabbitMQ.Interfaces;
-using Andux.Core.RabbitMQ.Models;
-using Andux.Core.RabbitMQ.Services.Connection;
-using Andux.Core.RabbitMQ.Services.Consumers;
-using Andux.Core.RabbitMQ.Services.Publishers;
-using Andux.Core.RabbitMQ.Services.Tenant;
 using Andux.Core.Redis.Extensions;
 using Andux.Core.Redis.Helper;
 using Andux.Core.Redis.Services;
+using Andux.Core.SignalR;
+using Andux.Core.SignalR.Clients;
+using Andux.Core.SignalR.Extensions;
 using Andux.Core.Testing;
 using Andux.Core.Testing.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseUrls("http://0.0.0.0:5001");  // 确保监听所有网络接口
 
 // 注册 Cookie 身份认证
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -118,6 +115,29 @@ builder.Services.UseAnduxHelper();
 
 #endregion
 
+#region Andux.Core.SignalR
+
+builder.Services.UseAnduxSignalR(new SignalROptions
+{
+    // 分布式集群部署需要
+    //RedisConnection = "localhost:6379"
+    RedisConnection = null
+});
+
+var client = new SignalRClient("http://127.0.0.1:5001/chatHub");
+
+client.On<string, string>("ReceiveMessage", (user, msg) =>
+{
+    Console.WriteLine($"{user}: {msg}");
+});
+
+
+await client.ConnectAsync();
+
+await client.SendMessageAsync("SendMessage", "客户端用户", "你好 SignalR");
+
+#endregion
+
 builder.Services.AddHostedService<OrderProcessingService>();
 
 var app = builder.Build();
@@ -137,6 +157,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.UseHttpsRedirection();
 

@@ -20,6 +20,8 @@
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +31,7 @@
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Helper\Andux.Core.Helper.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj" />
+    <ProjectReference Include="..\..\Infrastructures\Andux.Core.SignalR\Andux.Core.SignalR.csproj" />
   </ItemGroup>
 
 </Project>
