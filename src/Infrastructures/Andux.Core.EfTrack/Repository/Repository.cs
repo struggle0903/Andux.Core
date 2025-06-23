@@ -565,6 +565,13 @@ namespace Andux.Core.EfTrack
         {
             if (typeof(IProject).IsAssignableFrom(typeof(T)) && _options.EnableProject)
             {
+                // 超管标识为 101，如果是超管
+                if (_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "identityType")
+                        ?.Value == "101")
+                {
+                    return query;
+                }
+
                 var currentProjectStr = _httpContextAccessor.HttpContext?.User.Claims
                     .FirstOrDefault(c => c.Type == _options.ProjectClaimsType)?.Value;
 

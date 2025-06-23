@@ -20,8 +20,9 @@ namespace Andux.Core.Testing.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, "user123"),
                 new Claim(ClaimTypes.Name, "andy"),
-                new Claim("ProjectId", "123"),
-                new Claim("UserId", "111"),
+                new Claim("projectId", "123"),
+                new Claim("id", "111"),
+                new Claim("identityType", "101"), // 101 为超管标识，如果是101则不参与ProjectId的过滤
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
