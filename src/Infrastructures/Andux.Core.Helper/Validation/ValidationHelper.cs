@@ -83,7 +83,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="fieldName">字段名称（用于错误消息）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>当前ValidationHelper实例（支持链式调用）</returns>
-        public ValidationHelper Required(string value, string fieldName, string message = null)
+        public ValidationHelper Required(string value, string fieldName, string? message = null)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -101,7 +101,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="max">允许的最大值（包含）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>当前ValidationHelper实例（支持链式调用）</returns>
-        public ValidationHelper Range(int value, string fieldName, int min, int max, string message = null)
+        public ValidationHelper Range(int value, string fieldName, int min, int max, string? message = null)
         {
             if (value < min || value > max)
             {
@@ -119,7 +119,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="max">最大长度（包含）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>当前ValidationHelper实例（支持链式调用）</returns>
-        public ValidationHelper Length(string value, string fieldName, int min, int max, string message = null)
+        public ValidationHelper Length(string value, string fieldName, int min, int max, string? message = null)
         {
             if (value == null) return this;
 
@@ -137,7 +137,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="fieldName">字段名称（用于错误消息）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>当前ValidationHelper实例（支持链式调用）</returns>
-        public ValidationHelper Email(string value, string fieldName, string message = null)
+        public ValidationHelper Email(string value, string fieldName, string? message = null)
         {
             if (string.IsNullOrWhiteSpace(value)) return this;
 
@@ -155,7 +155,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="fieldName">字段名称（用于错误消息）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>当前ValidationHelper实例（支持链式调用）</returns>
-        public ValidationHelper Phone(string value, string fieldName, string message = null)
+        public ValidationHelper Phone(string value, string fieldName, string? message = null)
         {
             if (string.IsNullOrWhiteSpace(value)) return this;
 
@@ -254,7 +254,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="fieldName">字段名称（用于错误消息）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>验证结果</returns>
-        public static ValidationResult Required(string value, string fieldName, string message = null)
+        public static ValidationResult Required(string value, string fieldName, string? message = null)
         {
             return Create().Required(value, fieldName, message).ToResult();
         }
@@ -268,7 +268,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="max">最大值（包含）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>验证结果</returns>
-        public static ValidationResult Range(int value, string fieldName, int min, int max, string message = null)
+        public static ValidationResult Range(int value, string fieldName, int min, int max, string? message = null)
         {
             return Create().Range(value, fieldName, min, max, message).ToResult();
         }
@@ -282,7 +282,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="max">最大长度</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>验证结果</returns>
-        public static ValidationResult Length(string value, string fieldName, int min, int max, string message = null)
+        public static ValidationResult Length(string value, string fieldName, int min, int max, string? message = null)
         {
             return Create().Length(value, fieldName, min, max, message).ToResult();
         }
@@ -294,7 +294,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="fieldName">字段名称（用于错误消息）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>验证结果</returns>
-        public static ValidationResult Email(string value, string fieldName, string message = null)
+        public static ValidationResult Email(string value, string fieldName, string? message = null)
         {
             return Create().Email(value, fieldName, message).ToResult();
         }
@@ -306,7 +306,7 @@ namespace Andux.Core.Helper.Validation
         /// <param name="fieldName">字段名称（用于错误消息）</param>
         /// <param name="message">自定义错误消息（可选）</param>
         /// <returns>验证结果</returns>
-        public static ValidationResult Phone(string value, string fieldName, string message = null)
+        public static ValidationResult Phone(string value, string fieldName, string? message = null)
         {
             return Create().Phone(value, fieldName, message).ToResult();
         }

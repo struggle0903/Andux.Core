@@ -25,7 +25,7 @@ namespace Andux.Core.Helper.Config
         /// <param name="key">配置键</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns>配置值或默认值</returns>
-        public string GetString(string key, string defaultValue = null)
+        public string GetString(string key, string? defaultValue = null)
         {
             return _configuration[key] ?? defaultValue;
         }
@@ -102,7 +102,7 @@ namespace Andux.Core.Helper.Config
         /// <typeparam name="T">目标类型</typeparam>
         /// <param name="key">配置键</param>
         /// <returns>绑定后的对象实例</returns>
-        public T Get<T>(string key = null) where T : class, new()
+        public T Get<T>(string? key = null) where T : class, new()
         {
             var instance = new T();
             if (string.IsNullOrEmpty(key))

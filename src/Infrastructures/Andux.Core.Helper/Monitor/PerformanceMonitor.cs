@@ -190,7 +190,7 @@ namespace Andux.Core.Helper.Monitor
                 UseShellExecute = false
             };
             using var process = Process.Start(psi);
-            var output = await process.StandardOutput.ReadToEndAsync();
+            var output = await process?.StandardOutput.ReadToEndAsync()!;
             var match = Regex.Match(output, @"LoadPercentage=(\d+)");
             return match.Success ? double.Parse(match.Groups[1].Value) : -1;
         }
@@ -209,7 +209,7 @@ namespace Andux.Core.Helper.Monitor
                 UseShellExecute = false
             };
             using var process = Process.Start(psi);
-            var output = await process.StandardOutput.ReadToEndAsync();
+            var output = await process?.StandardOutput.ReadToEndAsync()!;
             var match = Regex.Match(output, @"(\d+\.\d+)\s+id");
             if (match.Success && double.TryParse(match.Groups[1].Value, out var idle))
                 return 100 - idle;

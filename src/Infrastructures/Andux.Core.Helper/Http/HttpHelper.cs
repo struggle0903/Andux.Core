@@ -26,7 +26,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="httpClient">HttpClient 实例</param>
         /// <param name="baseAddress">API 基础地址</param>
         /// <param name="timeout">请求超时时间（秒）</param>
-        private HttpHelper(HttpClient httpClient, string baseAddress = null, int timeout = 30)
+        private HttpHelper(HttpClient httpClient, string? baseAddress = null, int timeout = 30)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
@@ -46,7 +46,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="baseAddress">API 基础地址</param>
         /// <param name="timeout">请求超时时间（秒）</param>
         /// <returns>HttpHelper 实例</returns>
-        public static HttpHelper Create(IHttpClientFactory httpClientFactory, string baseAddress = null, int timeout = 30)
+        public static HttpHelper Create(IHttpClientFactory httpClientFactory, string? baseAddress = null, int timeout = 30)
         {
             var httpClient = httpClientFactory.CreateClient();
             return new HttpHelper(httpClient, baseAddress, timeout);
@@ -82,7 +82,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="url">请求地址</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>响应字符串</returns>
-        public async Task<string> GetAsync(string url, Dictionary<string, string> headers = null)
+        public async Task<string> GetAsync(string url, Dictionary<string, string>? headers = null)
         {
             return await SendRequestAsync(HttpMethod.Get, url, null, headers);
         }
@@ -94,7 +94,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="url">请求地址</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>反序列化后的对象</returns>
-        public async Task<T> GetAsync<T>(string url, Dictionary<string, string> headers = null)
+        public async Task<T> GetAsync<T>(string url, Dictionary<string, string>? headers = null)
         {
             var response = await GetAsync(url, headers);
             return JsonSerializer.Deserialize<T>(response, _jsonOptions);
@@ -107,7 +107,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="data">请求数据</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>响应字符串</returns>
-        public async Task<string> PostAsync(string url, object data = null, Dictionary<string, string> headers = null)
+        public async Task<string> PostAsync(string url, object? data = null, Dictionary<string, string>? headers = null)
         {
             return await SendRequestAsync(HttpMethod.Post, url, data, headers);
         }
@@ -120,7 +120,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="data">请求数据</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>反序列化后的对象</returns>
-        public async Task<T> PostAsync<T>(string url, object data = null, Dictionary<string, string> headers = null)
+        public async Task<T> PostAsync<T>(string url, object? data = null, Dictionary<string, string>? headers = null)
         {
             var response = await PostAsync(url, data, headers);
             return JsonSerializer.Deserialize<T>(response, _jsonOptions);
@@ -133,7 +133,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="data">请求数据</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>响应字符串</returns>
-        public async Task<string> PutAsync(string url, object data = null, Dictionary<string, string> headers = null)
+        public async Task<string> PutAsync(string url, object? data = null, Dictionary<string, string>? headers = null)
         {
             return await SendRequestAsync(HttpMethod.Put, url, data, headers);
         }
@@ -146,7 +146,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="data">请求数据</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>反序列化后的对象</returns>
-        public async Task<T> PutAsync<T>(string url, object data = null, Dictionary<string, string> headers = null)
+        public async Task<T> PutAsync<T>(string url, object? data = null, Dictionary<string, string>? headers = null)
         {
             var response = await PutAsync(url, data, headers);
             return JsonSerializer.Deserialize<T>(response, _jsonOptions);
@@ -158,7 +158,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="url">请求地址</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>响应字符串</returns>
-        public async Task<string> DeleteAsync(string url, Dictionary<string, string> headers = null)
+        public async Task<string> DeleteAsync(string url, Dictionary<string, string>? headers = null)
         {
             return await SendRequestAsync(HttpMethod.Delete, url, null, headers);
         }
@@ -170,7 +170,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="url">请求地址</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>反序列化后的对象</returns>
-        public async Task<T> DeleteAsync<T>(string url, Dictionary<string, string> headers = null)
+        public async Task<T> DeleteAsync<T>(string url, Dictionary<string, string>? headers = null)
         {
             var response = await DeleteAsync(url, headers);
             return JsonSerializer.Deserialize<T>(response, _jsonOptions);
@@ -186,7 +186,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="headers">自定义请求头</param>
         /// <returns>响应字符串</returns>
         /// <exception cref="FileNotFoundException">当文件不存在时抛出</exception>
-        public async Task<string> UploadFileAsync(string url, string filePath, string fileParamName = "file", Dictionary<string, string> formData = null, Dictionary<string, string> headers = null)
+        public async Task<string> UploadFileAsync(string url, string filePath, string fileParamName = "file", Dictionary<string, string>? formData = null, Dictionary<string, string>? headers = null)
         {
             if (!File.Exists(filePath))
             {
@@ -217,7 +217,7 @@ namespace Andux.Core.Helper.Http
         /// <param name="savePath">本地保存路径</param>
         /// <param name="headers">自定义请求头</param>
         /// <returns>是否下载成功</returns>
-        public async Task<bool> DownloadFileAsync(string url, string savePath, Dictionary<string, string> headers = null)
+        public async Task<bool> DownloadFileAsync(string url, string savePath, Dictionary<string, string>? headers = null)
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
 
