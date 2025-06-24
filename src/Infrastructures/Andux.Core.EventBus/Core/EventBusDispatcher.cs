@@ -10,7 +10,7 @@ namespace Andux.Core.EventBus.Core
     public class EventBusDispatcher
     {
         private readonly IServiceProvider _serviceProvider;
-
+        
         public EventBusDispatcher(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
