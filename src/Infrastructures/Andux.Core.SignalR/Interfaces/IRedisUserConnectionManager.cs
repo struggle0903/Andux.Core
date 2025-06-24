@@ -3,9 +3,9 @@
 namespace Andux.Core.SignalR.Interfaces
 {
     /// <summary>
-    /// 在线用户管理接口 (内存)
+    /// 在线用户管理接口 (redis存储)
     /// </summary>
-    public interface IUserConnectionManager
+    public interface IRedisUserConnectionManager
     {
         /// <summary>
         /// 注册一个新的连接信息，添加到在线连接管理中。
@@ -74,6 +74,5 @@ namespace Andux.Core.SignalR.Interfaces
         /// 清空所有连接信息，通常用于调试或服务重启时清理状态。
         /// </summary>
         void ClearAll();
-
     }
 }

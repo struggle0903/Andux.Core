@@ -8,22 +8,21 @@ namespace Andux.Core.Testing.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SignalRController : ControllerBase
+    public class RedisSignalRController : ControllerBase
     {
-        private readonly IHubService _hubService;
-        // 内存版
-        private readonly IUserConnectionManager _userManager;
+        private readonly IRedisHubService _hubService;
+        private readonly IRedisUserConnectionManager _redisUserManager;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="hubService"></param>
-        /// <param name="userManager"></param>
-        public SignalRController(IHubService hubService, 
-            IUserConnectionManager userManager)
+        /// <param name="redisUserManager"></param>
+        public RedisSignalRController(IRedisHubService hubService,
+            IRedisUserConnectionManager redisUserManager)
         {
             _hubService = hubService;
-            _userManager = userManager;
+            _redisUserManager = redisUserManager;
         }
 
         /// <summary>
@@ -90,7 +89,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpGet("online-users")]
         public IActionResult GetOnlineUsers()
         {
-            var users = _userManager.GetAllConnections();
+            var users = _redisUserManager.GetAllConnections();
             return Ok(users);
         }
 
@@ -200,7 +199,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("checkOnline")]
         public async Task<IActionResult> IsOnline(string userId)
         {
-            var isOnline = _userManager.IsOnline(userId);
+            var isOnline = _redisUserManager.IsOnline(userId);
             var status = isOnline ? "在线" : "离线";
             return Ok($"用户 {userId} 当前状态 {status}");
         }
@@ -211,7 +210,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("getConnectionIds")]
         public async Task<IActionResult> GetConnectionIdsByUserId(string userId)
         {
-            var list = _userManager.GetConnectionIdsByUserId(userId);
+            var list = _redisUserManager.GetConnectionIdsByUserId(userId);
             return Ok($"用户 {userId} 存在连接id有 {string.Join(",", list.Select(x => $"'{x}'"))}");
         }
 
@@ -222,7 +221,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("getConnectionsByGroup")]
         public async Task<IActionResult> GetConnectionsByGroup(string groupName)
         {
-            List<OnlineUserInfo> list = _userManager.GetConnectionsByGroup(groupName);
+            List<OnlineUserInfo> list = _redisUserManager.GetConnectionsByGroup(groupName);
             return Ok(list);
         }
 
@@ -232,7 +231,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("getConnectionsByTenant")]
         public async Task<IActionResult> GetConnectionsByTenant(string tenantId)
         {
-            List<OnlineUserInfo> list = _userManager.GetConnectionsByTenant(tenantId);
+            List<OnlineUserInfo> list = _redisUserManager.GetConnectionsByTenant(tenantId);
             return Ok(list);
         }
 
@@ -242,7 +241,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("clearAll")]
         public async Task<IActionResult> ClearAll()
         {
-            _userManager.ClearAll();
+            _redisUserManager.ClearAll();
             return Ok($"已清空所有连接信息");
         }
 

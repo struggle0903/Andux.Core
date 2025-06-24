@@ -9,6 +9,10 @@ namespace Andux.Core.SignalR.Clients
     {
         private readonly HubConnection _connection;
 
+        /// <summary>
+        /// SignalR 客户端构造函数。
+        /// </summary>
+        /// <param name="url"></param>
         public SignalRClient(string url)
         {
             _connection = new HubConnectionBuilder()
@@ -23,10 +27,24 @@ namespace Andux.Core.SignalR.Clients
 
         public async Task SendMessageAsync(string method, params object[] args)
         {
-            await _connection.InvokeAsync(method, args);
+            await _connection.InvokeCoreAsync(method, typeof(object), args);
+        }
+
+        public async Task SendMessageAsync(string method, object arg1, object arg2)
+        {
+            await _connection.InvokeAsync(method, arg1, arg2);
+        }
+
+        public void On<T1>(string method, Action<T1> handler)
+        {
+            _connection.On(method, handler);
         }
 
         public void On<T1, T2>(string method, Action<T1, T2> handler)
+        {
+            _connection.On(method, handler);
+        }
+        public void On(string method, Action handler)
         {
             _connection.On(method, handler);
         }

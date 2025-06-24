@@ -8,6 +8,7 @@ using Andux.Core.Redis.Services;
 using Andux.Core.SignalR;
 using Andux.Core.SignalR.Clients;
 using Andux.Core.SignalR.Extensions;
+using Andux.Core.SignalR.Hubs;
 using Andux.Core.Testing;
 using Andux.Core.Testing.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,7 +16,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:5001");  // 确保监听所有网络接口
+builder.WebHost.UseUrls("http://192.168.1.88:5001");
 
 // 注册 Cookie 身份认证
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -90,22 +91,25 @@ builder.Services.AddRedisService(builder.Configuration);
 
 #region Andux.Core.RabbitMQ
 
-// 添加RabbitMQ相关服务(非租户注册)
-builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
-    new("root") { Password = "mq@20241029!." },
-    new("bsb") { Password = "bsb@hyhf!.." },
-    new("sfm") { Password = "sfm@hyhf!.." }
-]);
-
-//// 添加RabbitMQ相关服务(租户模式)
-//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
+//// 添加RabbitMQ相关服务(非租户注册)
+//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
 //    new("root") { Password = "mq@20241029!." },
 //    new("bsb") { Password = "bsb@hyhf!.." },
 //    new("sfm") { Password = "sfm@hyhf!.." }
 //]);
 
-// 5. 注册后台服务
-builder.Services.AddHostedService<OrderProcessingService>();
+////// 添加RabbitMQ相关服务(租户模式)
+////builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
+////    new("root") { Password = "mq@20241029!." },
+////    new("bsb") { Password = "bsb@hyhf!.." },
+////    new("sfm") { Password = "sfm@hyhf!.." }
+////]);
+
+//// 5. 注册后台服务
+//builder.Services.AddHostedService<OrderProcessingService>();
+
+//// 监听订单处理服务
+////builder.Services.AddHostedService<OrderProcessingService>();
 
 #endregion
 
@@ -120,25 +124,15 @@ builder.Services.UseAnduxHelper();
 builder.Services.UseAnduxSignalR(new SignalROptions
 {
     // 分布式集群部署需要
-    //RedisConnection = "localhost:6379"
-    RedisConnection = null
+    RedisConnection = "localhost:6379,defaultDatabase=1,password=Aa123456"
+    //RedisConnection = null
 });
 
-var client = new SignalRClient("http://127.0.0.1:5001/chatHub");
-
-client.On<string, string>("ReceiveMessage", (user, msg) =>
-{
-    Console.WriteLine($"{user}: {msg}");
-});
-
-
-await client.ConnectAsync();
-
-await client.SendMessageAsync("SendMessage", "客户端用户", "你好 SignalR");
+builder.Services.AddHostedService<SignalRClient1Service>();
+builder.Services.AddHostedService<SignalRClient2Service>();
+builder.Services.AddHostedService<SignalRClient3Service>();
 
 #endregion
-
-builder.Services.AddHostedService<OrderProcessingService>();
 
 var app = builder.Build();
 app.UseRouting();
@@ -158,7 +152,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapHub<ChatHub>("/chatHub");
+//app.MapHub<AnduxChatHub>("/chatHub"); //内存版
+
+app.MapHub<AnduxRedisChatHub>("/chatHub"); //redis版
 
 app.UseHttpsRedirection();
 

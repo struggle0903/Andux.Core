@@ -5,23 +5,23 @@ using Microsoft.AspNetCore.SignalR;
 namespace Andux.Core.SignalR.Services
 {
     /// <summary>
-    /// SignalR 消息推送业务实现 (内存)
+    /// SignalR 消息推送业务实现 (redis)
     /// </summary>
-    public class HubService : IHubService
+    public class RedisHubService: IRedisHubService
     {
-        private readonly IHubContext<AnduxChatHub> _hubContext;
-        private readonly IUserConnectionManager _userConnectionManager;
+        private readonly IHubContext<AnduxRedisChatHub> _hubContext;
+        private readonly IRedisUserConnectionManager _redisUserConnectionManager;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="hubContext"></param>
-        /// <param name="userConnectionManager"></param>
-        public HubService(IHubContext<AnduxChatHub> hubContext
-            , IUserConnectionManager userConnectionManager)
+        /// <param name="redisUserConnectionManager"></param>
+        public RedisHubService(IHubContext<AnduxRedisChatHub> hubContext
+            , IRedisUserConnectionManager redisUserConnectionManager)
         {
             _hubContext = hubContext;
-            _userConnectionManager = userConnectionManager;
+            _redisUserConnectionManager = redisUserConnectionManager;
         }
 
         /// <summary>
@@ -42,11 +42,11 @@ namespace Andux.Core.SignalR.Services
         /// <returns></returns>
         public async Task RemoveByUserIdAsync(string userId)
         {
-            var connections = _userConnectionManager.GetConnectionsByUserId(userId);
+            var connections = _redisUserConnectionManager.GetConnectionsByUserId(userId);
             foreach (var conn in connections)
             {
                 await _hubContext.Clients.Client(conn.ConnectionId).SendAsync("ForceDisconnect");
-                _userConnectionManager.RemoveConnection(conn.ConnectionId);
+                _redisUserConnectionManager.RemoveConnection(conn.ConnectionId);
             }
         }
 
@@ -58,7 +58,7 @@ namespace Andux.Core.SignalR.Services
         /// <returns></returns>
         public async Task SendToUserAsync(string userId, string message)
         {
-            var connections = _userConnectionManager.GetConnectionsByUserId(userId);
+            var connections = _redisUserConnectionManager.GetConnectionsByUserId(userId);
             foreach (var conn in connections)
             {
                 await _hubContext.Clients.Client(conn.ConnectionId).SendAsync("ReceiveMessage", "系统", message);
@@ -95,7 +95,7 @@ namespace Andux.Core.SignalR.Services
         public async Task RemoveByConnectionIdAsync(string connectionId)
         {
             await _hubContext.Clients.Client(connectionId).SendAsync("ForceDisconnect");
-            _userConnectionManager.RemoveConnection(connectionId);
+            _redisUserConnectionManager.RemoveConnection(connectionId);
         }
 
         #region 组操作
@@ -142,7 +142,7 @@ namespace Andux.Core.SignalR.Services
         /// <returns></returns>
         public async Task JoinGroupByUserIdAsync(string userId, string groupName)
         {
-            var connections = _userConnectionManager.GetConnectionsByUserId(userId);
+            var connections = _redisUserConnectionManager.GetConnectionsByUserId(userId);
             foreach (var conn in connections)
             {
                 await _hubContext.Groups.AddToGroupAsync(conn.ConnectionId, groupName);
@@ -158,7 +158,7 @@ namespace Andux.Core.SignalR.Services
         /// <returns></returns>
         public async Task LeaveGroupByUserIdAsync(string userId, string groupName)
         {
-            var connections = _userConnectionManager.GetConnectionsByUserId(userId);
+            var connections = _redisUserConnectionManager.GetConnectionsByUserId(userId);
             foreach (var conn in connections)
             {
                 await _hubContext.Groups.RemoveFromGroupAsync(conn.ConnectionId, groupName);
@@ -177,7 +177,7 @@ namespace Andux.Core.SignalR.Services
         public void SyncGroups(string connectionId, string groupName)
         {
             // 同步Groups
-            var user = _userConnectionManager.GetConnectionById(connectionId);
+            var user = _redisUserConnectionManager.GetConnectionById(connectionId);
             if (user != null && !user.Groups.Contains(groupName))
             {
                 user.Groups.Add(groupName);

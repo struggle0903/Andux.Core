@@ -18,7 +18,7 @@
         /// <summary>
         /// 用户所属组集合。
         /// </summary>
-        public List<string> Groups { get; set; } = new List<string>();
+        public List<string> Groups { get; set; } = [];
 
         /// <summary>
         /// 租户 ID（可选）。
@@ -28,6 +28,6 @@
         /// <summary>
         /// 连接时间。
         /// </summary>
-        public DateTime ConnectedAt { get; set; } = DateTime.UtcNow;
+        public DateTime ConnectedAt { get; set; } = DateTime.Now;
     }
 }

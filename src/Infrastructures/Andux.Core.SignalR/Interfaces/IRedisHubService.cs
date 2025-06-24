@@ -1,9 +1,9 @@
 ﻿namespace Andux.Core.SignalR.Interfaces
 {
     /// <summary>
-    /// 聊天业务服务接口  (内存)
+    /// 聊天业务服务接口  (redis)
     /// </summary>
-    public interface IHubService
+    public interface IRedisHubService
     {
         /// <summary>
         /// 广播给所有用户
