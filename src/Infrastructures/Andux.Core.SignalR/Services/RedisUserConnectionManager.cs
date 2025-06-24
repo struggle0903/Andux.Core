@@ -11,7 +11,7 @@ namespace Andux.Core.SignalR.Services
     public class RedisUserConnectionManager : IRedisUserConnectionManager
     {
         private readonly IDatabase _redis;
-        private const string RedisKey = "signalr:users";
+        private const string RedisKey = "Signalr:Online_Users";
 
         /// <summary>
         /// 构造函数
@@ -21,7 +21,7 @@ namespace Andux.Core.SignalR.Services
         {
             _redis = connectionMultiplexer.GetDatabase();
 
-            
+            // 程序启动时清理历史连接
             ClearAll();
         }
 

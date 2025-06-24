@@ -1,6 +1,7 @@
 ﻿using Andux.Core.SignalR.Interfaces;
 using Andux.Core.SignalR.Models;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace Andux.Core.SignalR.Hubs
 {
@@ -31,7 +32,7 @@ namespace Andux.Core.SignalR.Hubs
             {
                 ConnectionId = Context.ConnectionId,
                 UserId = userId,
-                ConnectedAt = DateTime.Now
+                TenantId = Context.User?.FindFirst("tenantId")?.Value
             };
 
             _userManager.AddConnection(user);
@@ -58,7 +59,6 @@ namespace Andux.Core.SignalR.Hubs
             var users = _userManager.GetAllConnections();
             await Clients.Caller.SendAsync("OnlineUserList", users);
         }
-
     }
 
     /// <summary>
@@ -83,12 +83,11 @@ namespace Andux.Core.SignalR.Hubs
         public override async Task OnConnectedAsync()
         {
             var userId = Context.UserIdentifier ?? Context.ConnectionId;
-
             var user = new OnlineUserInfo
             {
                 ConnectionId = Context.ConnectionId,
                 UserId = userId,
-                ConnectedAt = DateTime.Now
+                TenantId = Context.User?.FindFirst("tenantId")?.Value
             };
 
             _redisUserManager.AddConnection(user);

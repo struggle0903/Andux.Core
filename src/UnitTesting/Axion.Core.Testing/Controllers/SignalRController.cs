@@ -1,14 +1,14 @@
 ﻿using Andux.Core.SignalR.Clients;
 using Andux.Core.SignalR.Interfaces;
 using Andux.Core.SignalR.Models;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class SignalRController : ControllerBase
+    public class SignalRController : ApiBaseController
     {
         private readonly IHubService _hubService;
         // 内存版

@@ -33,7 +33,7 @@ namespace Andux.Core.Testing.Services
                 await Task.Delay(5000, stoppingToken); // 等待10秒
                 if (stoppingToken.IsCancellationRequested) return;
 
-                var client = new SignalRClient("http://192.168.1.88:5001/chatHub");
+                var client = new SignalRClient("http://127.0.0.1:5001/chatHub");
                 client.On<string, string>("ReceiveMessage", (user, msg) =>
                 {
                     Console.WriteLine($"户端【3】收到: {user} - {msg}");

@@ -12,7 +12,8 @@ namespace Andux.Core.SignalR.Hubs
         /// 构造函数
         /// </summary>
         /// <param name="userManager"></param>
-        public AnduxChatHub(IUserConnectionManager userManager) : base(userManager) { }
+        public AnduxChatHub(IUserConnectionManager userManager) 
+            : base(userManager) { }
 
         /// <summary>
         /// 客户端调用这个方法发消息给所有人。
@@ -41,7 +42,9 @@ namespace Andux.Core.SignalR.Hubs
         /// 构造函数
         /// </summary>
         /// <param name="redisUserManager"></param>
-        public AnduxRedisChatHub(IRedisUserConnectionManager redisUserManager) : base(redisUserManager) { }
+        public AnduxRedisChatHub(IRedisUserConnectionManager redisUserManager) 
+            : base(redisUserManager) 
+        { }
 
         /// <summary>
         /// 客户端调用这个方法发消息给所有人。

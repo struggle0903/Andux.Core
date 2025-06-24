@@ -6,22 +6,27 @@
     public class OnlineUserInfo
     {
         /// <summary>
-        /// 连接 ID。
+        /// 唯一id 暂时不做业务处理
+        /// </summary>
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// 连接 ID
         /// </summary>
         public string ConnectionId { get; set; } = string.Empty;
 
         /// <summary>
-        /// 用户唯一标识。
+        /// 用户唯一标识
         /// </summary>
         public string UserId { get; set; } = string.Empty;
 
         /// <summary>
-        /// 用户所属组集合。
+        /// 用户所属组集合
         /// </summary>
         public List<string> Groups { get; set; } = [];
 
         /// <summary>
-        /// 租户 ID（可选）。
+        /// 租户 ID（可选）
         /// </summary>
         public string? TenantId { get; set; }
 

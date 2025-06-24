@@ -5,14 +5,14 @@ using Andux.Core.Helper.Picture;
 using Andux.Core.Helper.Reflection;
 using Andux.Core.Helper.Tasks;
 using Andux.Core.Helper.Validation;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class HelperController : ControllerBase
+    public class HelperController : ApiBaseController
     {
         private readonly ConfigHelper _config;
 

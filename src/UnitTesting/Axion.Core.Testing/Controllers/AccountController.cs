@@ -1,19 +1,22 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Andux.Core.Testing.Controllers.Base;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController : ApiBaseController
     {
         /// <summary>
         /// 模拟登录：写入 Cookie 并保存 Claims
         /// </summary>
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login()
         {
             var claims = new List<Claim>
@@ -23,14 +26,27 @@ namespace Andux.Core.Testing.Controllers
                 new Claim("projectId", "123"),
                 new Claim("id", "111"),
                 new Claim("identityType", "101"), // 101 为超管标识，如果是101则不参与ProjectId的过滤
+                new Claim(ClaimTypes.NameIdentifier, "123456"),
+                new Claim("tenantId", "tenant-001")
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSuperSecretKeyForJwtToken123!@#"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            var token = new JwtSecurityToken(
+                issuer: "your-app",
+                audience: "your-client",
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds);
 
-            return Ok(new { message = "登录成功" });
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new
+            {
+                message = "登录成功",
+                token = tokenString
+            });
         }
 
         /// <summary>

@@ -1,13 +1,14 @@
 ﻿using Andux.Core.Redis.Helper;
 using Andux.Core.Redis.Services;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Entitys;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/redis")]
-    public class RedisController : ControllerBase
+    [AllowAnonymous]
+    public class RedisController : ApiBaseController
     {
         private readonly IRedisService _redis;
 

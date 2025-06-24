@@ -23,7 +23,6 @@ namespace Andux.Core.SignalR.Extensions
 
             services.AddSingleton<IHubService, HubService>();
             services.AddSingleton<IUserConnectionManager, UserConnectionManager>();
-
             services.AddSingleton<IRedisHubService, RedisHubService>();
             services.AddSingleton<IRedisUserConnectionManager, RedisUserConnectionManager>();
 

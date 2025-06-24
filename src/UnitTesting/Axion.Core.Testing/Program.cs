@@ -11,34 +11,51 @@ using Andux.Core.SignalR.Extensions;
 using Andux.Core.SignalR.Hubs;
 using Andux.Core.Testing;
 using Andux.Core.Testing.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://192.168.1.88:5001");
+builder.WebHost.UseUrls("http://127.0.0.1:5001");
 
-// 注册 Cookie 身份认证
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+builder.Services.AddControllers(opt =>
+{
+    opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault;
+    options.JsonSerializerOptions.AllowTrailingCommas = false;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.LoginPath = "/api/account/login";
-        options.LogoutPath = "/api/account/logout";
-        options.AccessDeniedPath = "/access-denied";
-        options.Cookie.Name = "Andux.Auth";
-        options.ExpireTimeSpan = TimeSpan.FromHours(1);
-        options.SlidingExpiration = true;
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
 
-builder.Services.AddAuthorization();
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        // 解决实体无限循环嵌套报错问题
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    });
+        ValidIssuer = "your-app",
+        ValidAudience = "your-client",
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes("YourSuperSecretKeyForJwtToken123!@#")
+        ),
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -159,7 +176,7 @@ app.MapHub<AnduxRedisChatHub>("/chatHub"); //redis版
 app.UseHttpsRedirection();
 
 // 启用认证和授权中间件（顺序不能错）
-app.UseAuthentication(); // 必须先于 UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

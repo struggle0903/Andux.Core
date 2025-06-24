@@ -1,14 +1,14 @@
 ﻿using Andux.Core.SignalR.Clients;
 using Andux.Core.SignalR.Interfaces;
 using Andux.Core.SignalR.Models;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class RedisSignalRController : ControllerBase
+    public class RedisSignalRController : ApiBaseController
     {
         private readonly IRedisHubService _hubService;
         private readonly IRedisUserConnectionManager _redisUserManager;
@@ -28,10 +28,11 @@ namespace Andux.Core.Testing.Controllers
         /// <summary>
         /// 测试广播消息
         /// </summary>
+        [Authorize]
         [HttpPost("createClient")]
-        public async Task<IActionResult> CreateClient()
+        public async Task<IActionResult> CreateClient(string token)
         {
-            var client = new SignalRClient("http://192.168.1.88:5001/chatHub");
+            var client = new SignalRClient("http://127.0.0.1:5001/chatHub", token);
 
             client.On<string, string>("ReceiveMessage", (user, msg) =>
             {
