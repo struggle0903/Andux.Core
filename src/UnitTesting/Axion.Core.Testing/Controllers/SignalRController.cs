@@ -1,9 +1,8 @@
 ﻿using Andux.Core.SignalR.Clients;
-using Andux.Core.SignalR.Interfaces;
+using Andux.Core.SignalR;
 using Andux.Core.SignalR.Models;
 using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers

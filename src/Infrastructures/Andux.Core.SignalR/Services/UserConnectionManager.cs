@@ -1,5 +1,4 @@
-﻿using Andux.Core.SignalR.Interfaces;
-using Andux.Core.SignalR.Models;
+﻿using Andux.Core.SignalR.Models;
 
 namespace Andux.Core.SignalR.Services
 {

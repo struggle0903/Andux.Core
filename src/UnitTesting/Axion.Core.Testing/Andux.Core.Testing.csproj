@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Andux.Core.Common\Andux.Core.Common.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.EfTrack\Andux.Core.EfTrack.csproj" />
+    <ProjectReference Include="..\..\Infrastructures\Andux.Core.EventBus\Andux.Core.EventBus.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Extensions\Andux.Core.Extensions.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Helper\Andux.Core.Helper.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj" />

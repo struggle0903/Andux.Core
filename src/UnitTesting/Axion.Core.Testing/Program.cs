@@ -14,6 +14,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using Andux.Core.RabbitMQ.Extensions;
+using Andux.Core.EventBus;
+using Andux.Core.EventBus.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,25 +107,22 @@ builder.Services.AddRedisService(builder.Configuration);
 
 #region Andux.Core.RabbitMQ
 
-//// 添加RabbitMQ相关服务(非租户注册)
-//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
+// 添加RabbitMQ相关服务(非租户注册)
+builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
+    new("root") { Password = "mq@20241029!." },
+    new("bsb") { Password = "bsb@hyhf!.." },
+    new("sfm") { Password = "sfm@hyhf!.." }
+]);
+
+//// 添加RabbitMQ相关服务(租户模式)
+//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
 //    new("root") { Password = "mq@20241029!." },
 //    new("bsb") { Password = "bsb@hyhf!.." },
 //    new("sfm") { Password = "sfm@hyhf!.." }
 //]);
 
-////// 添加RabbitMQ相关服务(租户模式)
-////builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
-////    new("root") { Password = "mq@20241029!." },
-////    new("bsb") { Password = "bsb@hyhf!.." },
-////    new("sfm") { Password = "sfm@hyhf!.." }
-////]);
-
-//// 5. 注册后台服务
+// 监听订单处理服务
 //builder.Services.AddHostedService<OrderProcessingService>();
-
-//// 监听订单处理服务
-////builder.Services.AddHostedService<OrderProcessingService>();
 
 #endregion
 
@@ -147,6 +147,14 @@ builder.Services.AddHostedService<SignalRClient3Service>();
 
 #endregion
 
+#region Andux.Core.EventBus
+
+builder.Services.UseAnduxEventBus();
+builder.Services.AddSingleton<UserCreatedEventHandler>();
+builder.Services.AddSingleton<IEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
+
+#endregion
+
 var app = builder.Build();
 app.UseRouting();
 
@@ -156,6 +164,15 @@ var redisService = app.Services.GetRequiredService<IRedisService>();
 
 // 注入静态 RedisHelper
 RedisHelper.Configure(redisService);
+#endregion
+
+#region Andux.Core.EventBus
+// 初始化事件订阅（推荐在启动时）
+using (var scope = app.Services.CreateScope())
+{
+    var eventBus = scope.ServiceProvider.GetRequiredService<IEventBus>();
+    await eventBus.SubscribeAsync<UserCreatedEvent, UserCreatedEventHandler>();
+}
 #endregion
 
 // Configure the HTTP request pipeline.

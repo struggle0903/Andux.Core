@@ -1,6 +1,6 @@
 ﻿using Andux.Core.SignalR.Models;
 
-namespace Andux.Core.SignalR.Interfaces
+namespace Andux.Core.SignalR
 {
     /// <summary>
     /// 在线用户管理接口 (redis存储)

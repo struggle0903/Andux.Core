@@ -1,5 +1,4 @@
-﻿using Andux.Core.SignalR.Interfaces;
-using Andux.Core.SignalR.Services;
+﻿using Andux.Core.SignalR.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Andux.Core.SignalR.Extensions

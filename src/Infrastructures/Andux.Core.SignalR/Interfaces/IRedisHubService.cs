@@ -1,4 +1,4 @@
-﻿namespace Andux.Core.SignalR.Interfaces
+﻿namespace Andux.Core.SignalR
 {
     /// <summary>
     /// 聊天业务服务接口  (redis)

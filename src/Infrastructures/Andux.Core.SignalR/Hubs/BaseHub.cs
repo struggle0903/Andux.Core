@@ -1,7 +1,5 @@
-﻿using Andux.Core.SignalR.Interfaces;
-using Andux.Core.SignalR.Models;
+﻿using Andux.Core.SignalR.Models;
 using Microsoft.AspNetCore.SignalR;
-using System.Security.Claims;
 
 namespace Andux.Core.SignalR.Hubs
 {
