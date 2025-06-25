@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- NuGet 包信息 -->
+    <PackageId>Andux.Core.SignalR</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>andy.hu</Authors>
+    <Description>此SignalR包内置了用户连接管理、群组加入与移除、消息广播、点对点消息推送等核心功能，支持根据用户标识发送消息或群发通知。为适应不同应用场景，组件提供两种连接信息存储方式：内存存储版适用于单节点部署，轻量高效；Redis 存储版适用于分布式部署，实现跨节点连接共享与同步，确保消息投递准确一致</Description>
+    <PackageTags>SignalR;PubSub;Andux</PackageTags>
+    <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

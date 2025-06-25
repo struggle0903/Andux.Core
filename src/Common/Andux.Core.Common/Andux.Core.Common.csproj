@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructures\Andux.Core.EventBus\Andux.Core.EventBus.csproj" />
+  </ItemGroup>
+
 </Project>

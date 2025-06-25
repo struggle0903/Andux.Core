@@ -1,14 +1,15 @@
 ﻿using Andux.Core.EfTrack;
 using Andux.Core.EfTrack.Repository.Paged;
 using Andux.Core.RabbitMQ.Interfaces;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Entitys;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/order")]
-    public class OrderController : ControllerBase
+    [AllowAnonymous]
+    public class OrderController : ApiBaseController
     {
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<Order> _orderRepository;

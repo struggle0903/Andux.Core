@@ -1,47 +1,89 @@
 using Andux.Core.EfTrack;
-using Andux.Core.Helper.Config;
 using Andux.Core.Helper.Extensions;
-using Andux.Core.Helper.Http;
 using Andux.Core.Logger;
-using Andux.Core.RabbitMQ.Extensions;
-using Andux.Core.RabbitMQ.Interfaces;
-using Andux.Core.RabbitMQ.Models;
-using Andux.Core.RabbitMQ.Services.Connection;
-using Andux.Core.RabbitMQ.Services.Consumers;
-using Andux.Core.RabbitMQ.Services.Publishers;
-using Andux.Core.RabbitMQ.Services.Tenant;
 using Andux.Core.Redis.Extensions;
 using Andux.Core.Redis.Helper;
 using Andux.Core.Redis.Services;
+using Andux.Core.SignalR;
+using Andux.Core.SignalR.Extensions;
+using Andux.Core.SignalR.Hubs;
 using Andux.Core.Testing;
 using Andux.Core.Testing.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Andux.Core.RabbitMQ.Extensions;
+using Andux.Core.EventBus.Events;
+using Andux.Core.EventBus.Extensions;
+using Andux.Core.Testing.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 注册 Cookie 身份认证
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-    {
-        options.LoginPath = "/api/account/login";
-        options.LogoutPath = "/api/account/logout";
-        options.AccessDeniedPath = "/access-denied";
-        options.Cookie.Name = "Andux.Auth";
-        options.ExpireTimeSpan = TimeSpan.FromHours(1);
-        options.SlidingExpiration = true;
-    });
+builder.WebHost.UseUrls("http://127.0.0.1:5001");
 
-builder.Services.AddAuthorization();
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        // 解决实体无限循环嵌套报错问题
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    });
+builder.Services.AddControllers(opt =>
+{
+    opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull | JsonIgnoreCondition.WhenWritingDefault;
+    options.JsonSerializerOptions.AllowTrailingCommas = false;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = "your-app",
+        ValidAudience = "your-client",
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes("YourSuperSecretKeyForJwtToken123!@#")
+        ),
+
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // 添加 Bearer Token 身份验证到 Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "请输入您的 Token",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 #region Andux.Core.EfTrack
 
@@ -80,8 +122,8 @@ builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
 //    new("sfm") { Password = "sfm@hyhf!.." }
 //]);
 
-// 5. 注册后台服务
-builder.Services.AddHostedService<OrderProcessingService>();
+// 监听订单处理服务
+//builder.Services.AddHostedService<OrderProcessingService>();
 
 #endregion
 
@@ -91,7 +133,34 @@ builder.Services.UseAnduxHelper();
 
 #endregion
 
-builder.Services.AddHostedService<OrderProcessingService>();
+#region Andux.Core.SignalR
+
+builder.Services.UseAnduxSignalR(new SignalROptions
+{
+    // 分布式集群部署需要
+    RedisConnection = "localhost:6379,defaultDatabase=1,password=Aa123456"
+    //RedisConnection = null
+});
+
+builder.Services.AddHostedService<SignalRClient1Service>();
+builder.Services.AddHostedService<SignalRClient2Service>();
+builder.Services.AddHostedService<SignalRClient3Service>();
+
+#endregion
+
+#region Andux.Core.EventBus
+
+builder.Services.UseAnduxEventBus(builder.Configuration);
+
+// 用户创建事件处理器注册
+builder.Services.AddSingleton<UserCreatedEventHandler>();
+builder.Services.AddSingleton<IEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
+
+// 日志新增事件处理器注册
+builder.Services.AddSingleton<AddLoggerEventHandler>();
+builder.Services.AddSingleton<IEventHandler<AddLoggerEvent>, AddLoggerEventHandler>();
+
+#endregion
 
 var app = builder.Build();
 app.UseRouting();
@@ -104,6 +173,16 @@ var redisService = app.Services.GetRequiredService<IRedisService>();
 RedisHelper.Configure(redisService);
 #endregion
 
+#region Andux.Core.EventBus
+// 初始化事件订阅（推荐在启动时）
+using (var scope = app.Services.CreateScope())
+{
+    var eventBus = scope.ServiceProvider.GetRequiredService<IEventBus>();
+    await eventBus.SubscribeAsync<UserCreatedEvent, UserCreatedEventHandler>();
+    await eventBus.SubscribeAsync<AddLoggerEvent, AddLoggerEventHandler>();
+}
+#endregion
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -111,10 +190,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//app.MapHub<AnduxChatHub>("/chatHub"); //内存版
+
+app.MapHub<AnduxRedisChatHub>("/chatHub"); //redis版
+
 app.UseHttpsRedirection();
 
 // 启用认证和授权中间件（顺序不能错）
-app.UseAuthentication(); // 必须先于 UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

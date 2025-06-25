@@ -1,12 +1,13 @@
 ﻿using Andux.Core.Helper.Http;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class HttpHelperController : Controller
+    [AllowAnonymous]
+    public class HttpHelperController : ApiBaseController
     {
         private readonly IHttpHelper _httpHelper;
         private readonly ILogger<HttpHelperController> _logger;

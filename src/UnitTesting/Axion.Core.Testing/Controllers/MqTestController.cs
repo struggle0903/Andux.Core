@@ -1,12 +1,13 @@
 ﻿using Andux.Core.RabbitMQ.Interfaces;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Entitys;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class MqTestController : ControllerBase
+    [AllowAnonymous]
+    public class MqTestController : ApiBaseController
     {
         private readonly IRabbitMQTenantService _tenantService;
         private readonly IRabbitMQPublisher _inner;

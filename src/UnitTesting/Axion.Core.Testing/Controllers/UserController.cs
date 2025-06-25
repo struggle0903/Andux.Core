@@ -1,14 +1,13 @@
 ﻿using Andux.Core.Common.Result;
 using Andux.Core.EfTrack;
 using Andux.Core.EfTrack.Repository.Paged;
+using Andux.Core.Testing.Controllers.Base;
 using Andux.Core.Testing.Entitys;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : ApiBaseController
     {
         private ILogger<UserController> _logger;
         private readonly IRepository<User> _userRepository;

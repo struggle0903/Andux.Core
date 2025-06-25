@@ -2,12 +2,13 @@
 using Andux.Core.Extensions;
 using System.Text;
 using Andux.Core.Helper.Validation;
+using Microsoft.AspNetCore.Authorization;
+using Andux.Core.Testing.Controllers.Base;
 
 namespace Andux.Core.Testing.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ExtensionsController : ControllerBase
+    [AllowAnonymous]
+    public class ExtensionsController : ApiBaseController
     {
         /// <summary>
         /// string 扩展示例

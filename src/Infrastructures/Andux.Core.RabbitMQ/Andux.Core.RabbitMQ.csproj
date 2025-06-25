@@ -10,7 +10,7 @@
 	<Version>1.0.0</Version>
 	<Authors>andy.hu</Authors>
 	<Description>一个强大的多租户RabbitMQ集成库，可自由订阅和发布指定的租户消息，提供简化的配置、自动连接恢复和灵活的租户隔离。</Description>
-	<PackageTags>RabbitMQ;MQ;Queue;Andux</PackageTags>
+	<PackageTags>RabbitMQ;PubSub;MQ;Queue;Andux</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
