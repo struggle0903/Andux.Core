@@ -26,21 +26,27 @@ namespace Andux.Core.Testing.Controllers
         }
 
         /// <summary>
-        /// 测试广播消息
+        /// 创建客户端
         /// </summary>
         [HttpPost("createClient")]
         public async Task<IActionResult> CreateClient()
         {
-            var client = new SignalRClient("http://192.168.1.88:5001/chatHub");
+            var client = new SignalRClient("http://127.0.0.1:5001:5001/chatHub");
 
+            string connectionId = string.Empty;
             client.On<string, string>("ReceiveMessage", (user, msg) =>
             {
                 Console.WriteLine($"{user}: {msg}");
+                connectionId = msg;
             });
 
             await client.ConnectAsync();
             await client.SendMessageAsync("SendMessage", "客户端用户", "你好 SignalR");
-            return Ok("广播成功");
+
+            //等待1s
+            Thread.Sleep(1000);
+
+            return Ok($"创建客户端成功，连接ID为：{connectionId}");
         }
 
         /// <summary>
@@ -197,7 +203,7 @@ namespace Andux.Core.Testing.Controllers
         /// 判断指定用户当前是否在线（至少有一个连接）
         /// </summary>
         [HttpPost("checkOnline")]
-        public async Task<IActionResult> IsOnline(string userId)
+        public IActionResult IsOnline(string userId)
         {
             var isOnline = _userManager.IsOnline(userId);
             var status = isOnline ? "在线" : "离线";
@@ -208,7 +214,7 @@ namespace Andux.Core.Testing.Controllers
         /// 获取指定用户的所有连接ID列表
         /// </summary>
         [HttpPost("getConnectionIds")]
-        public async Task<IActionResult> GetConnectionIdsByUserId(string userId)
+        public IActionResult GetConnectionIdsByUserId(string userId)
         {
             var list = _userManager.GetConnectionIdsByUserId(userId);
             return Ok($"用户 {userId} 存在连接id有 {string.Join(",", list.Select(x => $"'{x}'"))}");
@@ -219,7 +225,7 @@ namespace Andux.Core.Testing.Controllers
         /// 一个连接可以属于多个群组。
         /// </summary>
         [HttpPost("getConnectionsByGroup")]
-        public async Task<IActionResult> GetConnectionsByGroup(string groupName)
+        public IActionResult GetConnectionsByGroup(string groupName)
         {
             List<OnlineUserInfo> list = _userManager.GetConnectionsByGroup(groupName);
             return Ok(list);
@@ -229,7 +235,7 @@ namespace Andux.Core.Testing.Controllers
         /// 获取指定租户下所有在线连接信息
         /// </summary>
         [HttpPost("getConnectionsByTenant")]
-        public async Task<IActionResult> GetConnectionsByTenant(string tenantId)
+        public IActionResult GetConnectionsByTenant(string tenantId)
         {
             List<OnlineUserInfo> list = _userManager.GetConnectionsByTenant(tenantId);
             return Ok(list);
@@ -239,7 +245,7 @@ namespace Andux.Core.Testing.Controllers
         /// 清空所有连接信息，通常用于调试或服务重启时清理状态
         /// </summary>
         [HttpPost("clearAll")]
-        public async Task<IActionResult> ClearAll()
+        public IActionResult ClearAll()
         {
             _userManager.ClearAll();
             return Ok($"已清空所有连接信息");

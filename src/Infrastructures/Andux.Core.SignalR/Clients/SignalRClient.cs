@@ -22,7 +22,7 @@ namespace Andux.Core.SignalR.Clients
                     // 如果要使用租户模式，token为必须，否则拿不到tenantId
                     if (!string.IsNullOrEmpty(token))
                     {
-                        options.AccessTokenProvider = () => Task.FromResult(token);
+                        options.AccessTokenProvider = () => Task.FromResult(token)!;
                     }
                 })
                 .WithAutomaticReconnect()

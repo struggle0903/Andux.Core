@@ -15,8 +15,9 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Andux.Core.RabbitMQ.Extensions;
-using Andux.Core.EventBus;
+using Andux.Core.EventBus.Events;
 using Andux.Core.EventBus.Extensions;
+using Andux.Core.Testing.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -149,9 +150,15 @@ builder.Services.AddHostedService<SignalRClient3Service>();
 
 #region Andux.Core.EventBus
 
-builder.Services.UseAnduxEventBus();
+builder.Services.UseAnduxEventBus(builder.Configuration);
+
+// 用户创建事件处理器注册
 builder.Services.AddSingleton<UserCreatedEventHandler>();
 builder.Services.AddSingleton<IEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
+
+// 日志新增事件处理器注册
+builder.Services.AddSingleton<AddLoggerEventHandler>();
+builder.Services.AddSingleton<IEventHandler<AddLoggerEvent>, AddLoggerEventHandler>();
 
 #endregion
 
@@ -172,6 +179,7 @@ using (var scope = app.Services.CreateScope())
 {
     var eventBus = scope.ServiceProvider.GetRequiredService<IEventBus>();
     await eventBus.SubscribeAsync<UserCreatedEvent, UserCreatedEventHandler>();
+    await eventBus.SubscribeAsync<AddLoggerEvent, AddLoggerEventHandler>();
 }
 #endregion
 
