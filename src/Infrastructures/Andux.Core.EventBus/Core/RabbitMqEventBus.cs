@@ -1,4 +1,5 @@
-﻿using Andux.Core.EventBus.Events;
+﻿using Andux.Core.EventBus.Attributes;
+using Andux.Core.EventBus.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -96,7 +97,7 @@ namespace Andux.Core.EventBus.Core
         public Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IEvent
         {
             // 队列名，默认用事件类型名称
-            var queue = typeof(TEvent).Name + "-queue";
+            var queue = GetQueueName<TEvent>();
             return BasicPublishAsync(@event, queue, cancellationToken);
         }
 
@@ -109,7 +110,7 @@ namespace Andux.Core.EventBus.Core
             where TEvent : IEvent
             where THandler : IEventHandler<TEvent>
         {
-            var queue = typeof(TEvent).Name + "-queue";
+            var queue = GetQueueName<TEvent>();
             return BasicConsume<TEvent, THandler>(queue);
         }
 
@@ -251,6 +252,21 @@ namespace Andux.Core.EventBus.Core
             // 开始消费队列中的消息，不自动确认，交由业务处理后手动确认
             Channel.BasicConsume(queue: queueName, autoAck: false, consumer: consumer);
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 获取队列名 （优先采用EventQueueA属性配置的Name，如果未配置使用typeof(TEvent).Name + "-queue"）
+        /// </summary>
+        /// <typeparam name="TEvent"></typeparam>
+        /// <returns></returns>
+        private string GetQueueName<TEvent>() where TEvent : IEvent
+        {
+            var attr = typeof(TEvent).GetCustomAttributes(typeof(EventQueueAttribute), false)
+                .FirstOrDefault() as EventQueueAttribute;
+
+            return !string.IsNullOrWhiteSpace(attr?.Name)
+                ? attr.Name
+                : typeof(TEvent).Name + "-queue";
         }
 
         #endregion

@@ -6,10 +6,20 @@
     <Nullable>enable</Nullable>
 
 	<!-- NuGet 包信息 -->
-	<PackageId>Andux.Core.EventBus</PackageId>
+	<!--<PackageId>Andux.Core.EventBus</PackageId>
 	<Version>1.0.0</Version>
 	<Authors>andy.hu</Authors>
 	<Description>一个轻量级、高性能的事件总线库，支持发布/订阅模式。支持RabbitMQ做分布式部署。</Description>
+	<PackageTags>EventBus;PubSub;Events;Publish;Subscribe;Andux</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+	<PackageId>Andux.Core.EventBus</PackageId>
+	<Version>1.0.1</Version>
+	<Authors>andy.hu</Authors>
+	<Description>一个轻量级、高性能的事件总线库，支持发布/订阅模式。支持RabbitMQ做分布式部署。更新点：新增EventQueueAttribute属性可自定义队列名。</Description>
 	<PackageTags>EventBus;PubSub;Events;Publish;Subscribe;Andux</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
