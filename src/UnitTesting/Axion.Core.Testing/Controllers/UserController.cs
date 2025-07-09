@@ -11,6 +11,7 @@ namespace Andux.Core.Testing.Controllers
     {
         private ILogger<UserController> _logger;
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Order> _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         /// <summary>
@@ -123,8 +124,12 @@ namespace Andux.Core.Testing.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+
                 await _userRepository.AddAsync(new User { Name = "Dave", Age = 31 });
                 await _userRepository.AddAsync(new User { Name = "Eve", Age = 29 });
+
+                await _orderRepository.AddAsync(new Order { OrderDate = DateTime.Now });
+
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
                 return ApiResponse<string>.Ok(null, "事务成功提交");

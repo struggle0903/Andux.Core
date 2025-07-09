@@ -87,6 +87,24 @@ namespace Andux.Core.Testing.Controllers
             var pageParam = new BasePageParam { Page = page, Limit = limit };
             var pageResult = await _orderRepository.GetPagedWithIncludesAsync(pageParam, "Customer");
 
+
+
+
+            await _orderRepository.UpdateRangeAsync(
+                x => x.Id == 1,                               // 筛选条件
+                x => new Order { OrderDate = DateTime.Now }   // 更新内容
+            );
+
+
+
+            var list = new List<Order>
+            {
+                new Order(),
+                new Order()
+            };
+            await _orderRepository.AddRangeAsync(list);
+
+
             return Ok(new PagedResult<Order>
             {
                 TotalCount = pageResult.TotalCount,
