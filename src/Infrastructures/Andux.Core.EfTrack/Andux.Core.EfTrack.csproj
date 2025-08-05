@@ -35,8 +35,18 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-		<PackageId>Andux.Core.EfTrack</PackageId>
+		<!--<PackageId>Andux.Core.EfTrack</PackageId>
 		<Version>2.0.2</Version>
+		<Authors>andy.hu</Authors>
+		<Description>增加了User.Claims的超管类型，如果是超管则不进行项目数据过滤。其他优化...</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>2.0.3</Version>
 		<Authors>andy.hu</Authors>
 		<Description>增加了User.Claims的超管类型，如果是超管则不进行项目数据过滤。其他优化...</Description>
 		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>

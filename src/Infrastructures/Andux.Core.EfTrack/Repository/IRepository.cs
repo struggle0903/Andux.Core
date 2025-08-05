@@ -20,6 +20,12 @@ namespace Andux.Core.EfTrack
     public interface IRepository<T> where T : class
     {
         /// <summary>
+        /// 将当前仓储转换为异步可枚举集合
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<T> AsEnumerable();
+
+        /// <summary>
         /// 根据主键获取实体
         /// </summary>
         Task<T?> GetByIdAsync(object id);
@@ -252,5 +258,18 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, TKey>> groupBySelector,
             Expression<Func<IGrouping<TKey, T>, TResult>> resultSelector);
+
+        /// <summary>
+        /// 联表后 Select 投影到其他模型（如 DTO）
+        /// </summary>
+        /// <typeparam name="TResult">投影类型</typeparam>
+        /// <param name="selector">投影表达式</param>
+        /// <param name="predicate">过滤条件</param>
+        /// <param name="includes">过滤条件</param>
+        Task<List<TResult>> SelectAsync<TResult>(
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, TResult>> selector,
+            params Expression<Func<T, object>>[] includes);
+
     }
 }

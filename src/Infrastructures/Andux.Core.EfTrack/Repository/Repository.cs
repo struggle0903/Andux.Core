@@ -46,6 +46,15 @@ namespace Andux.Core.EfTrack
         }
 
         /// <summary>
+        /// 将当前仓储转换为异步可枚举集合
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<T> AsEnumerable()
+        {
+            return ApplyProjectFilter(_dbSet).AsEnumerable();
+        }
+
+        /// <summary>
         /// 根据主键获取实体
         /// </summary>
         public async Task<T?> GetByIdAsync(object id)
@@ -383,21 +392,23 @@ namespace Andux.Core.EfTrack
         }
 
         /// <summary>
-        /// 按条件软删除（逻辑删除）
+        /// 按条件删除
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
         public async Task<int> RemoveAsync(Expression<Func<T, bool>> predicate)
         {
-            if (!typeof(ISoftDelete).IsAssignableFrom(typeof(T)))
-                throw new InvalidOperationException($"{typeof(T).Name} 未实现 ISoftDelete，不支持调用此方法删除");
+            //if (!typeof(ISoftDelete).IsAssignableFrom(typeof(T)))
+            //    throw new InvalidOperationException($"{typeof(T).Name} 未实现 ISoftDelete，不支持调用此方法删除");
 
-            var entities = await _dbSet.Where(predicate).Cast<ISoftDelete>().ToListAsync();
-            foreach (var entity in entities)
-            {
-                entity.IsDeleted = true;
-            }
+            //var entities = await _dbSet.Where(predicate).Cast<ISoftDelete>().ToListAsync();
+            //foreach (var entity in entities)
+            //{
+            //    entity.IsDeleted = true;
+            //}
 
+            var entities = await _dbSet.Where(predicate).ToListAsync();
+            _context.RemoveRange(entities);
             return await _context.SaveChangesAsync();
         }
 
@@ -481,7 +492,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段求和值。</returns>
         public async Task<decimal> SumAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, decimal>> selector)
         {
-            return await _dbSet.Where(predicate).SumAsync(selector);
+            return await ApplyProjectFilter(_dbSet).Where(predicate).SumAsync(selector);
         }
 
         /// <summary>
@@ -492,7 +503,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段平均值。</returns>
         public async Task<decimal> AverageAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, decimal>> selector)
         {
-            return await _dbSet.Where(predicate).AverageAsync(selector);
+            return await ApplyProjectFilter(_dbSet).Where(predicate).AverageAsync(selector);
         }
 
         /// <summary>
@@ -504,7 +515,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段最大值。</returns>
         public async Task<TProperty> MaxAsync<TProperty>(Expression<Func<T, bool>> predicate, Expression<Func<T, TProperty>> selector)
         {
-            return await _dbSet.Where(predicate).MaxAsync(selector);
+            return await ApplyProjectFilter(_dbSet).Where(predicate).MaxAsync(selector);
         }
 
         /// <summary>
@@ -516,7 +527,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段最小值。</returns>
         public async Task<TProperty> MinAsync<TProperty>(Expression<Func<T, bool>> predicate, Expression<Func<T, TProperty>> selector)
         {
-            return await _dbSet.Where(predicate).MinAsync(selector);
+            return await ApplyProjectFilter(_dbSet).Where(predicate).MinAsync(selector);
         }
 
         /// <summary>
@@ -530,7 +541,7 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, TProperty>> selector)
         {
-            return await _dbSet
+            return await ApplyProjectFilter(_dbSet)
                 .Where(predicate)
                 .Select(selector)
                 .Distinct()
@@ -551,11 +562,28 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, TKey>> groupBySelector,
             Expression<Func<IGrouping<TKey, T>, TResult>> resultSelector)
         {
-            return await _dbSet
+            return await ApplyProjectFilter(_dbSet)
                 .Where(predicate)
                 .GroupBy(groupBySelector)
                 .Select(resultSelector)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// 联表后 Select 投影到其他模型（如 DTO）
+        /// </summary>
+        public async Task<List<TResult>> SelectAsync<TResult>(
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, TResult>> selector,
+            params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.Where(predicate).Select(selector).ToListAsync();
         }
 
         /// <summary>

@@ -361,6 +361,23 @@ namespace Andux.Core.Extensions
             return Regex.IsMatch(input, @"[\u4e00-\u9fa5]");
         }
 
+        /// <summary>
+        /// 规范url
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string NormalizeUrl(this string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return url;
+
+            var uri = new Uri(url, UriKind.Absolute);
+            var scheme = uri.Scheme + "://";
+            var path = uri.AbsoluteUri.Substring(scheme.Length).Replace("//", "/");
+
+            return scheme + path;
+        }
+
         #region 字符脱敏
         /// <summary>
         /// 字符串脱敏模式

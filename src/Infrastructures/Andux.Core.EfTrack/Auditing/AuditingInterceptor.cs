@@ -85,9 +85,15 @@ namespace Andux.Core.EfTrack
                 var entries = context.ChangeTracker.Entries<IProject>();
                 foreach (var entry in entries)
                 {
-                    if (entry.State == EntityState.Added)
+                    //if (entry.State == EntityState.Added)
+                    //{
+                    //    entry.Entity.ProjectId = currentProject != null ? long.Parse(currentProject): null;
+                    //}
+
+                    // 如果实体Entity的ProjectId字段已赋值则不自动赋值
+                    if (entry is { State: EntityState.Added, Entity.ProjectId: null or <= 0 })
                     {
-                        entry.Entity.ProjectId = currentProject != null ? long.Parse(currentProject): null;
+                        entry.Entity.ProjectId = currentProject != null ? long.Parse(currentProject) : null;
                     }
                 }
             }

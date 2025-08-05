@@ -7,9 +7,10 @@ namespace Andux.Core.Helper.ServiceScope
     /// </summary>
     public static class ServiceScopeHelper
     {
-        #region 单个 Scoped 服务
+        #region 无返回结果
         /// <summary>
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
+        /// 同步-无返回值
         /// </summary>
         public static void ExecuteInScope<TService>(IServiceScopeFactory scopeFactory, Action<TService> action)
             where TService : notnull
@@ -20,18 +21,8 @@ namespace Andux.Core.Helper.ServiceScope
         }
 
         /// <summary>
-        /// 支持返回结果的版本
-        /// </summary>
-        public static TResult ExecuteInScope<TService, TResult>(IServiceScopeFactory scopeFactory, Func<TService, TResult> func)
-            where TService : notnull
-        {
-            using var scope = scopeFactory.CreateScope();
-            var service = scope.ServiceProvider.GetRequiredService<TService>();
-            return func(service);
-        }
-
-        /// <summary>
-        /// 异步：在新作用域中执行异步逻辑（无返回值）
+        /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
+        /// 异步-无返回值
         /// </summary>
         public static async Task ExecuteInScopeAsync<TService>(
             IServiceScopeFactory scopeFactory,
@@ -44,7 +35,100 @@ namespace Andux.Core.Helper.ServiceScope
         }
 
         /// <summary>
-        /// 异步：在新作用域中执行异步逻辑并返回结果
+        /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
+        /// 异步-无返回值
+        /// </summary>
+        public static async Task ExecuteInScopeAsync<TService1, TService2>(
+            IServiceScopeFactory scopeFactory,
+            Func<TService1, TService2, Task> action)
+            where TService1 : notnull
+            where TService2 : notnull
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var service1 = scope.ServiceProvider.GetRequiredService<TService1>();
+            var service2 = scope.ServiceProvider.GetRequiredService<TService2>();
+            await action(service1, service2);
+        }
+
+        /// <summary>
+        /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
+        /// 异步-无返回值
+        /// </summary>
+        public static async Task ExecuteInScopeAsync<TService1, TService2, TService3>(
+            IServiceScopeFactory scopeFactory,
+            Func<TService1, TService2, TService3, Task> action)
+            where TService1 : notnull
+            where TService2 : notnull
+            where TService3 : notnull
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var service1 = scope.ServiceProvider.GetRequiredService<TService1>();
+            var service2 = scope.ServiceProvider.GetRequiredService<TService2>();
+            var service3 = scope.ServiceProvider.GetRequiredService<TService3>();
+            await action(service1, service2, service3);
+        }
+
+        /// <summary>
+        /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
+        /// 异步-无返回值
+        /// </summary>
+        public static async Task ExecuteInScopeAsync<TService1, TService2, TService3, TService4>(
+            IServiceScopeFactory scopeFactory,
+            Func<TService1, TService2, TService3, TService4, Task> action)
+            where TService1 : notnull
+            where TService2 : notnull
+            where TService3 : notnull
+            where TService4 : notnull
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var service1 = scope.ServiceProvider.GetRequiredService<TService1>();
+            var service2 = scope.ServiceProvider.GetRequiredService<TService2>();
+            var service3 = scope.ServiceProvider.GetRequiredService<TService3>();
+            var service4 = scope.ServiceProvider.GetRequiredService<TService4>();
+            await action(service1, service2, service3, service4);
+        }
+
+        /// <summary>
+        /// 综合方法：在新作用域中执行指定逻辑，支持多个服务类型
+        /// 不推荐使用，因为这种方式会损失类型安全、代码提示、DI 注入检查等优势。
+        /// </summary>
+        /// <param name="scopeFactory"></param>
+        /// <param name="serviceTypes"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static async Task ExecuteInScopeAsync(
+            IServiceScopeFactory scopeFactory,
+            Type[] serviceTypes,
+            Func<object[], Task> action)
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var provider = scope.ServiceProvider;
+
+            var services = new object[serviceTypes.Length];
+            for (int i = 0; i < serviceTypes.Length; i++)
+            {
+                services[i] = provider.GetRequiredService(serviceTypes[i]);
+            }
+
+            await action(services);
+        }
+        #endregion
+
+        #region 带返回结果
+        /// <summary>
+        /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
+        /// 带TResult返回
+        /// </summary>
+        public static TResult ExecuteInScope<TService, TResult>(IServiceScopeFactory scopeFactory, Func<TService, TResult> func)
+            where TService : notnull
+        {
+            using var scope = scopeFactory.CreateScope();
+            var service = scope.ServiceProvider.GetRequiredService<TService>();
+            return func(service);
+        }
+
+        /// <summary>
+        /// 异步：在新作用域中执行异步逻辑（有返回结果）
         /// </summary>
         public static async Task<TResult> ExecuteInScopeAsync<TService, TResult>(
             IServiceScopeFactory scopeFactory,
@@ -55,56 +139,76 @@ namespace Andux.Core.Helper.ServiceScope
             var service = scope.ServiceProvider.GetRequiredService<TService>();
             return await func(service);
         }
-        #endregion
-
-        #region 同时解析两个 Scoped 服务
-        /// <summary>
-        /// 同时解析两个 Scoped 服务，适用于在 Singleton 中使用多个 Scoped 服务
-        /// </summary>
-        public static void ExecuteInScope<T1, T2>(IServiceScopeFactory scopeFactory, Action<T1, T2> action)
-            where T1 : notnull
-            where T2 : notnull
-        {
-            using var scope = scopeFactory.CreateScope();
-            var sp = scope.ServiceProvider;
-
-            var s1 = sp.GetRequiredService<T1>();
-            var s2 = sp.GetRequiredService<T2>();
-
-            action(s1, s2);
-        }
 
         /// <summary>
-        /// 支持带返回值的两个服务组合使用
+        /// 异步：在新作用域中执行异步逻辑（有返回结果）
         /// </summary>
-        public static TResult ExecuteInScope<T1, T2, TResult>(IServiceScopeFactory scopeFactory, Func<T1, T2, TResult> func)
-            where T1 : notnull
-            where T2 : notnull
-        {
-            using var scope = scopeFactory.CreateScope();
-            var sp = scope.ServiceProvider;
-
-            var s1 = sp.GetRequiredService<T1>();
-            var s2 = sp.GetRequiredService<T2>();
-
-            return func(s1, s2);
-        }
-
-        public static async Task ExecuteInScopeAsync<T1, T2>(
+        public static async Task<TResult> ExecuteInScopeAsync<TService1, TService2, TResult>(
             IServiceScopeFactory scopeFactory,
-            Func<T1, T2, Task> action)
-            where T1 : notnull
-            where T2 : notnull
+            Func<TService1, TService2, Task<TResult>> func)
+            where TService1 : notnull
+            where TService2 : notnull
         {
             await using var scope = scopeFactory.CreateAsyncScope();
-            var sp = scope.ServiceProvider;
+            var service1 = scope.ServiceProvider.GetRequiredService<TService1>();
+            var service2 = scope.ServiceProvider.GetRequiredService<TService2>();
+            return await func(service1, service2);
+        }
 
-            var s1 = sp.GetRequiredService<T1>();
-            var s2 = sp.GetRequiredService<T2>();
+        /// <summary>
+        /// 异步：在新作用域中执行异步逻辑（有返回结果）
+        /// </summary>
+        public static async Task<TResult> ExecuteInScopeAsync<TService1, TService2, TService3, TResult>(
+            IServiceScopeFactory scopeFactory,
+            Func<TService1, TService2, TService3, Task<TResult>> func)
+            where TService1 : notnull
+            where TService2 : notnull
+            where TService3 : notnull
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var service1 = scope.ServiceProvider.GetRequiredService<TService1>();
+            var service2 = scope.ServiceProvider.GetRequiredService<TService2>();
+            var service3 = scope.ServiceProvider.GetRequiredService<TService3>();
+            return await func(service1, service2, service3);
+        }
 
-            await action(s1, s2);
+        /// <summary>
+        /// 异步：在新作用域中执行异步逻辑（有返回结果）
+        /// </summary>
+        public static async Task<TResult> ExecuteInScopeAsync<TService1, TService2, TService3, TService4, TResult>(
+            IServiceScopeFactory scopeFactory,
+            Func<TService1, TService2, TService3, TService4, Task<TResult>> func)
+            where TService1 : notnull
+            where TService2 : notnull
+            where TService3 : notnull
+            where TService4 : notnull
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var service1 = scope.ServiceProvider.GetRequiredService<TService1>();
+            var service2 = scope.ServiceProvider.GetRequiredService<TService2>();
+            var service3 = scope.ServiceProvider.GetRequiredService<TService3>();
+            var service4 = scope.ServiceProvider.GetRequiredService<TService4>();
+            return await func(service1, service2, service3, service4);
+        }
+
+        /// <summary>
+        /// 综合方法：在新作用域中执行异步逻辑，支持多个服务类型
+        /// 这种方式会损失类型安全、代码提示、DI 注入检查等优势，不建议用于生产环境
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="scopeFactory"></param>
+        /// <param name="serviceTypes"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<TResult> ExecuteInScopeAsync<TResult>(
+            IServiceScopeFactory scopeFactory,
+            Type[] serviceTypes,
+            Func<object[], Task<TResult>> func)
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var services = serviceTypes.Select(t => scope.ServiceProvider.GetRequiredService(t)).ToArray();
+            return await func(services);
         }
         #endregion
-
     }
 }
