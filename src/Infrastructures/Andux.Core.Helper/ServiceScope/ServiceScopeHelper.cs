@@ -12,7 +12,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
         /// 同步-无返回值
         /// </summary>
-        public static void ExecuteInScope<TService>(IServiceScopeFactory scopeFactory, Action<TService> action)
+        public static void ExecuteOnly<TService>(IServiceScopeFactory scopeFactory, Action<TService> action)
             where TService : notnull
         {
             using var scope = scopeFactory.CreateScope();
@@ -24,7 +24,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
         /// 异步-无返回值
         /// </summary>
-        public static async Task ExecuteInScopeAsync<TService>(
+        public static async Task ExecuteOnlyAsync<TService>(
             IServiceScopeFactory scopeFactory,
             Func<TService, Task> action)
             where TService : notnull
@@ -38,7 +38,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
         /// 异步-无返回值
         /// </summary>
-        public static async Task ExecuteInScopeAsync<TService1, TService2>(
+        public static async Task ExecuteOnlyAsync<TService1, TService2>(
             IServiceScopeFactory scopeFactory,
             Func<TService1, TService2, Task> action)
             where TService1 : notnull
@@ -54,7 +54,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
         /// 异步-无返回值
         /// </summary>
-        public static async Task ExecuteInScopeAsync<TService1, TService2, TService3>(
+        public static async Task ExecuteOnlyAsync<TService1, TService2, TService3>(
             IServiceScopeFactory scopeFactory,
             Func<TService1, TService2, TService3, Task> action)
             where TService1 : notnull
@@ -72,7 +72,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
         /// 异步-无返回值
         /// </summary>
-        public static async Task ExecuteInScopeAsync<TService1, TService2, TService3, TService4>(
+        public static async Task ExecuteOnlyAsync<TService1, TService2, TService3, TService4>(
             IServiceScopeFactory scopeFactory,
             Func<TService1, TService2, TService3, TService4, Task> action)
             where TService1 : notnull
@@ -96,7 +96,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// <param name="serviceTypes"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static async Task ExecuteInScopeAsync(
+        public static async Task ExecuteOnlyAsync(
             IServiceScopeFactory scopeFactory,
             Type[] serviceTypes,
             Func<object[], Task> action)
@@ -119,7 +119,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// 在新作用域中执行指定逻辑，适用于从 Singleton 中安全使用 Scoped 服务。
         /// 带TResult返回
         /// </summary>
-        public static TResult ExecuteInScope<TService, TResult>(IServiceScopeFactory scopeFactory, Func<TService, TResult> func)
+        public static TResult ExecuteWithResult<TService, TResult>(IServiceScopeFactory scopeFactory, Func<TService, TResult> func)
             where TService : notnull
         {
             using var scope = scopeFactory.CreateScope();
@@ -130,7 +130,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// <summary>
         /// 异步：在新作用域中执行异步逻辑（有返回结果）
         /// </summary>
-        public static async Task<TResult> ExecuteInScopeAsync<TService, TResult>(
+        public static async Task<TResult> ExecuteWithResultAsync<TService, TResult>(
             IServiceScopeFactory scopeFactory,
             Func<TService, Task<TResult>> func)
             where TService : notnull
@@ -143,7 +143,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// <summary>
         /// 异步：在新作用域中执行异步逻辑（有返回结果）
         /// </summary>
-        public static async Task<TResult> ExecuteInScopeAsync<TService1, TService2, TResult>(
+        public static async Task<TResult> ExecuteWithResultAsync<TService1, TService2, TResult>(
             IServiceScopeFactory scopeFactory,
             Func<TService1, TService2, Task<TResult>> func)
             where TService1 : notnull
@@ -158,7 +158,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// <summary>
         /// 异步：在新作用域中执行异步逻辑（有返回结果）
         /// </summary>
-        public static async Task<TResult> ExecuteInScopeAsync<TService1, TService2, TService3, TResult>(
+        public static async Task<TResult> ExecuteWithResultAsync<TService1, TService2, TService3, TResult>(
             IServiceScopeFactory scopeFactory,
             Func<TService1, TService2, TService3, Task<TResult>> func)
             where TService1 : notnull
@@ -175,7 +175,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// <summary>
         /// 异步：在新作用域中执行异步逻辑（有返回结果）
         /// </summary>
-        public static async Task<TResult> ExecuteInScopeAsync<TService1, TService2, TService3, TService4, TResult>(
+        public static async Task<TResult> ExecuteWithResultAsync<TService1, TService2, TService3, TService4, TResult>(
             IServiceScopeFactory scopeFactory,
             Func<TService1, TService2, TService3, TService4, Task<TResult>> func)
             where TService1 : notnull
@@ -200,7 +200,7 @@ namespace Andux.Core.Helper.ServiceScope
         /// <param name="serviceTypes"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        public static async Task<TResult> ExecuteInScopeAsync<TResult>(
+        public static async Task<TResult> ExecuteWithResultAsync<TResult>(
             IServiceScopeFactory scopeFactory,
             Type[] serviceTypes,
             Func<object[], Task<TResult>> func)

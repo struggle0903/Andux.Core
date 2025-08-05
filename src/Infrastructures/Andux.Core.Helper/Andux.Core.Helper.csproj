@@ -28,10 +28,31 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
 	<!-- 新增服务作用域帮助类 -->
-    <PackageId>Andux.Core.Helper</PackageId>
+    <!--<PackageId>Andux.Core.Helper</PackageId>
     <Version>1.0.2</Version>
     <Authors>andy.hu</Authors>
-    <Description>新增新增服务作用域Helper类，支持在不同作用域中使用服务</Description>
+    <Description>新增服务作用域Helper类，支持在不同作用域中使用服务</Description>
+    <PackageTags>Regex;Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
+    <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+    <!-- 优化服务作用域帮助类 -->
+    <!--<PackageId>Andux.Core.Helper</PackageId>
+    <Version>1.0.3</Version>
+    <Authors>andy.hu</Authors>
+    <Description>优化服务作用域Helper类，重载多个不同参数的版本，同时增加无数量限制的IService构建（牺牲类型安全-不建议使用）</Description>
+    <PackageTags>Regex;Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
+    <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+    <PackageId>Andux.Core.Helper</PackageId>
+    <Version>1.0.4</Version>
+    <Authors>andy.hu</Authors>
+    <Description>优化服务作用域Helper类，重载多个不同参数的版本，同时增加无数量限制的IService构建（牺牲类型安全-不建议使用）</Description>
     <PackageTags>Regex;Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
     <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
