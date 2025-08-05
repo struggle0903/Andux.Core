@@ -20,13 +20,16 @@ namespace Andux.Core.Testing.Controllers
         /// <param name="logger"></param>
         /// <param name="userRepository"></param>
         /// <param name="unitOfWork"></param>
+        /// <param name="orderRepository"></param>
         public UserController(ILogger<UserController> logger,
             IRepository<User> userRepository, 
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, 
+            IRepository<Order> orderRepository)
         {
             _logger = logger;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _orderRepository = orderRepository;
         }
 
         [HttpPost("add")]

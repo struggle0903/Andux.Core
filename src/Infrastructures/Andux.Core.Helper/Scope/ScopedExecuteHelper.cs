@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Andux.Core.Helper.ServiceScope
+namespace Andux.Core.Helper.Scope
 {
     /// <summary>
     /// 服务作用域帮助类
     /// </summary>
-    public static class ServiceScopeHelper
+    public static class ScopedExecuteHelper
     {
         #region 无返回结果
         /// <summary>
