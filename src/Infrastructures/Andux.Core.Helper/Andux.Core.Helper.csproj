@@ -59,10 +59,20 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-    <PackageId>Andux.Core.Helper</PackageId>
+    <!--<PackageId>Andux.Core.Helper</PackageId>
     <Version>1.1.0</Version>
     <Authors>andy.hu</Authors>
     <Description>新增ScopedExecuteHelper范围内执行帮助类，其他优化。</Description>
+    <PackageTags>Regex;Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
+    <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+    <PackageId>Andux.Core.Helper</PackageId>
+    <Version>1.0.9</Version>
+    <Authors>andy.hu</Authors>
+    <Description>新增ScopedExecuteHelper范围内执行帮助类，其他优化...</Description>
     <PackageTags>Regex;Helper;Validation;Task;Reflection;Picture;Network;Http;Extensions;Config;Andux</PackageTags>
     <RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

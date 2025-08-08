@@ -35,7 +35,7 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<ApiResponse<string>>> AddUser()
         {
-            var user = new User { Name = "Alice", Age = 28};
+            var user = new User { Name = "Alice", Age = 28, ProjectId = 0};
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
@@ -43,7 +43,6 @@ namespace Andux.Core.Testing.Controllers
             //_logger.LogDebug("【add】用户已添加");
             _logger.LogInformation("【add】用户已添加");
             //_logger.LogError("【add】用户已添加");
-
 
             return ApiResponse<string>.Ok(null, "用户已添加");
         }
@@ -102,7 +101,11 @@ namespace Andux.Core.Testing.Controllers
             if (user is null)
                 return ApiResponse<string>.Fail("用户不存在");
 
-            _userRepository.Remove(user);
+            //_userRepository.RemoveRange(new List<User>(){ user });
+            //_userRepository.Remove(user);
+
+            await _userRepository.RemoveAsync(w=>w.Id == id);
+
             await _unitOfWork.SaveChangesAsync();
             return ApiResponse<string>.Ok(null, "用户已删除");
         }

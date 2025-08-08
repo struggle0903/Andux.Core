@@ -22,7 +22,6 @@ namespace Andux.Core.EfTrack
     /// </summary>
     public class AuditingInterceptor : SaveChangesInterceptor
     {
-
         private readonly EntityBehaviorOptions _options;
 
         /// <summary>

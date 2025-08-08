@@ -398,15 +398,6 @@ namespace Andux.Core.EfTrack
         /// <returns></returns>
         public async Task<int> RemoveAsync(Expression<Func<T, bool>> predicate)
         {
-            //if (!typeof(ISoftDelete).IsAssignableFrom(typeof(T)))
-            //    throw new InvalidOperationException($"{typeof(T).Name} 未实现 ISoftDelete，不支持调用此方法删除");
-
-            //var entities = await _dbSet.Where(predicate).Cast<ISoftDelete>().ToListAsync();
-            //foreach (var entity in entities)
-            //{
-            //    entity.IsDeleted = true;
-            //}
-
             var entities = await _dbSet.Where(predicate).ToListAsync();
             _context.RemoveRange(entities);
             return await _context.SaveChangesAsync();
