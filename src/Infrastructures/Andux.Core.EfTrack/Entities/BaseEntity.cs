@@ -5,6 +5,7 @@
 // =======================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Andux.Core.EfTrack
 {
@@ -14,6 +15,7 @@ namespace Andux.Core.EfTrack
     /// <typeparam name="TKey">主键类型</typeparam>
     public abstract class BaseEntity<TKey> : IEntity<TKey>, IAuditedEntity, ISoftDelete
     {
+        [Key]
         public TKey Id { get; set; } = default!;
 
         /// <summary>

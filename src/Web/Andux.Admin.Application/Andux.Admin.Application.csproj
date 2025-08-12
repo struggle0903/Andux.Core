@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="User\" />
+    <Folder Include="Role\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Andux.Admin.Entity\Andux.Admin.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

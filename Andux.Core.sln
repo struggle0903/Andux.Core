@@ -23,15 +23,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.RabbitMQ", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcDemo", "src\UnitTesting\GrpcDemo\GrpcDemo.csproj", "{1F18A862-F3A4-4B7A-96EA-1A8504EE757D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.EventBus", "src\Infrastructures\Andux.Core.EventBus\Andux.Core.EventBus.csproj", "{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.EventBus", "src\Infrastructures\Andux.Core.EventBus\Andux.Core.EventBus.csproj", "{FE8F89C9-57B0-45D3-8B7C-B7E9DE21E812}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Extensions", "src\Infrastructures\Andux.Core.Extensions\Andux.Core.Extensions.csproj", "{95286649-0B22-4A69-BFF6-ABBCAA13318B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Helper", "src\Infrastructures\Andux.Core.Helper\Andux.Core.Helper.csproj", "{A3ACA531-8C7B-4949-8F22-547E5DB1027D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.SignalR", "src\Infrastructures\Andux.Core.SignalR\Andux.Core.SignalR.csproj", "{159FEC4A-FEB4-44D4-810A-33517AF41D9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.SignalR", "src\Infrastructures\Andux.Core.SignalR\Andux.Core.SignalR.csproj", "{159FEC4A-FEB4-44D4-810A-33517AF41D9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Core.Testing2", "src\UnitTesting\Andux.Core.Testing2\Andux.Core.Testing2.csproj", "{0CE6B836-D410-40D9-AF7B-B8CE7C880EC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andux.Core.Testing2", "src\UnitTesting\Andux.Core.Testing2\Andux.Core.Testing2.csproj", "{0CE6B836-D410-40D9-AF7B-B8CE7C880EC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{94E9793B-1EAA-42B8-9EE9-54FC202F39FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Admin.Application", "src\Web\Andux.Admin.Application\Andux.Admin.Application.csproj", "{AF5A516D-03AC-4B53-9752-7132BEF8AD13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Admin.Domain", "src\Web\Andux.Admin.Entity\Andux.Admin.Domain.csproj", "{905F38B0-E556-41AF-ADA7-2DD28AA60AE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andux.Admin.Host", "src\Web\Andux.Admin.Host\Andux.Admin.Host.csproj", "{E9EEF5B9-C87F-4567-B8D2-A9BB327933EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +95,18 @@ Global
 		{0CE6B836-D410-40D9-AF7B-B8CE7C880EC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CE6B836-D410-40D9-AF7B-B8CE7C880EC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CE6B836-D410-40D9-AF7B-B8CE7C880EC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF5A516D-03AC-4B53-9752-7132BEF8AD13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF5A516D-03AC-4B53-9752-7132BEF8AD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF5A516D-03AC-4B53-9752-7132BEF8AD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF5A516D-03AC-4B53-9752-7132BEF8AD13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905F38B0-E556-41AF-ADA7-2DD28AA60AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905F38B0-E556-41AF-ADA7-2DD28AA60AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905F38B0-E556-41AF-ADA7-2DD28AA60AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905F38B0-E556-41AF-ADA7-2DD28AA60AE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9EEF5B9-C87F-4567-B8D2-A9BB327933EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9EEF5B9-C87F-4567-B8D2-A9BB327933EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9EEF5B9-C87F-4567-B8D2-A9BB327933EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9EEF5B9-C87F-4567-B8D2-A9BB327933EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +124,9 @@ Global
 		{A3ACA531-8C7B-4949-8F22-547E5DB1027D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{159FEC4A-FEB4-44D4-810A-33517AF41D9F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{0CE6B836-D410-40D9-AF7B-B8CE7C880EC8} = {3ED1CCEC-8147-4111-AC7D-9D43C3EAFCCA}
+		{AF5A516D-03AC-4B53-9752-7132BEF8AD13} = {94E9793B-1EAA-42B8-9EE9-54FC202F39FD}
+		{905F38B0-E556-41AF-ADA7-2DD28AA60AE3} = {94E9793B-1EAA-42B8-9EE9-54FC202F39FD}
+		{E9EEF5B9-C87F-4567-B8D2-A9BB327933EF} = {94E9793B-1EAA-42B8-9EE9-54FC202F39FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB6281E-01BB-4320-8143-30ED12871150}
