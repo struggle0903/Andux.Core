@@ -21,7 +21,7 @@ using Andux.Core.Testing.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://127.0.0.1:5001");
+//builder.WebHost.UseUrls("http://127.0.0.1:5001");
 
 builder.Services.AddControllers(opt =>
 {
@@ -138,8 +138,8 @@ builder.Services.UseAnduxHelper();
 builder.Services.UseAnduxSignalR(new SignalROptions
 {
     // 分布式集群部署需要
-    RedisConnection = "localhost:6379,defaultDatabase=1,password=Aa123456"
-    //RedisConnection = null
+    // RedisConnection = "localhost:6379,defaultDatabase=1,password=Aa123456"
+    RedisConnection = null
 });
 
 builder.Services.AddHostedService<SignalRClient1Service>();

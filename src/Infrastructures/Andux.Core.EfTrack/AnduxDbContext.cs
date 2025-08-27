@@ -7,6 +7,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -110,6 +111,97 @@ namespace Andux.Core.EfTrack
                 modelBuilder.Entity(type);
             }
         }
+
+
+        #region ---------- 原生 SQL / 批量操作支持 ----------
+
+        /// <summary>
+        /// 执行 SQL 查询并返回实体集合（支持异步）
+        /// 用法示例:
+        /// var users = await dbContext.FromSqlAsync<User>("SELECT * FROM Users WHERE Age > {0}", 18);
+        /// </summary>
+        public async Task<List<T>> FromSqlAsync<T>(string sql, params object[] parameters) where T : class
+        {
+            return await Set<T>().FromSqlRaw(sql, parameters).ToListAsync();
+        }
+
+        /// <summary>
+        /// 执行原生 SQL 查询（无跟踪）
+        /// 用法示例:
+        /// var users = await dbContext.FromSqlNoTrackingAsync<User>("SELECT * FROM Users");
+        /// </summary>
+        public async Task<List<T>> FromSqlNoTrackingAsync<T>(string sql, params object[] parameters) where T : class
+        {
+            return await Set<T>().FromSqlRaw(sql, parameters).AsNoTracking().ToListAsync();
+        }
+
+        /// <summary>
+        /// 执行 SQL 命令（Insert/Update/Delete 等），返回受影响行数
+        /// 用法示例:
+        /// int rows = await dbContext.ExecuteSqlAsync("UPDATE Users SET Age = Age + 1 WHERE Id = {0}", userId);
+        /// </summary>
+        public async Task<int> ExecuteSqlAsync(string sql, params object[] parameters)
+        {
+            return await Database.ExecuteSqlRawAsync(sql, parameters);
+        }
+
+        /// <summary>
+        /// 批量插入（推荐小批量用 EF Core 的 AddRangeAsync，大批量用 EFCore.BulkExtensions）
+        /// 用法示例:
+        /// await dbContext.BulkInsertAsync(users);
+        /// </summary>
+        public async Task BulkInsertAsync<T>(IEnumerable<T> entities, int batchSize = 1000) where T : class
+        {
+            var list = entities.ToList();
+            for (int i = 0; i < list.Count; i += batchSize)
+            {
+                var batch = list.Skip(i).Take(batchSize);
+                await Set<T>().AddRangeAsync(batch);
+                await SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// 批量更新（通过 SQL 执行，避免逐条 Update）
+        /// 用法示例:
+        /// await dbContext.BulkUpdateAsync("UPDATE Users SET Age = {0} WHERE Age < {1}", 30, 18);
+        /// </summary>
+        public async Task<int> BulkUpdateAsync(string sql, params object[] parameters)
+        {
+            return await ExecuteSqlAsync(sql, parameters);
+        }
+
+        /// <summary>
+        /// 批量删除（通过 SQL 执行）
+        /// 用法示例:
+        /// await dbContext.BulkDeleteAsync("DELETE FROM Users WHERE IsDeleted = 1");
+        /// </summary>
+        public async Task<int> BulkDeleteAsync(string sql, params object[] parameters)
+        {
+            return await ExecuteSqlAsync(sql, parameters);
+        }
+
+        #endregion
+
+
+        //// 1. 原生 SQL 查询
+        //var users = await dbContext.FromSqlAsync<User>("SELECT * FROM Users WHERE Age > {0}", 18);
+
+        //// 2. 原生 SQL 更新
+        //int rows = await dbContext.ExecuteSqlAsync("UPDATE Users SET Age = Age + 1 WHERE Id = {0}", userId);
+
+        //// 3. 批量插入
+        //await dbContext.BulkInsertAsync(new List<User>
+        //{
+        //    new User { Name = "张三", Age = 20 },
+        //    new User { Name = "李四", Age = 25 }
+        //});
+
+        //// 4. 批量更新
+        //await dbContext.BulkUpdateAsync("UPDATE Users SET IsActive = 0 WHERE LastLogin < {0}", DateTime.Now.AddYears(-1));
+
+        //// 5. 批量删除
+        //await dbContext.BulkDeleteAsync("DELETE FROM Users WHERE IsDeleted = 1");
 
     }
 }

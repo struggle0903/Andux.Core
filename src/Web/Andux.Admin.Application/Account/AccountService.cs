@@ -1,5 +1,7 @@
 ﻿using Andux.Admin.Application.Account.Request;
 using Andux.Admin.Application.Account.Response;
+using Andux.Admin.Domain.Entitys;
+using Andux.Core.EfTrack;
 
 namespace Andux.Admin.Application.Account
 {
@@ -8,6 +10,18 @@ namespace Andux.Admin.Application.Account
     /// </summary>
     public class AccountService : IAccountService
     {
+
+        private readonly IRepository<AnduxUser> _userRepository;
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="userRepository"></param>
+        public AccountService(IRepository<AnduxUser> userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
         /// <summary>
         /// 登录
         /// </summary>

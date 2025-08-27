@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Andux.Core.Logger" Version="1.0.1" />
+    <PackageReference Include="Andux.Core.SignalR" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
@@ -35,7 +36,6 @@
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Helper\Andux.Core.Helper.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.RabbitMQ\Andux.Core.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\Infrastructures\Andux.Core.Redis\Andux.Core.Redis.csproj" />
-    <ProjectReference Include="..\..\Infrastructures\Andux.Core.SignalR\Andux.Core.SignalR.csproj" />
   </ItemGroup>
 
 </Project>

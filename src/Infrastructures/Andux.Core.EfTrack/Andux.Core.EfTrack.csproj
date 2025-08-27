@@ -55,10 +55,20 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-		<PackageId>Andux.Core.EfTrack</PackageId>
+		<!--<PackageId>Andux.Core.EfTrack</PackageId>
 		<Version>2.0.5</Version>
 		<Authors>andy.hu</Authors>
 		<Description>Auditing中处理IProject数据逻辑改为有值则不重新赋值。其他优化...</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>2.1.0</Version>
+		<Authors>andy.hu</Authors>
+		<Description>1.新增了原生 SQL的操作 2.增加了User.Claims的超管类型，如果是超管则不进行项目数据过滤 3.Auditing中处理IProject数据逻辑改为有值则不重新赋值。其他优化...</Description>
 		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
 		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>

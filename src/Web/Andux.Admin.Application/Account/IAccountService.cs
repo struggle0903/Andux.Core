@@ -8,8 +8,20 @@ namespace Andux.Admin.Application.Account
     /// </summary>
     public interface IAccountService
     {
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ipAddress"></param>
+        /// <param name="deviceInfo"></param>
+        /// <returns></returns>
         Task<ApiResult<LoginResponse>> LoginAsync(LoginRequest request, string ipAddress, string deviceInfo);
 
+        /// <summary>
+        /// 注销
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
         Task<ApiResult<bool>> LogoutAsync(string sessionId);
     }
 }

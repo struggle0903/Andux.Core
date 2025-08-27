@@ -1,11 +1,22 @@
+using Andux.Admin.Domain;
+using Andux.Core.EfTrack;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 获取程序集名
+var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// 使用 AddEfOrmFramework 必须加
+builder.Services.AddHttpContextAccessor();
+
+// 注册 EF 仓储、工作单元、审计拦截器、DbContext（MySQL）
+builder.Services.AddEfOrmFramework<AnduxAdminDbContext>(builder.Configuration, new Version(8, 0, 32));
+
 
 var app = builder.Build();
 
