@@ -181,6 +181,35 @@ namespace Andux.Core.EfTrack
             return await ExecuteSqlAsync(sql, parameters);
         }
 
+        /// <summary>
+        /// 执行返回单个值的SQL标量查询（支持异步）
+        /// </summary>
+        public async Task<T> ExecuteScalarAsync<T>(string sql, params object[] parameters)
+        {
+            await using var command = Database.GetDbConnection().CreateCommand();
+            command.CommandText = sql;
+
+            // 添加参数（防SQL注入）
+            if (parameters is { Length: > 0 })
+            {
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = $"@p{i}";
+                    parameter.Value = parameters[i] ?? DBNull.Value;
+                    command.Parameters.Add(parameter);
+                }
+            }
+
+            if (command.Connection.State != System.Data.ConnectionState.Open)
+                await command.Connection.OpenAsync();
+
+            var result = await command.ExecuteScalarAsync();
+            await command.Connection.CloseAsync();
+
+            return (T)Convert.ChangeType(result, typeof(T));
+        }
+
         #endregion
 
 
