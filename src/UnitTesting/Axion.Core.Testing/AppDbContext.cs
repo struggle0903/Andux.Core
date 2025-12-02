@@ -36,6 +36,12 @@ namespace Andux.Core.Testing
             RegisterEntities(modelBuilder, typeof(OrderItem));
 
 
+            //RegisterEntities(modelBuilder, typeof(TestUser));
+
+
+            modelBuilder.Ignore<TestUser>();
+
+
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Customer)
                 .WithMany(c => c.Orders)

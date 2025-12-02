@@ -123,6 +123,21 @@ namespace Andux.Core.EfTrack
         IQueryable<T> Query(Expression<Func<T, bool>>? predicate = null);
 
         /// <summary>
+        /// 忽略所有的底层查询筛选器
+        /// </summary>
+        IQueryable<T> IgnoreQueryFilters(Expression<Func<T, bool>>? predicate = null);
+
+        /// <summary>
+        /// 忽略项目查询筛选器
+        /// </summary>
+        IQueryable<T> IgnoreProjectQueryFilters(Expression<Func<T, bool>>? predicate = null);
+
+        /// <summary>
+        /// 忽略软删除查询筛选器
+        /// </summary>
+        IQueryable<T> IgnoreSoftDeleteQueryFilters(Expression<Func<T, bool>>? predicate = null);
+
+        /// <summary>
         /// 添加实体
         /// </summary>
         Task AddAsync(T entity);

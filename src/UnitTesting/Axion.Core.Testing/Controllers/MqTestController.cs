@@ -9,20 +9,20 @@ namespace Andux.Core.Testing.Controllers
     [AllowAnonymous]
     public class MqTestController : ApiBaseController
     {
-        private readonly IRabbitMQTenantService _tenantService;
         private readonly IRabbitMQPublisher _inner;
+        private readonly IRabbitMQConsumer _mqConsume;
         private readonly IRabbitMQConnectionProvider _connectionProvider;
 
         /// <summary>
         /// 构造
         /// </summary>
-        /// <param name="tenantService"></param>
         /// <param name="inner"></param>
+        /// <param name="mqConsume"></param>
         /// <param name="connectionProvider"></param>
-        public MqTestController(IRabbitMQTenantService tenantService, IRabbitMQPublisher inner, IRabbitMQConnectionProvider connectionProvider)
+        public MqTestController(IRabbitMQPublisher inner, IRabbitMQConsumer mqConsume, IRabbitMQConnectionProvider connectionProvider)
         {
-            _tenantService = tenantService;
             _inner = inner;
+            _mqConsume = mqConsume;
             _connectionProvider = connectionProvider;
         }
 
@@ -51,10 +51,17 @@ namespace Andux.Core.Testing.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateOrder([FromBody] Order order)
+        public IActionResult CreateOrder()
         {
-            // 自动使用当前租户的配置
-            _tenantService.Publisher.PublishToQueue("andux.test.queue", order);
+            var order = new Order(){ Id = 999 };
+
+            // 直接发布
+            //_inner.PublishToQueue("andux.test.queue2", order);
+            //_inner.PublishToExchange("andux.iot.gateway", "andux.test.queue2", order);
+
+            // 直接发布广播
+            _inner.PublishTopic("andux.iot.gateway", "andux.topic.queue", order);
+
             return Accepted();
         }
 
@@ -63,11 +70,25 @@ namespace Andux.Core.Testing.Controllers
         {
             var tcs = new TaskCompletionSource<Order>();
 
-            _tenantService.Consumer.StartConsuming<Order>("andux.test.queue", order =>
+            #region // 直接发布接收
+            //_mqConsume.StartConsuming<Order>("andux.test.queue2", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
+
+            _mqConsume.StartConsumingExchange<Order>("andux.iot.gateway", "andux.8888.queue", "andux.topic.queue", order =>
             {
                 tcs.TrySetResult(order);
                 return Task.CompletedTask;
             });
+            _mqConsume.StartConsumingExchange<Order>("andux.iot.gateway", "andux.9999.queue", "andux.topic.queue", order =>
+            {
+                tcs.TrySetResult(order);
+                return Task.CompletedTask;
+            });
+            #endregion
+
 
             // 等待5秒接收消息
             var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(5000));

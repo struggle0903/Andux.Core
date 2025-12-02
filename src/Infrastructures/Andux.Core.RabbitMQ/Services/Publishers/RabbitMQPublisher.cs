@@ -77,7 +77,6 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
         /// <param name="exchangeName">目标交换机名称</param>
         /// <param name="messages">消息集合</param>
         /// <param name="persistent">是否持久化消息</param>
-        [Obsolete]
         public void PublishBatch<T>(string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
         {
             if (messages == null || !messages.Any())
@@ -109,6 +108,108 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
                 throw new RabbitMQException("发布批处理消息时出错", ex);
             }
         }
+
+        /// <summary>
+        /// 支持 Topic Exchange
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="exchangeName">目标交换机名称</param>
+        /// <param name="routingKey">路由键</param>
+        /// <param name="message">消息</param>
+        /// <param name="persistent">是否持久化消息</param>
+        public void PublishTopic<T>(string exchangeName, string routingKey, T message, bool persistent = true) where T : class
+        {
+            using var channel = _connectionProvider.CreateChannel();
+            channel.ExchangeDeclare(exchangeName, ExchangeType.Topic, durable: true);
+            PublishMessage(channel, exchangeName, routingKey, message, persistent);
+        }
+
+        #region 根据Connection连接对象发布消息
+
+        /// <summary>
+        /// 发布消息到指定队列（使用连接创建临时通道）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">连接对象</param>
+        /// <param name="queueName">目标交换机名称</param>
+        /// <param name="message">消息</param>
+        /// <param name="persistent">是否持久化消息</param>
+        public void PublishToQueue<T>(IConnection connection, string queueName, T message, bool persistent = true) where T : class
+        {
+            using var channel = connection.CreateModel();
+            PublishMessage(channel, string.Empty, queueName, message, persistent);
+        }
+
+        /// <summary>
+        /// 发布消息到指定交换机（使用连接创建临时通道）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">连接对象</param>
+        /// <param name="exchangeName">目标交换机名称</param>
+        /// <param name="routingKey">路由键</param>
+        /// <param name="message">消息</param>
+        /// <param name="persistent">是否持久化消息</param>
+        public void PublishToExchange<T>(IConnection connection, string exchangeName, string routingKey, T message, bool persistent = true) where T : class
+        {
+            using var channel = connection.CreateModel();
+            PublishMessage(channel, exchangeName, routingKey, message, persistent);
+        }
+
+        /// <summary>
+        /// 批量发布消息到交换机（使用连接创建临时通道）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">连接对象</param>
+        /// <param name="exchangeName">目标交换机名称</param>
+        /// <param name="messages">消息集合</param>
+        /// <param name="persistent">是否持久化消息</param>
+        public void PublishBatch<T>(IConnection connection, string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
+        {
+            using var channel = connection.CreateModel();
+            var batch = channel.CreateBasicPublishBatch();
+
+            foreach (var (routingKey, message) in messages)
+            {
+                var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
+                var properties = channel.CreateBasicProperties();
+                ConfigureProperties(properties, persistent);
+
+                batch.Add(
+                    exchange: exchangeName,
+                    routingKey: routingKey,
+                    mandatory: false,
+                    properties: properties,
+                    body: body);
+            }
+
+            try
+            {
+                batch.Publish();
+            }
+            catch (Exception ex)
+            {
+                throw new RabbitMQException("发布批处理消息时出错", ex);
+            }
+        }
+
+        /// <summary>
+        /// 发布主题消息（使用连接创建临时通道）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">连接对象</param>
+        /// <param name="exchangeName">目标交换机名称</param>
+        /// <param name="routingKey">路由键</param>
+        /// <param name="message">消息</param>
+        /// <param name="persistent">是否持久化消息</param>
+        public void PublishTopic<T>(IConnection connection, string exchangeName, string routingKey, T message, bool persistent = true) where T : class
+        {
+            using var channel = connection.CreateModel();
+            PublishMessage(channel, exchangeName, routingKey, message, persistent);
+        }
+
+        #endregion
+
+        #region 私有方法
 
         /// <summary>
         /// 发布消息
@@ -152,6 +253,8 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
             properties.Persistent = persistent;
             properties.DeliveryMode = persistent ? (byte)2 : (byte)1;
         }
+
+        #endregion
 
     }
 }

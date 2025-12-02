@@ -12,7 +12,7 @@ namespace Andux.Core.RabbitMQ.Services.Connection
     public class RabbitMQConnectionProvider : IRabbitMQConnectionProvider
     {
         private readonly RabbitMQOptions _globalOptions;
-        private readonly ConcurrentDictionary<string, TenantOptions> _tenantOptions;
+        private readonly ConcurrentDictionary<string, RabbitMQTenantOptions> _tenantOptions;
         private readonly ConcurrentDictionary<string, IConnection> _connections;
         private bool _disposed;
         
@@ -28,7 +28,7 @@ namespace Andux.Core.RabbitMQ.Services.Connection
         public RabbitMQConnectionProvider(RabbitMQOptions globalOptions)
         {
             _globalOptions = globalOptions;
-            _tenantOptions = new ConcurrentDictionary<string, TenantOptions>();
+            _tenantOptions = new ConcurrentDictionary<string, RabbitMQTenantOptions>();
             _connections = new ConcurrentDictionary<string, IConnection>();
         }
 
@@ -36,7 +36,7 @@ namespace Andux.Core.RabbitMQ.Services.Connection
         /// 注册租户配置
         /// </summary>
         /// <param name="options"></param>
-        public void RegisterTenant(TenantOptions options)
+        public void RegisterTenant(RabbitMQTenantOptions options)
         {
             _tenantOptions[options.TenantId] = options;
         }
@@ -57,9 +57,6 @@ namespace Andux.Core.RabbitMQ.Services.Connection
         /// <returns></returns>
         public IConnection GetTenantConnection(string? tenantId)
         {
-            //if (string.IsNullOrEmpty(tenantId))
-            //    throw new ArgumentException("Tenant ID cannot be null or empty");
-
             return GetOrCreateConnection(tenantId);
         }
 
@@ -158,7 +155,7 @@ namespace Andux.Core.RabbitMQ.Services.Connection
 
             return new ConnectionFactory
             {
-                HostName = options.HostName,
+                HostName = options.Host,
                 Port = options.Port,
                 VirtualHost = options.VirtualHost,
                 UserName = options.UserName,
@@ -176,8 +173,8 @@ namespace Andux.Core.RabbitMQ.Services.Connection
 
             return new RabbitMQOptions
             {
-                HostName = _globalOptions.HostName,
-                Port = _globalOptions.Port,
+                Host = tenantOptions.Host,
+                Port = tenantOptions.Port,
                 VirtualHost = tenantOptions.VirtualHost,
                 UserName = tenantOptions.UserName,
                 Password = tenantOptions.Password

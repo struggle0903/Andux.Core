@@ -51,7 +51,7 @@ namespace Andux.Core.EfTrack
         /// <returns></returns>
         public IEnumerable<T> AsEnumerable()
         {
-            return ApplyProjectFilter(_dbSet).AsEnumerable();
+            return ApplyFilter(_dbSet).AsEnumerable();
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Andux.Core.EfTrack
             var equal = Expression.Equal(property, Expression.Convert(constant, property.Type));
             var lambda = Expression.Lambda<Func<T, bool>>(equal, parameter);
 
-            return await ApplyProjectFilter(_dbSet).FirstOrDefaultAsync(lambda);
+            return await ApplyFilter(_dbSet).FirstOrDefaultAsync(lambda);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Andux.Core.EfTrack
             var lambda = Expression.Lambda<Func<T, bool>>(equal, parameter);
 
             // 构造 query 并自动 Include 所有导航属性
-            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            IQueryable<T> query = ApplyFilter(_dbSet);
             foreach (var nav in entityType.GetNavigations())
             {
                 query = query.Include(nav.Name);
@@ -124,7 +124,7 @@ namespace Andux.Core.EfTrack
             var lambda = Expression.Lambda<Func<T, bool>>(equal, parameter);
 
             // 构造 query
-            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            IQueryable<T> query = ApplyFilter(_dbSet);
 
             // 动态 Include 指定属性
             foreach (var include in includes)
@@ -155,7 +155,7 @@ namespace Andux.Core.EfTrack
             var equal = Expression.Equal(property, Expression.Convert(constant, property.Type));
             var lambda = Expression.Lambda<Func<T, bool>>(equal, parameter);
 
-            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            IQueryable<T> query = ApplyFilter(_dbSet);
 
             foreach (var include in includes)
             {
@@ -177,7 +177,7 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null)
         {
-            var query = ApplyProjectFilter(_dbSet);
+            var query = ApplyFilter(_dbSet);
 
             if (predicate != null)
                 query = query.Where(predicate);
@@ -212,7 +212,7 @@ namespace Andux.Core.EfTrack
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             params Expression<Func<T, object>>[] includes)
         {
-            var query = ApplyProjectFilter(_dbSet);
+            var query = ApplyFilter(_dbSet);
 
             if (predicate != null)
                 query = query.Where(predicate);
@@ -269,7 +269,7 @@ namespace Andux.Core.EfTrack
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             params string[] includes)
         {
-            var query = ApplyProjectFilter(_dbSet);
+            var query = ApplyFilter(_dbSet);
 
             if (predicate != null)
                 query = query.Where(predicate);
@@ -320,7 +320,7 @@ namespace Andux.Core.EfTrack
         /// </summary>
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await ApplyProjectFilter(_dbSet).ToListAsync();
+            return await ApplyFilter(_dbSet).ToListAsync();
         }
 
         /// <summary>
@@ -328,8 +328,37 @@ namespace Andux.Core.EfTrack
         /// </summary>
         public IQueryable<T> Query(Expression<Func<T, bool>>? predicate = null)
         {
-            var query = ApplyProjectFilter(_dbSet);
+            var query = _dbSet.AsQueryable();
+            query = ApplyFilter(query);
+
             return predicate != null ? query.Where(predicate) : query;
+        }
+
+        /// <summary>
+        /// 忽略所有的底层查询筛选器
+        /// </summary>
+        public IQueryable<T> IgnoreQueryFilters(Expression<Func<T, bool>>? predicate = null)
+        {
+            var query = _dbSet.AsQueryable();
+            return predicate != null ? query.Where(predicate) : query;
+        }
+
+        /// <summary>
+        /// 忽略项目查询筛选器
+        /// </summary>
+        public IQueryable<T> IgnoreProjectQueryFilters(Expression<Func<T, bool>>? predicate = null)
+        {
+            var query = _dbSet.AsQueryable();
+            return predicate != null ? ApplySoftDeleteFilter(query).Where(predicate) : query;
+        }
+
+        /// <summary>
+        /// 忽略软删除查询筛选器
+        /// </summary>
+        public IQueryable<T> IgnoreSoftDeleteQueryFilters(Expression<Func<T, bool>>? predicate = null)
+        {
+            var query = _dbSet.AsQueryable();
+            return predicate != null ? ApplyProjectFilter(query).Where(predicate) : query;
         }
 
         /// <summary>
@@ -408,7 +437,7 @@ namespace Andux.Core.EfTrack
         /// </summary>
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {
-            return await ApplyProjectFilter(_dbSet).AnyAsync(predicate);
+            return await ApplyFilter(_dbSet).AnyAsync(predicate);
         }
 
         /// <summary>
@@ -416,7 +445,7 @@ namespace Andux.Core.EfTrack
         /// </summary>
         public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
-            var query = ApplyProjectFilter(_dbSet);
+            var query = ApplyFilter(_dbSet);
             return predicate == null ? await query.CountAsync() : await query.CountAsync(predicate);
         }
 
@@ -425,7 +454,7 @@ namespace Andux.Core.EfTrack
         /// </summary>
         public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            return await ApplyProjectFilter(_dbSet).FirstOrDefaultAsync(predicate);
+            return await ApplyFilter(_dbSet).FirstOrDefaultAsync(predicate);
         }
 
         /// <summary>
@@ -439,7 +468,7 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, bool>> predicate,
             params string[] includes)
         {
-            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            IQueryable<T> query = ApplyFilter(_dbSet);
             if (includes is { Length: > 0 })
             {
                 foreach (var include in includes.Where(i => !string.IsNullOrWhiteSpace(i)))
@@ -462,7 +491,7 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, bool>> predicate,
             params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            IQueryable<T> query = ApplyFilter(_dbSet);
 
             if (includes is { Length: > 0 })
             {
@@ -483,7 +512,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段求和值。</returns>
         public async Task<decimal> SumAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, decimal>> selector)
         {
-            return await ApplyProjectFilter(_dbSet).Where(predicate).SumAsync(selector);
+            return await ApplyFilter(_dbSet).Where(predicate).SumAsync(selector);
         }
 
         /// <summary>
@@ -494,7 +523,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段平均值。</returns>
         public async Task<decimal> AverageAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, decimal>> selector)
         {
-            return await ApplyProjectFilter(_dbSet).Where(predicate).AverageAsync(selector);
+            return await ApplyFilter(_dbSet).Where(predicate).AverageAsync(selector);
         }
 
         /// <summary>
@@ -506,7 +535,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段最大值。</returns>
         public async Task<TProperty> MaxAsync<TProperty>(Expression<Func<T, bool>> predicate, Expression<Func<T, TProperty>> selector)
         {
-            return await ApplyProjectFilter(_dbSet).Where(predicate).MaxAsync(selector);
+            return await ApplyFilter(_dbSet).Where(predicate).MaxAsync(selector);
         }
 
         /// <summary>
@@ -518,7 +547,7 @@ namespace Andux.Core.EfTrack
         /// <returns>返回满足条件的字段最小值。</returns>
         public async Task<TProperty> MinAsync<TProperty>(Expression<Func<T, bool>> predicate, Expression<Func<T, TProperty>> selector)
         {
-            return await ApplyProjectFilter(_dbSet).Where(predicate).MinAsync(selector);
+            return await ApplyFilter(_dbSet).Where(predicate).MinAsync(selector);
         }
 
         /// <summary>
@@ -532,7 +561,7 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, TProperty>> selector)
         {
-            return await ApplyProjectFilter(_dbSet)
+            return await ApplyFilter(_dbSet)
                 .Where(predicate)
                 .Select(selector)
                 .Distinct()
@@ -553,7 +582,7 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, TKey>> groupBySelector,
             Expression<Func<IGrouping<TKey, T>, TResult>> resultSelector)
         {
-            return await ApplyProjectFilter(_dbSet)
+            return await ApplyFilter(_dbSet)
                 .Where(predicate)
                 .GroupBy(groupBySelector)
                 .Select(resultSelector)
@@ -568,13 +597,26 @@ namespace Andux.Core.EfTrack
             Expression<Func<T, TResult>> selector,
             params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<T> query = ApplyProjectFilter(_dbSet);
+            IQueryable<T> query = ApplyFilter(_dbSet);
             foreach (var include in includes)
             {
                 query = query.Include(include);
             }
 
             return await query.Where(predicate).Select(selector).ToListAsync();
+        }
+
+        #region 私有方法
+
+        /// <summary>
+        /// 应用筛选器
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        private IQueryable<T> ApplyFilter(IQueryable<T> query)
+        {
+            var newQuery = ApplyProjectFilter(query);
+            return ApplySoftDeleteFilter(newQuery);
         }
 
         /// <summary>
@@ -584,32 +626,57 @@ namespace Andux.Core.EfTrack
         {
             if (typeof(IProject).IsAssignableFrom(typeof(T)) && _options.EnableProject)
             {
-                // 超管标识为 101，如果是超管
-                if (_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "identityType")
-                        ?.Value == "101")
-                {
+                // 超管标识为 101，如果是超管直接返回不过滤
+                if (IsSuperAdmin())
                     return query;
-                }
 
-                var currentProjectStr = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(c => c.Type == _options.ProjectClaimsType)?.Value;
-
-                if (!long.TryParse(currentProjectStr, out var projectIdValue))
+                var projectId = GetCurrentProjectId();
+                if (projectId == null)
                     return query; // 无效 ProjectId，不过滤
 
-                var projectId = (long?)projectIdValue;
-
-                var parameter = Expression.Parameter(typeof(T), "e");
-                var property = Expression.Property(parameter, nameof(IProject.ProjectId));
-                var constant = Expression.Constant(projectId, typeof(long?));
-                var equal = Expression.Equal(property, constant);
-                var lambda = Expression.Lambda<Func<T, bool>>(equal, parameter);
-
-                return query.Where(lambda);
+                return query.Where(e => ((IProject)e).ProjectId == projectId);
             }
 
             return query;
         }
+
+        /// <summary>
+        /// 自动过滤软删除过滤
+        /// </summary>
+        private IQueryable<T> ApplySoftDeleteFilter(IQueryable<T> query)
+        {
+            if (typeof(ISoftDelete).IsAssignableFrom(typeof(T)) && _options.EnableSoftDelete)
+            {
+                return query.Where(e => !((ISoftDelete)e).IsDeleted);
+            }
+
+            return query;
+        }
+
+        /// <summary>
+        /// 判断当前用户是否为超级管理员
+        /// </summary>
+        private bool IsSuperAdmin()
+        {
+            return _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(c => c.Type == "identityType")?.Value == "101";
+        }
+
+        /// <summary>
+        /// 获取当前用户的 ProjectId
+        /// </summary>
+        private long? GetCurrentProjectId()
+        {
+            var currentProjectStr = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(c => c.Type == _options.ProjectClaimsType)?.Value;
+
+            if (long.TryParse(currentProjectStr, out var projectIdValue))
+                return projectIdValue;
+
+            return null;
+        }
+        
+        #endregion
 
     }
 }

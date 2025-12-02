@@ -5,7 +5,6 @@ using Andux.Core.RabbitMQ.Services.Connection;
 using Andux.Core.RabbitMQ.Services.Consumers;
 using Andux.Core.RabbitMQ.Services.Publishers;
 using Andux.Core.RabbitMQ.Services.Tenant;
-using Microsoft.Extensions.Configuration;
 
 namespace Andux.Core.RabbitMQ.Extensions
 {
@@ -16,88 +15,72 @@ namespace Andux.Core.RabbitMQ.Extensions
     {
         /// <summary>
         /// Andux.Core.RabbitMQ 服务注册扩展方法
+        /// 普通模式（支持IRabbitMQConnectionProvider，IRabbitMQPublisher， IRabbitMQConsumer）
+        /// 只能注册单个MQ服务地址的单个用户连接
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <param name="tenantId"></param>
-        /// <param name="tenantConfigs"></param>
+        /// <param name="rabbitMQConfig"></param>
         /// <returns></returns>
-        public static IServiceCollection UseAnduxRabbitMQServices(this IServiceCollection services,
-            IConfiguration configuration, string? tenantId = null, List<TenantOptions>? tenantConfigs = null)
+        public static IServiceCollection UseAnduxRabbitMQServices(this IServiceCollection services, RabbitMQOptions rabbitMQConfig)
         {
-            // 1. 注册配置
-            var rabbitMQConfig = new RabbitMQOptions
-            {
-                HostName = configuration.GetValue("RabbitMQ:Host", "localhost"),
-                Port = configuration.GetValue("RabbitMQ:Port", 5672),
-                UserName = configuration.GetValue("RabbitMQ:Username", "guest"),
-                Password = configuration.GetValue("RabbitMQ:Password", "guest"),
-                ClientProvidedName = configuration.GetValue("RabbitMQ:ClientProvidedName", "Andux.Core.RabbitMQ"),
-                VirtualHost = configuration.GetValue("RabbitMQ:VirtualHost", "/"),
-                AutomaticRecoveryEnabled = configuration.GetValue("RabbitMQ:AutomaticRecoveryEnabled", false),
-                NetworkRecoveryInterval = configuration.GetValue("RabbitMQ:NetworkRecoveryInterval", 10)
-            };
-
             services.AddSingleton(rabbitMQConfig);
 
-            // 2. 注册租户上下文（作用域）
-            services.AddScoped<ITenantContext>(sp => new TenantContext(tenantId ?? string.Empty));
-
-            // 3. 注册RabbitMQ核心服务
+            // 注册连接提供者
             services.AddSingleton<IRabbitMQConnectionProvider>(sp =>
             {
                 var provider = new RabbitMQConnectionProvider(rabbitMQConfig);
-                (tenantConfigs ?? []).ForEach(provider.RegisterTenant);
+                return provider;
+            });
+
+            services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
+            services.AddScoped<IRabbitMQPublisher, RabbitMQPublisher>();
+            services.AddSingleton<IRabbitMQConsumer, RabbitMQConsumer>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Andux.Core.RabbitMQ 服务注册扩展方法
+        /// 多租户模式（支持IRabbitMQConnectionProvider，IRabbitMQPublisher， IRabbitMQConsumer，IRabbitMQTenantService）
+        /// 支持同时注册多个连接，和管理连接 （使用此模式后所有的exchangeName，routingKey以及queueName前面都会自动加上 $"{tenantId}."）
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="tenantConfigs"></param>
+        /// <returns></returns>
+        public static IServiceCollection UseAnduxTenantRabbitMQServices(this IServiceCollection services, List<RabbitMQTenantOptions> tenantConfigs)
+        {
+            if (tenantConfigs.Count <= 0)
+                throw new AbandonedMutexException("无租户数据，注册并使用AnduxRabbitMQ失败");
+
+            services.AddSingleton(tenantConfigs);
+
+            // 默认取第一天数据为默认租户
+            var defaultTenant = tenantConfigs.First();
+            var rabbitMQConfig = new RabbitMQOptions()
+            {
+                Host = defaultTenant.Host,
+                Port = defaultTenant.Port,
+                UserName = defaultTenant.UserName,
+                Password = defaultTenant.Password,
+                VirtualHost = defaultTenant.VirtualHost,
+                NetworkRecoveryInterval = defaultTenant.NetworkRecoveryInterval,
+            };
+
+            // 注册连接提供者（支持多租户）
+            services.AddSingleton<IRabbitMQConnectionProvider>(sp =>
+            {
+                var provider = new RabbitMQConnectionProvider(rabbitMQConfig);
+                (tenantConfigs).ForEach(provider.RegisterTenant);
                 return provider;
             });
 
             services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
             services.AddSingleton<IRabbitMQConsumer, RabbitMQConsumer>();
 
-            // 4. 注册租户服务（作用域）
-            services.AddScoped<IRabbitMQTenantService>(sp =>
-            {
-                var tenantContext = sp.GetRequiredService<ITenantContext>();
-                return CreateRabbitMQTenantService(sp, tenantContext.TenantId);
-            });
+            // 租户服务工厂
+            services.AddSingleton<IRabbitMQTenantServiceFactory, RabbitMQTenantServiceFactory>();
 
             return services;
         }
-
-
-        /// <summary>
-        /// 获取指定 TenantId 的 RabbitMQTenantService
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        /// <param name="tenantId"></param>
-        /// <returns></returns>
-        public static IRabbitMQTenantService GetRabbitMQTenantService(
-            this IServiceProvider serviceProvider,
-            string tenantId)
-        {
-            return CreateRabbitMQTenantService(serviceProvider, tenantId);
-        }
-
-        /// <summary>
-        /// 内部创建方法
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        /// <param name="tenantId"></param>
-        /// <returns></returns>
-        private static IRabbitMQTenantService CreateRabbitMQTenantService(
-            IServiceProvider serviceProvider,
-            string tenantId)
-        {
-            var connectionProvider = serviceProvider.GetRequiredService<IRabbitMQConnectionProvider>();
-            var publisher = serviceProvider.GetRequiredService<IRabbitMQPublisher>();
-            var consumer = serviceProvider.GetRequiredService<IRabbitMQConsumer>();
-
-            return new RabbitMQTenantService(
-                tenantId,
-                connectionProvider,
-                publisher,
-                consumer);
-        }
-
     }
 }

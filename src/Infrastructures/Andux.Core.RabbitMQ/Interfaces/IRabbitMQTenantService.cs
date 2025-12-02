@@ -11,6 +11,11 @@
         string TenantId { get; }
 
         /// <summary>
+        /// 创建时间
+        /// </summary>
+        DateTime CreatedTime { get; }
+
+        /// <summary>
         /// 租户专属发布者
         /// </summary>
         IRabbitMQPublisher Publisher { get; }

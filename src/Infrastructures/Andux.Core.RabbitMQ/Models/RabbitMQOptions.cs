@@ -8,7 +8,7 @@
         /// <summary>
         /// 主机地址 (默认: localhost)
         /// </summary>
-        public string HostName { get; set; } = "localhost";
+        public string Host { get; set; } = "localhost";
 
         /// <summary>
         /// 端口号 (默认: 5672)
@@ -23,22 +23,12 @@
         /// <summary>
         /// 用户名 (默认: guest)
         /// </summary>
-        public string UserName { get; set; } = "guest";
+        public string UserName { get; set; } = "root";
 
         /// <summary>
         /// 密码 (默认: guest)
         /// </summary>
-        public string Password { get; set; } = "guest";
-
-        /// <summary>
-        /// 客户提供的名称 (默认: Andux.Core.RabbitMQ)
-        /// </summary>
-        public string ClientProvidedName { get; set; } = "Andux.Core.RabbitMQ";
-
-        /// <summary>
-        /// 启用自动恢复 (默认: true)
-        /// </summary>
-        public bool AutomaticRecoveryEnabled { get; set; } = true;
+        public string Password { get; set; } = "root";
 
         /// <summary>
         /// 网络恢复间隔(秒) (默认: 10)

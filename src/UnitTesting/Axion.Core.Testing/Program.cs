@@ -17,6 +17,7 @@ using System.Text;
 using Andux.Core.RabbitMQ.Extensions;
 using Andux.Core.EventBus.Events;
 using Andux.Core.EventBus.Extensions;
+using Andux.Core.RabbitMQ.Models;
 using Andux.Core.Testing.Events;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -108,19 +109,52 @@ builder.Services.AddRedisService(builder.Configuration);
 
 #region Andux.Core.RabbitMQ
 
-// 添加RabbitMQ相关服务(非租户注册)
-builder.Services.UseAnduxRabbitMQServices(builder.Configuration, null, [
-    new("root") { Password = "mq@20241029!." },
-    new("bsb") { Password = "bsb@hyhf!.." },
-    new("sfm") { Password = "sfm@hyhf!.." }
-]);
+// 注册AnduxRabbitMQ，普通模式
+//builder.Services.UseAnduxRabbitMQServices(new RabbitMQOptions()
+//{
+//    Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
+//    Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
+//    UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
+//    Password = builder.Configuration.GetValue("AnduxRabbitMQ:Password", "guest"),
+//    VirtualHost = builder.Configuration.GetValue("AnduxRabbitMQ:VirtualHost", "/"),
+//    NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+//});
 
-//// 添加RabbitMQ相关服务(租户模式)
-//builder.Services.UseAnduxRabbitMQServices(builder.Configuration, "bsb", [
-//    new("root") { Password = "mq@20241029!." },
-//    new("bsb") { Password = "bsb@hyhf!.." },
-//    new("sfm") { Password = "sfm@hyhf!.." }
-//]);
+// 注册AnduxRabbitMQ，租户模式
+var tenantOptions = new List<RabbitMQTenantOptions>
+{
+    new ()
+    {
+        TenantId = "andy",
+        Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
+        Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
+        UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
+        Password = builder.Configuration.GetValue("AnduxRabbitMQ:Password", "guest"),
+        VirtualHost = builder.Configuration.GetValue("AnduxRabbitMQ:VirtualHost", "/"),
+        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+    },
+    new ()
+    {
+        TenantId = "pro",
+        Host = "111.22.145.28",
+        Port = 7093,
+        UserName = "test",
+        Password = "test@123",
+        VirtualHost ="test",
+        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+    },
+    new ()
+    {
+        TenantId = "hu",
+        Host = "111.22.145.236",
+        Port = 25704,
+        UserName = "log_test",
+        Password = "log_test",
+        VirtualHost ="/log",
+        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+    },
+};
+builder.Services.UseAnduxTenantRabbitMQServices(tenantOptions);
 
 // 监听订单处理服务
 //builder.Services.AddHostedService<OrderProcessingService>();

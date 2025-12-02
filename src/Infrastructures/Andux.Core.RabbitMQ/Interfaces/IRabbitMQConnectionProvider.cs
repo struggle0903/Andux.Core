@@ -14,24 +14,11 @@ namespace Andux.Core.RabbitMQ.Interfaces
         IConnection GetConnection();
 
         /// <summary>
-        /// 获取租户专属连接
-        /// </summary>
-        /// <param name="tenantId"></param>
-        /// <returns></returns>
-        IConnection GetTenantConnection(string? tenantId);
-
-        /// <summary>
         /// 创建通道
         /// </summary>
         /// <param name="tenantId"></param>
         /// <returns></returns>
         IModel CreateChannel(string? tenantId = null);
-
-        /// <summary>
-        /// 注册租户配置
-        /// </summary>
-        /// <param name="options"></param>
-        void RegisterTenant(TenantOptions options);
 
         /// <summary>
         /// 获取当前所有活跃连接对象
@@ -44,5 +31,22 @@ namespace Andux.Core.RabbitMQ.Interfaces
         /// </summary>
         /// <param name="tenantId"></param>
         void RemoveConnection(string tenantId);
+
+        #region 租户相关
+
+        /// <summary>
+        /// 获取租户专属连接
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        IConnection GetTenantConnection(string? tenantId);
+
+        /// <summary>
+        /// 注册租户配置
+        /// </summary>
+        /// <param name="options"></param>
+        void RegisterTenant(RabbitMQTenantOptions options);
+
+        #endregion
     }
 }
