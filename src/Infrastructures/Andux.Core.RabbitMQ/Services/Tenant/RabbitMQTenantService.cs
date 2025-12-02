@@ -67,8 +67,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishToQueue<T>(string queueName, T message, bool persistent = true) where T : class
             {
-                //_inner.PublishToQueue(GetTenantName(queueName), message, persistent);
-
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
                 _inner.PublishToQueue(tenantConnection, GetTenantName(queueName), message, persistent);
             }
@@ -85,8 +83,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             {
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
                 _inner.PublishToExchange(tenantConnection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
-
-                //_inner.PublishToExchange(GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
             }
 
             /// <summary>
@@ -99,8 +95,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void PublishBatch<T>(string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
             {
                 var modifiedMessages = messages.Select(x => (GetTenantName(x.RoutingKey), x.Message));
-                //_inner.PublishBatch(GetTenantName(exchangeName), modifiedMessages, persistent);
-
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
                 _inner.PublishBatch(tenantConnection, GetTenantName(exchangeName), modifiedMessages, persistent);
             }
@@ -115,8 +109,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishTopic<T>(string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
-                //_inner.PublishTopic(GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
-
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
                 _inner.PublishTopic(tenantConnection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
             }
@@ -133,8 +125,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishToQueue<T>(IConnection connection, string queueName, T message, bool persistent = true) where T : class
             {
-                //_inner.PublishToQueue(connection, GetTenantName(queueName), message, persistent);
-
                 _inner.PublishToQueue(connection, GetTenantName(queueName), message, persistent);
             }
 
@@ -149,8 +139,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishToExchange<T>(IConnection connection, string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
-                //_inner.PublishToExchange(connection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
-
                 _inner.PublishToExchange(connection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
             }
 
@@ -165,8 +153,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void PublishBatch<T>(IConnection connection, string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
             {
                 var modifiedMessages = messages.Select(x => (GetTenantName(x.RoutingKey), x.Message));
-                //_inner.PublishBatch(connection, GetTenantName(exchangeName), modifiedMessages, persistent);
-
                 _inner.PublishBatch(connection, GetTenantName(exchangeName), modifiedMessages, persistent);
             }
 
@@ -181,8 +167,6 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishTopic<T>(IConnection connection, string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
-                //_inner.PublishTopic(connection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
-
                 _inner.PublishTopic(connection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
             }
 

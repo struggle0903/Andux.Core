@@ -78,6 +78,9 @@ namespace Andux.Core.Testing.Controllers
             var order = new Order() { Id = 999 };
             _inner.PublishToQueue("123456", order);
 
+            var order2 = new Order() { Id = 101022 };
+            _inner.PublishToExchange("omp.biz.gateway", "omp.biz.log", order2);
+
             #region 租户工厂发布消息
 
             var aOrder = new Order() { Id = 111 };
@@ -107,6 +110,12 @@ namespace Andux.Core.Testing.Controllers
             var tcs = new TaskCompletionSource<Order>();
 
             _mqConsume.StartConsuming<Order>("123456", order =>
+            {
+                tcs.TrySetResult(order);
+                return Task.CompletedTask;
+            });
+
+            _mqConsume.StartConsumingExchange<Order>("omp.biz.gateway", "omp.biz.log.queue", "omp.biz.log", order =>
             {
                 tcs.TrySetResult(order);
                 return Task.CompletedTask;
