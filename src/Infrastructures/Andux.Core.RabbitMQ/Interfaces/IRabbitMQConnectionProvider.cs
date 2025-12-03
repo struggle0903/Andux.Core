@@ -9,6 +9,19 @@ namespace Andux.Core.RabbitMQ.Interfaces
     public interface IRabbitMQConnectionProvider : IDisposable
     {
         /// <summary>
+        /// 获取mq配置选项
+        /// </summary>
+        /// <returns></returns>
+        RabbitMQOptions GetMQOptions();
+
+        /// <summary>
+        /// 获取指定租户mq配置
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        RabbitMQTenantOptions GetMQTenantOptions(string tenantId);
+
+        /// <summary>
         /// 获取默认连接
         /// </summary>
         IConnection GetConnection();

@@ -11,6 +11,11 @@
         string TenantId { get; }
 
         /// <summary>
+        /// 是否启用前缀，启用后exchange，routingKey和queueName前面都会 TenantId
+        /// </summary>
+        bool EnablePrefix { get; }
+
+        /// <summary>
         /// 创建时间
         /// </summary>
         DateTime CreatedTime { get; }

@@ -126,6 +126,7 @@ var tenantOptions = new List<RabbitMQTenantOptions>
     new ()
     {
         TenantId = "andy",
+        EnablePrefix = false,
         Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
         Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
         UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),

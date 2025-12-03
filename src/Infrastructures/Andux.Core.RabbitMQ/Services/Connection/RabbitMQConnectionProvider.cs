@@ -33,6 +33,24 @@ namespace Andux.Core.RabbitMQ.Services.Connection
         }
 
         /// <summary>
+        /// 获取mq配置
+        /// </summary>
+        /// <returns></returns>
+        public RabbitMQOptions GetMQOptions()
+        {
+            return _globalOptions;
+        }
+
+        /// <summary>
+        /// 获取指定租户mq配置
+        /// </summary>
+        /// <returns></returns>
+        public RabbitMQTenantOptions GetMQTenantOptions(string tenantId)
+        {
+            return _tenantOptions[tenantId];
+        }
+
+        /// <summary>
         /// 注册租户配置
         /// </summary>
         /// <param name="options"></param>

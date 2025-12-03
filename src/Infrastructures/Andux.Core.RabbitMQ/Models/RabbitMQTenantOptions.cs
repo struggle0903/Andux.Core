@@ -36,20 +36,13 @@
         public string Password { get; set; }
 
         /// <summary>
+        /// 是否启用前缀，启用后exchange，routingKey和queueName前面都会 TenantId
+        /// </summary>
+        public bool EnablePrefix { get; set; } = true;
+
+        /// <summary>
         /// 网络恢复间隔(秒) (默认: 10)
         /// </summary>
         public int NetworkRecoveryInterval { get; set; } = 10;
-
-        ///// <summary>
-        ///// 构造
-        ///// </summary>
-        ///// <param name="tenantId"></param>
-        //public RabbitMQTenantOptions(string tenantId)
-        //{
-        //    Password = Password ?? string.Empty;
-        //    TenantId = tenantId ?? string.Empty;
-        //    VirtualHost = VirtualHost;
-        //    UserName = $"{tenantId}";
-        //}
     }
 }

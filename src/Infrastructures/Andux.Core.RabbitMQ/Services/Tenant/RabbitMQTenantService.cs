@@ -9,21 +9,24 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
     public class RabbitMQTenantService : IRabbitMQTenantService
     {
         public string TenantId { get; }
+        public bool EnablePrefix { get; }
         public DateTime CreatedTime { get; }
         public IRabbitMQPublisher Publisher { get; }
         public IRabbitMQConsumer Consumer { get; }
 
         public RabbitMQTenantService(
             string? tenantId,
+            bool enablePrefix,
             IRabbitMQConnectionProvider connectionProvider,
             IRabbitMQPublisher publisher,
             IRabbitMQConsumer consumer,
             IRabbitMQTenantServiceFactory tenantServiceFactory)
         {
             TenantId = tenantId ?? string.Empty;
+            EnablePrefix = enablePrefix;
             CreatedTime = DateTime.Now;
-            Publisher = new TenantPublisherDecorator(connectionProvider, publisher, tenantId);
-            Consumer = new TenantConsumerDecorator(connectionProvider, consumer, tenantId);
+            Publisher = new TenantPublisherDecorator(connectionProvider, publisher, tenantId, enablePrefix);
+            Consumer = new TenantConsumerDecorator(connectionProvider, consumer, tenantId, enablePrefix);
 
             // 确保租户已注册
             //connectionProvider.GetTenantConnection(tenantId);
@@ -45,15 +48,17 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="connectionProvider"></param>
             /// <param name="inner"></param>
             /// <param name="tenantId"></param>
+            /// <param name="enablePrefix"></param>
             public TenantPublisherDecorator(
                 IRabbitMQConnectionProvider connectionProvider,
                 IRabbitMQPublisher inner, 
-                string? tenantId)
+                string? tenantId,
+                bool enablePrefix)
             {
                 _inner = inner;
                 _currentTenantId = tenantId ?? "default";
                 _connectionProvider = connectionProvider;
-                _tenantPrefix = tenantId is { Length: > 0 } ? $"{tenantId}." : "";
+                _tenantPrefix = enablePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : ""): "";
             }
 
             private string GetTenantName(string name) => $"{_tenantPrefix}{name}";
@@ -189,15 +194,17 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="inner"></param>
             /// <param name="connectionProvider"></param>
             /// <param name="tenantId"></param>
+            /// <param name="enablePrefix"></param>
             public TenantConsumerDecorator(
                 IRabbitMQConnectionProvider connectionProvider, 
                 IRabbitMQConsumer inner,
-                string? tenantId)
+                string? tenantId,
+                bool enablePrefix)
             {
                 _inner = inner;
                 _currentTenantId = tenantId ?? "default";
                 _connectionProvider = connectionProvider;
-                _tenantPrefix = tenantId is { Length: > 0 } ? $"{tenantId}." : "";
+                _tenantPrefix = enablePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : "") : "";
             }
 
             /// <summary>
