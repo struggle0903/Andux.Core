@@ -16,10 +16,20 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-	<PackageId>Andux.Core.RabbitMQ</PackageId>
+	<!--<PackageId>Andux.Core.RabbitMQ</PackageId>
 	<Version>1.0.1</Version>
 	<Authors>andy.hu</Authors>
 	<Description>区分普通模式（UseAnduxRabbitMQServices）和租户模式（UseAnduxTenantRabbitMQServices）。</Description>
+	<PackageTags>RabbitMQ;PubSub;MQ;Queue;Andux</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+	<PackageId>Andux.Core.RabbitMQ</PackageId>
+	<Version>1.0.2</Version>
+	<Authors>andy.hu</Authors>
+	<Description>租户模式下增加自定义是否启用TenantId前缀参数。</Description>
 	<PackageTags>RabbitMQ;PubSub;MQ;Queue;Andux</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
