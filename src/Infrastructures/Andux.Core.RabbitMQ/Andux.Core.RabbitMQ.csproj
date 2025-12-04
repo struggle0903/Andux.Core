@@ -36,10 +36,30 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-	<PackageId>Andux.Core.RabbitMQ</PackageId>
+	<!--<PackageId>Andux.Core.RabbitMQ</PackageId>
 	<Version>1.0.2.1</Version>
 	<Authors>andy.hu</Authors>
 	<Description>租户模式下分别增加交换机，路由key，队列名的前缀是否启用参数。</Description>
+	<PackageTags>RabbitMQ;PubSub;MQ;Queue;Andux</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+	<!--<PackageId>Andux.Core.RabbitMQ</PackageId>
+	<Version>1.0.2.2</Version>
+	<Authors>andy.hu</Authors>
+	<Description>修复发布消息后出现编码问题。</Description>
+	<PackageTags>RabbitMQ;PubSub;MQ;Queue;Andux</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+	<PackageId>Andux.Core.RabbitMQ</PackageId>
+	<Version>1.0.2.3</Version>
+	<Authors>andy.hu</Authors>
+	<Description>增加发布的消息类型判断，避免字符串消息被双重转义</Description>
 	<PackageTags>RabbitMQ;PubSub;MQ;Queue;Andux</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>

@@ -85,7 +85,8 @@ namespace Andux.Core.Testing.Controllers
 
             var aOrder = new Order() { Id = 111 };
             var andyTenant = _tenantServiceFactory.GetService("andy");
-            andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", aOrder);
+            //andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", aOrder);
+            andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", "1232222");
 
             //var hOrder = new Order() { Id = 222 };
             //var huTenant = _tenantServiceFactory.GetService("hu");

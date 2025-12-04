@@ -1,6 +1,8 @@
 ﻿using Andux.Core.RabbitMQ.Exceptions;
 using Andux.Core.RabbitMQ.Interfaces;
 using RabbitMQ.Client;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace Andux.Core.RabbitMQ.Services.Publishers
@@ -24,7 +26,10 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = false
+                WriteIndented = false,
+
+                // 加上后不会出现 \u0022 编码问题
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
         }
 
@@ -225,7 +230,19 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
         {
             try
             {
-                var body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
+                byte[] body;
+
+                // 检查是否为字符串类型
+                if (message is string stringMessage)
+                {
+                    // 如果是字符串，直接编码
+                    body = Encoding.UTF8.GetBytes(stringMessage);
+                }
+                else
+                {
+                    // 如果不是字符串，序列化为 JSON
+                    body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
+                }
 
                 var properties = channel.CreateBasicProperties();
                 ConfigureProperties(properties, persistent);
