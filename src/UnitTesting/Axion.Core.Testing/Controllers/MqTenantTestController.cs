@@ -75,25 +75,25 @@ namespace Andux.Core.Testing.Controllers
         [HttpPost("publish")]
         public IActionResult CreateOrder()
         {
-            var order = new Order() { Id = 999 };
-            _inner.PublishToQueue("123456", order);
+            //var order = new Order() { Id = 999 };
+            //_inner.PublishToQueue("123456", order);
 
-            var order2 = new Order() { Id = 101022 };
-            _inner.PublishToExchange("omp.biz.gateway", "omp.biz.log", order2);
+            //var order2 = new Order() { Id = 101022 };
+            //_inner.PublishToExchange("omp.biz.gateway", "omp.biz.log", order2);
 
             #region 租户工厂发布消息
 
             var aOrder = new Order() { Id = 111 };
             var andyTenant = _tenantServiceFactory.GetService("andy");
-            andyTenant.Publisher.PublishTopic("andux.iot.gateway", "andux.test.rkey", aOrder);
+            andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", aOrder);
 
-            var hOrder = new Order() { Id = 222 };
-            var huTenant = _tenantServiceFactory.GetService("hu");
-            huTenant.Publisher.PublishTopic("andux.iot.gateway", "andux.test.rkey2", hOrder);
+            //var hOrder = new Order() { Id = 222 };
+            //var huTenant = _tenantServiceFactory.GetService("hu");
+            //huTenant.Publisher.PublishTopic("andux.iot.gateway", "andux.test.rkey2", hOrder);
 
-            var pOrder = new Order() { Id = 3333 };
-            var proTenant = _tenantServiceFactory.GetService("pro");
-            proTenant.Publisher.PublishTopic("andux.iot.gateway", "andux.test.rkey", pOrder);
+            //var pOrder = new Order() { Id = 3333 };
+            //var proTenant = _tenantServiceFactory.GetService("pro");
+            //proTenant.Publisher.PublishTopic("andux.iot.gateway", "andux.test.rkey", pOrder);
 
             #endregion
 
@@ -109,58 +109,58 @@ namespace Andux.Core.Testing.Controllers
         {
             var tcs = new TaskCompletionSource<Order>();
 
-            _mqConsume.StartConsuming<Order>("123456", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //_mqConsume.StartConsuming<Order>("123456", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
-            _mqConsume.StartConsumingExchange<Order>("omp.biz.gateway", "omp.biz.log.queue", "omp.biz.log", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //_mqConsume.StartConsumingExchange<Order>("omp.biz.gateway", "omp.biz.log.queue", "omp.biz.log", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
             #region 租户工厂消费
 
             var andyTenant = _tenantServiceFactory.GetService("andy");
-            andyTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey", "andy.andux.test.queue", order =>
+            andyTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "andy.andux.test.queue", order =>
             {
                 tcs.TrySetResult(order);
                 return Task.CompletedTask;
             });
 
-            andyTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey", "andy.andux.test2.queue", order =>
+            andyTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "andy.andux.test2.queue", order =>
             {
                 tcs.TrySetResult(order);
                 return Task.CompletedTask;
             });
 
-            var huTenant = _tenantServiceFactory.GetService("hu");
-            huTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey2", "andy.andux.test.queue", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //var huTenant = _tenantServiceFactory.GetService("hu");
+            //huTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey2", "andy.andux.test.queue", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
-            huTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey2", "andy.andux.test2.queue", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //huTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey2", "andy.andux.test2.queue", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
-            var proTenant = _tenantServiceFactory.GetService("pro");
-            proTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey", "andy.andux.test.queue", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //var proTenant = _tenantServiceFactory.GetService("pro");
+            //proTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey", "andy.andux.test.queue", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
-            proTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey", "andy.andux.test2.queue", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //proTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey", "andy.andux.test2.queue", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
 
             #endregion

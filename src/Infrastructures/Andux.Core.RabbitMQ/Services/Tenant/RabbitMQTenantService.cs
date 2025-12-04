@@ -1,4 +1,5 @@
 ﻿using Andux.Core.RabbitMQ.Interfaces;
+using Andux.Core.RabbitMQ.Models;
 using RabbitMQ.Client;
 
 namespace Andux.Core.RabbitMQ.Services.Tenant
@@ -9,24 +10,31 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
     public class RabbitMQTenantService : IRabbitMQTenantService
     {
         public string TenantId { get; }
-        public bool EnablePrefix { get; }
+        public RabbitMQTenantOptions TenantOptions { get; }
         public DateTime CreatedTime { get; }
         public IRabbitMQPublisher Publisher { get; }
         public IRabbitMQConsumer Consumer { get; }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="mqTenantOptions"></param>
+        /// <param name="connectionProvider"></param>
+        /// <param name="publisher"></param>
+        /// <param name="consumer"></param>
         public RabbitMQTenantService(
             string? tenantId,
-            bool enablePrefix,
+            RabbitMQTenantOptions mqTenantOptions,
             IRabbitMQConnectionProvider connectionProvider,
             IRabbitMQPublisher publisher,
-            IRabbitMQConsumer consumer,
-            IRabbitMQTenantServiceFactory tenantServiceFactory)
+            IRabbitMQConsumer consumer)
         {
             TenantId = tenantId ?? string.Empty;
-            EnablePrefix = enablePrefix;
             CreatedTime = DateTime.Now;
-            Publisher = new TenantPublisherDecorator(connectionProvider, publisher, tenantId, enablePrefix);
-            Consumer = new TenantConsumerDecorator(connectionProvider, consumer, tenantId, enablePrefix);
+            TenantOptions = mqTenantOptions;
+            Publisher = new TenantPublisherDecorator(connectionProvider, publisher, mqTenantOptions, tenantId);
+            Consumer = new TenantConsumerDecorator(connectionProvider, consumer, mqTenantOptions, tenantId);
 
             // 确保租户已注册
             //connectionProvider.GetTenantConnection(tenantId);
@@ -39,7 +47,9 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
         {
             private readonly IRabbitMQPublisher _inner;
             private readonly IRabbitMQConnectionProvider _connectionProvider;
-            private readonly string _tenantPrefix;
+            private readonly string _exchangePrefix;
+            private readonly string _routingKeyPrefix;
+            private readonly string _queuePrefix;
             private readonly string _currentTenantId;
 
             /// <summary>
@@ -47,21 +57,42 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// </summary>
             /// <param name="connectionProvider"></param>
             /// <param name="inner"></param>
+            /// <param name="tenantOptions"></param>
             /// <param name="tenantId"></param>
-            /// <param name="enablePrefix"></param>
             public TenantPublisherDecorator(
                 IRabbitMQConnectionProvider connectionProvider,
-                IRabbitMQPublisher inner, 
-                string? tenantId,
-                bool enablePrefix)
+                IRabbitMQPublisher inner,
+                RabbitMQTenantOptions tenantOptions,
+                string? tenantId)
             {
                 _inner = inner;
                 _currentTenantId = tenantId ?? "default";
                 _connectionProvider = connectionProvider;
-                _tenantPrefix = enablePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : ""): "";
+                _exchangePrefix = tenantOptions.EnableExchangePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : ""): "";
+                _routingKeyPrefix = tenantOptions.EnableRoutingKeyPrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : ""): "";
+                _queuePrefix = tenantOptions.EnableQueueNamePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : ""): "";
             }
 
-            private string GetTenantName(string name) => $"{_tenantPrefix}{name}";
+            /// <summary>
+            /// 租户交换机名称
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            private string GetTenantExchangeName(string name) => $"{_exchangePrefix}{name}";
+
+            /// <summary>
+            /// 租户路由key名称
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            private string GetTenantRoutingKeyName(string name) => $"{_routingKeyPrefix}{name}";
+
+            /// <summary>
+            /// 租户队列名称
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            private string GetTenantQueueName(string name) => $"{_queuePrefix}{name}";
 
             /// <summary>
             /// 将消息发布到指定队列。如果队列不存在，会自动创建持久化队列。
@@ -73,7 +104,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void PublishToQueue<T>(string queueName, T message, bool persistent = true) where T : class
             {
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
-                _inner.PublishToQueue(tenantConnection, GetTenantName(queueName), message, persistent);
+                _inner.PublishToQueue(tenantConnection, GetTenantQueueName(queueName), message, persistent);
             }
 
             /// <summary>
@@ -87,7 +118,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void PublishToExchange<T>(string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
-                _inner.PublishToExchange(tenantConnection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
+                _inner.PublishToExchange(tenantConnection, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), message, persistent);
             }
 
             /// <summary>
@@ -99,9 +130,9 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishBatch<T>(string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
             {
-                var modifiedMessages = messages.Select(x => (GetTenantName(x.RoutingKey), x.Message));
+                var modifiedMessages = messages.Select(x => (GetTenantRoutingKeyName(x.RoutingKey), x.Message));
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
-                _inner.PublishBatch(tenantConnection, GetTenantName(exchangeName), modifiedMessages, persistent);
+                _inner.PublishBatch(tenantConnection, GetTenantExchangeName(exchangeName), modifiedMessages, persistent);
             }
 
             /// <summary>
@@ -115,7 +146,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void PublishTopic<T>(string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
                 var tenantConnection = _connectionProvider.GetTenantConnection(_currentTenantId);
-                _inner.PublishTopic(tenantConnection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
+                _inner.PublishTopic(tenantConnection, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), message, persistent);
             }
 
             #region 根据Connection连接对象发布消息
@@ -130,7 +161,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishToQueue<T>(IConnection connection, string queueName, T message, bool persistent = true) where T : class
             {
-                _inner.PublishToQueue(connection, GetTenantName(queueName), message, persistent);
+                _inner.PublishToQueue(connection, GetTenantQueueName(queueName), message, persistent);
             }
 
             /// <summary>
@@ -144,7 +175,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishToExchange<T>(IConnection connection, string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
-                _inner.PublishToExchange(connection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
+                _inner.PublishToExchange(connection, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), message, persistent);
             }
 
             /// <summary>
@@ -157,8 +188,8 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishBatch<T>(IConnection connection, string exchangeName, IEnumerable<(string RoutingKey, T Message)> messages, bool persistent = true) where T : class
             {
-                var modifiedMessages = messages.Select(x => (GetTenantName(x.RoutingKey), x.Message));
-                _inner.PublishBatch(connection, GetTenantName(exchangeName), modifiedMessages, persistent);
+                var modifiedMessages = messages.Select(x => (GetTenantRoutingKeyName(x.RoutingKey), x.Message));
+                _inner.PublishBatch(connection, GetTenantExchangeName(exchangeName), modifiedMessages, persistent);
             }
 
             /// <summary>
@@ -172,7 +203,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="persistent">是否持久化消息</param>
             public void PublishTopic<T>(IConnection connection, string exchangeName, string routingKey, T message, bool persistent = true) where T : class
             {
-                _inner.PublishTopic(connection, GetTenantName(exchangeName), GetTenantName(routingKey), message, persistent);
+                _inner.PublishTopic(connection, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), message, persistent);
             }
 
             #endregion
@@ -185,7 +216,9 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
         {
             private readonly IRabbitMQConsumer _inner;
             private readonly IRabbitMQConnectionProvider _connectionProvider;
-            private readonly string _tenantPrefix;
+            private readonly string _exchangePrefix;
+            private readonly string _routingKeyPrefix;
+            private readonly string _queuePrefix;
             private readonly string _currentTenantId;
 
             /// <summary>
@@ -193,19 +226,42 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// </summary>
             /// <param name="inner"></param>
             /// <param name="connectionProvider"></param>
+            /// <param name="tenantOptions"></param>
             /// <param name="tenantId"></param>
-            /// <param name="enablePrefix"></param>
             public TenantConsumerDecorator(
                 IRabbitMQConnectionProvider connectionProvider, 
                 IRabbitMQConsumer inner,
-                string? tenantId,
-                bool enablePrefix)
+                RabbitMQTenantOptions tenantOptions,
+                string? tenantId)
             {
                 _inner = inner;
                 _currentTenantId = tenantId ?? "default";
                 _connectionProvider = connectionProvider;
-                _tenantPrefix = enablePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : "") : "";
+                _exchangePrefix = tenantOptions.EnableExchangePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : "") : "";
+                _routingKeyPrefix = tenantOptions.EnableRoutingKeyPrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : "") : "";
+                _queuePrefix = tenantOptions.EnableQueueNamePrefix ? (tenantId is { Length: > 0 } ? $"{tenantId}." : "") : "";
             }
+
+            /// <summary>
+            /// 租户交换机名称
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            private string GetTenantExchangeName(string name) => $"{_exchangePrefix}{name}";
+
+            /// <summary>
+            /// 租户路由key名称
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            private string GetTenantRoutingKeyName(string name) => $"{_routingKeyPrefix}{name}";
+
+            /// <summary>
+            /// 租户队列名称
+            /// </summary>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            private string GetTenantQueueName(string name) => $"{_queuePrefix}{name}";
 
             /// <summary>
             /// 开始消费队列
@@ -217,7 +273,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void StartConsuming<T>(string queueName, Func<T, Task> handler, bool autoAck = false) where T : class
             {
                 var tenantChannel = _connectionProvider.CreateChannel(_currentTenantId);
-                _inner.StartConsuming(tenantChannel, GetTenantName(queueName), handler, autoAck);
+                _inner.StartConsuming(tenantChannel, GetTenantQueueName(queueName), handler, autoAck);
             }
 
             /// <summary>
@@ -231,7 +287,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void StartConsumingTopic<T>(string exchangeName, string routingKey, Func<T, Task> handler, bool autoAck = false) where T : class
             {
                 var tenantChannel = _connectionProvider.CreateChannel(_currentTenantId);
-                _inner.StartConsumingTopic(tenantChannel, GetTenantName(exchangeName), GetTenantName(routingKey), handler, autoAck);
+                _inner.StartConsumingTopic(tenantChannel, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), handler, autoAck);
             }
 
             /// <summary>
@@ -247,7 +303,7 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
                 Func<T, Task> handler, bool autoAck = false) where T : class
             {
                 var tenantChannel = _connectionProvider.CreateChannel(_currentTenantId);
-                _inner.StartConsumingTopic(tenantChannel, GetTenantName(exchangeName), GetTenantName(routingKey), GetTenantName(queueName), handler, autoAck);
+                _inner.StartConsumingTopic(tenantChannel, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), GetTenantQueueName(queueName), handler, autoAck);
             }
 
             /// <summary>
@@ -267,28 +323,28 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
                 bool autoAck = false) where T : class
             {
                 var tenantChannel = _connectionProvider.CreateChannel(_currentTenantId);
-                _inner.StartConsumingExchange(tenantChannel, GetTenantName(exchangeName), GetTenantName(queueName ?? "default"), GetTenantName(routingKey), handler, autoAck);
+                _inner.StartConsumingExchange(tenantChannel, GetTenantExchangeName(exchangeName), GetTenantQueueName(queueName ?? "default"), GetTenantRoutingKeyName(routingKey), handler, autoAck);
             }
 
             #region 根据指定通道订阅消息
             public void StartConsuming<T>(IModel channel, string queueName, Func<T, Task> handler, bool autoAck = false) where T : class
             {
-                _inner.StartConsuming(channel, GetTenantName(queueName), handler, autoAck);
+                _inner.StartConsuming(channel, GetTenantQueueName(queueName), handler, autoAck);
             }
 
             public void StartConsumingTopic<T>(IModel channel, string exchangeName, string routingKey, Func<T, Task> handler, bool autoAck = false) where T : class
             {
-                _inner.StartConsumingTopic(channel, GetTenantName(exchangeName), GetTenantName(routingKey), handler, autoAck);
+                _inner.StartConsumingTopic(channel, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), handler, autoAck);
             }
 
             public void StartConsumingTopic<T>(IModel channel, string exchangeName, string routingKey, string queueName, Func<T, Task> handler, bool autoAck = false) where T : class
             {
-                _inner.StartConsumingTopic(channel, GetTenantName(exchangeName), GetTenantName(routingKey), GetTenantName(queueName), handler, autoAck);
+                _inner.StartConsumingTopic(channel, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), GetTenantQueueName(queueName), handler, autoAck);
             }
 
             public void StartConsumingExchange<T>(IModel channel, string exchangeName, string? queueName, string routingKey, Func<T, Task> handler, bool autoAck = false) where T : class
             {
-                _inner.StartConsumingExchange(channel, GetTenantName(exchangeName), GetTenantName(queueName ?? "default"), GetTenantName(routingKey), handler, autoAck);
+                _inner.StartConsumingExchange(channel, GetTenantExchangeName(exchangeName), GetTenantQueueName(queueName ?? "default"), GetTenantRoutingKeyName(routingKey), handler, autoAck);
             }
             #endregion
 
@@ -306,10 +362,8 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             /// <param name="queueName"></param>
             public void StopConsuming(string queueName)
             {
-                _inner.StopConsuming(GetTenantName(queueName));
+                _inner.StopConsuming(GetTenantQueueName(queueName));
             }
-
-            private string GetTenantName(string name) => $"{_tenantPrefix}{name}";
 
         }
     }

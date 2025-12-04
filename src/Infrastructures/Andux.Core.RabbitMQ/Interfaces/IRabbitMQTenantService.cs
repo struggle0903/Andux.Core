@@ -1,4 +1,6 @@
-﻿namespace Andux.Core.RabbitMQ.Interfaces
+﻿using Andux.Core.RabbitMQ.Models;
+
+namespace Andux.Core.RabbitMQ.Interfaces
 {
     /// <summary>
     /// 租户专属RabbitMQ服务接口
@@ -11,9 +13,9 @@
         string TenantId { get; }
 
         /// <summary>
-        /// 是否启用前缀，启用后exchange，routingKey和queueName前面都会 TenantId
+        /// 当前租户的配置选项
         /// </summary>
-        bool EnablePrefix { get; }
+        RabbitMQTenantOptions TenantOptions { get; }
 
         /// <summary>
         /// 创建时间

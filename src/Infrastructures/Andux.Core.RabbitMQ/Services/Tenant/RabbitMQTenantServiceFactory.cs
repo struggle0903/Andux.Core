@@ -58,18 +58,16 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             var connectionProvider = sp.GetRequiredService<IRabbitMQConnectionProvider>();
             var publisher = sp.GetRequiredService<IRabbitMQPublisher>();
             var consumer = sp.GetRequiredService<IRabbitMQConsumer>();
-            var tenantServiceFactory = sp.GetRequiredService<IRabbitMQTenantServiceFactory>();
 
             // 获取租户配置选项
             var tenantOptions = connectionProvider.GetMQTenantOptions(tenantId);
 
             return new RabbitMQTenantService(
                 tenantId,
-                tenantOptions.EnablePrefix,
+                tenantOptions,
                 connectionProvider,
                 publisher,
-                consumer,
-                tenantServiceFactory);
+                consumer);
         }
         #endregion
     }

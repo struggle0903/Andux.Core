@@ -126,7 +126,9 @@ var tenantOptions = new List<RabbitMQTenantOptions>
     new ()
     {
         TenantId = "andy",
-        EnablePrefix = false,
+        EnableExchangePrefix = false,
+        EnableRoutingKeyPrefix = true,
+        EnableQueueNamePrefix = true,
         Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
         Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
         UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
@@ -137,6 +139,9 @@ var tenantOptions = new List<RabbitMQTenantOptions>
     new ()
     {
         TenantId = "pro",
+        EnableExchangePrefix = true,
+        EnableRoutingKeyPrefix = true,
+        EnableQueueNamePrefix = true,
         Host = "111.22.145.28",
         Port = 7093,
         UserName = "test",
@@ -147,6 +152,9 @@ var tenantOptions = new List<RabbitMQTenantOptions>
     new ()
     {
         TenantId = "hu",
+        EnableExchangePrefix = true,
+        EnableRoutingKeyPrefix = true,
+        EnableQueueNamePrefix = true,
         Host = "111.22.145.236",
         Port = 25704,
         UserName = "log_test",

@@ -35,10 +35,22 @@
         /// </summary>
         public string Password { get; set; }
 
+        #region 为兼容OMP之前项目的配置项保留
         /// <summary>
-        /// 是否启用前缀，启用后exchange，routingKey和queueName前面都会 TenantId
+        /// 是否启用交换机前缀，启用后exchange前面会带上 TenantId
         /// </summary>
-        public bool EnablePrefix { get; set; } = true;
+        public bool EnableExchangePrefix { get; set; } = true;
+
+        /// <summary>
+        /// 是否启用路由key（routingKey）前缀，启用后routingKey前面会带上 TenantId
+        /// </summary>
+        public bool EnableRoutingKeyPrefix { get; set; } = true;
+
+        /// <summary>
+        /// 是否启用队列名前缀，启用后queueName前面会带上 TenantId
+        /// </summary>
+        public bool EnableQueueNamePrefix { get; set; } = true;
+        #endregion
 
         /// <summary>
         /// 网络恢复间隔(秒) (默认: 10)
