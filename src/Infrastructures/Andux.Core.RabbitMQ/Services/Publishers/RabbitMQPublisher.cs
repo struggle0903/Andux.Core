@@ -232,15 +232,30 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
             {
                 byte[] body;
 
-                // 检查是否为字符串类型
-                if (message is string stringMessage)
+                // 根据类型决定序列化方式
+                if (typeof(T) == typeof(string))
                 {
-                    // 如果是字符串，直接编码
-                    body = Encoding.UTF8.GetBytes(stringMessage);
+                    // 对于 string 类型，检查是否为有效的 JSON
+                    string stringMessage = message as string;
+                    if (IsValidJson(stringMessage))
+                    {
+                        // 如果是 JSON 字符串，直接编码（不额外序列化）
+                        body = Encoding.UTF8.GetBytes(stringMessage);
+                    }
+                    else
+                    {
+                        // 如果是普通字符串，作为 JSON 字符串序列化
+                        body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
+                    }
+                }
+                else if (typeof(T).IsPrimitive || message is ValueType)
+                {
+                    // 对于基本类型，直接序列化为 JSON
+                    body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
                 }
                 else
                 {
-                    // 如果不是字符串，序列化为 JSON
+                    // 对于复杂对象，序列化为 JSON
                     body = JsonSerializer.SerializeToUtf8Bytes(message, _jsonOptions);
                 }
 
@@ -269,6 +284,28 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
         {
             properties.Persistent = persistent;
             properties.DeliveryMode = persistent ? (byte)2 : (byte)1;
+        }
+
+        /// <summary>
+        /// 检查字符串是否为有效的json
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private bool IsValidJson(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+                return false;
+
+            try
+            {
+                var trimmed = str.Trim();
+                return (trimmed.StartsWith("{") && trimmed.EndsWith("}")) ||
+                       (trimmed.StartsWith("[") && trimmed.EndsWith("]"));
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion

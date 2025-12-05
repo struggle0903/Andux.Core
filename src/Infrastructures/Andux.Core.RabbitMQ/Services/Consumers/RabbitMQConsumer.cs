@@ -4,6 +4,7 @@ using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Collections.Concurrent;
 using System.Text.Json;
+using System.Text;
 
 namespace Andux.Core.RabbitMQ.Services.Consumers
 {
@@ -72,27 +73,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    throw new RabbitMQException($"处理来自队列的消息时出错: {queueName}", ex);
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(
@@ -137,27 +119,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    // 可以考虑记录日志
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
@@ -197,27 +160,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    // 可以考虑记录日志
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
@@ -268,27 +212,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    // 可记录日志
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
@@ -337,27 +262,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    throw new RabbitMQException($"处理来自队列的消息时出错: {queueName}", ex);
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(
@@ -407,27 +313,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    // 可以考虑记录日志
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
@@ -469,27 +356,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    // 可以考虑记录日志
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
@@ -539,27 +407,8 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
 
             consumer.Received += async (model, ea) =>
             {
-                try
-                {
-                    var message = JsonSerializer.Deserialize<T>(ea.Body.Span, _jsonOptions);
-                    if (message != null)
-                    {
-                        await handler(message);
-                    }
-
-                    if (!autoAck)
-                    {
-                        channel.BasicAck(ea.DeliveryTag, false);
-                    }
-                }
-                catch (Exception)
-                {
-                    if (!autoAck)
-                    {
-                        channel.BasicReject(ea.DeliveryTag, false);
-                    }
-                    // 可记录日志
-                }
+                await HandleReceivedMessageAsync<T>(channel, ea.Body.ToArray(), handler,
+                    ea.DeliveryTag, autoAck);
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
@@ -618,6 +467,56 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
         }
 
         #region 私有方法
+
+        /// <summary>
+        /// 处理接收消息
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="channel"></param>
+        /// <param name="body"></param>
+        /// <param name="handler"></param>
+        /// <param name="deliveryTag"></param>
+        /// <param name="autoAck"></param>
+        /// <returns></returns>
+        private async Task HandleReceivedMessageAsync<T>(IModel channel, byte[] body, Func<T, Task> handler,
+            ulong deliveryTag, bool autoAck) where T : class
+        {
+            try
+            {
+                T message;
+
+                // 根据泛型类型 T 决定如何处理
+                if (typeof(T) == typeof(string))
+                {
+                    // 对于 string 类型，直接解码为字符串
+                    var jsonText = Encoding.UTF8.GetString(body);
+                    message = (T)(object)jsonText;
+                }
+                else
+                {
+                    // 对于其他类型，使用 JSON 反序列化
+                    message = JsonSerializer.Deserialize<T>(body, _jsonOptions);
+                }
+
+                if (message != null)
+                {
+                    await handler(message);
+                }
+
+                if (!autoAck)
+                {
+                    channel.BasicAck(deliveryTag, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"处理接收消息发生异常：{ex.Message}");
+                if (!autoAck)
+                {
+                    channel.BasicReject(deliveryTag, false);
+                }
+            }
+        }
 
         /// <summary>
         /// 辅助方法：生成租户队列唯一Key

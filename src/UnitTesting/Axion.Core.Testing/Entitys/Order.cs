@@ -11,5 +11,6 @@
         // 导航属性
         public Customer Customer { get; set; } = null!;
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
+
     }
 }

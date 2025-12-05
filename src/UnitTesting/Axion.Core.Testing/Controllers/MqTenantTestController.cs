@@ -1,4 +1,5 @@
-﻿using Andux.Core.RabbitMQ.Interfaces;
+﻿using Andux.Core.Extensions;
+using Andux.Core.RabbitMQ.Interfaces;
 using Andux.Core.Testing.Entitys;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -84,9 +85,13 @@ namespace Andux.Core.Testing.Controllers
             #region 租户工厂发布消息
 
             var aOrder = new Order() { Id = 111 };
-            var andyTenant = _tenantServiceFactory.GetService("andy");
-            //andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", aOrder);
-            andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", "1232222");
+
+            //var andyTenant = _tenantServiceFactory.GetService("andy");
+            ////andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", aOrder);
+            //andyTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", "1232222");
+
+            var yjxfhhTenant = _tenantServiceFactory.GetService("yjxfhh");
+            yjxfhhTenant.Publisher.PublishTopic("andux2.iot.gateway", "andux.test.rkey", aOrder);
 
             //var hOrder = new Order() { Id = 222 };
             //var huTenant = _tenantServiceFactory.GetService("hu");
@@ -122,20 +127,33 @@ namespace Andux.Core.Testing.Controllers
             //    return Task.CompletedTask;
             //});
 
+            var yjxfhhTenant = _tenantServiceFactory.GetService("yjxfhh");
+            yjxfhhTenant.Consumer.StartConsumingTopic<string>("andux2.iot.gateway", "andux.test.rkey", "biz.andux.test.queue", order =>
+            {
+                //tcs.TrySetResult(order);
+                return Task.CompletedTask;
+            });
+
+            yjxfhhTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "biz.andux.test2.queue", order =>
+            {
+                //tcs.TrySetResult(order);
+                return Task.CompletedTask;
+            });
+
             #region 租户工厂消费
 
-            var andyTenant = _tenantServiceFactory.GetService("andy");
-            andyTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "andy.andux.test.queue", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //var andyTenant = _tenantServiceFactory.GetService("andy");
+            //andyTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "andy.andux.test.queue", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
-            andyTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "andy.andux.test2.queue", order =>
-            {
-                tcs.TrySetResult(order);
-                return Task.CompletedTask;
-            });
+            //andyTenant.Consumer.StartConsumingTopic<Order>("andux2.iot.gateway", "andux.test.rkey", "andy.andux.test2.queue", order =>
+            //{
+            //    tcs.TrySetResult(order);
+            //    return Task.CompletedTask;
+            //});
 
             //var huTenant = _tenantServiceFactory.GetService("hu");
             //huTenant.Consumer.StartConsumingTopic<Order>("andux.iot.gateway", "andux.test.rkey2", "andy.andux.test.queue", order =>
@@ -163,11 +181,10 @@ namespace Andux.Core.Testing.Controllers
             //    return Task.CompletedTask;
             //});
 
-
             #endregion
 
             // 等待5秒接收消息
-            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(5000));
+            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(2000));
 
             if (completedTask == tcs.Task)
             {

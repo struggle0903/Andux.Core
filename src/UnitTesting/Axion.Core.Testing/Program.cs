@@ -138,6 +138,19 @@ var tenantOptions = new List<RabbitMQTenantOptions>
     },
     new ()
     {
+        TenantId = "yjxfhh",
+        EnableExchangePrefix = true,
+        EnableRoutingKeyPrefix = true,
+        EnableQueueNamePrefix = true,
+        Host = "111.22.145.236",
+        Port = 25704,
+        UserName = "yjxfhh",
+        Password = "yjxfhh@251204!..",
+        VirtualHost = "yj",
+        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+    },
+    new ()
+    {
         TenantId = "pro",
         EnableExchangePrefix = true,
         EnableRoutingKeyPrefix = true,
@@ -149,19 +162,19 @@ var tenantOptions = new List<RabbitMQTenantOptions>
         VirtualHost ="test",
         NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
     },
-    new ()
-    {
-        TenantId = "hu",
-        EnableExchangePrefix = true,
-        EnableRoutingKeyPrefix = true,
-        EnableQueueNamePrefix = true,
-        Host = "111.22.145.236",
-        Port = 25704,
-        UserName = "log_test",
-        Password = "log_test",
-        VirtualHost ="/log",
-        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
-    },
+    //new ()
+    //{
+    //    TenantId = "hu",
+    //    EnableExchangePrefix = true,
+    //    EnableRoutingKeyPrefix = true,
+    //    EnableQueueNamePrefix = true,
+    //    Host = "111.22.145.236",
+    //    Port = 25704,
+    //    UserName = "log_test",
+    //    Password = "log_test",
+    //    VirtualHost ="/log",
+    //    NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+    //},
 };
 builder.Services.UseAnduxTenantRabbitMQServices(tenantOptions);
 
