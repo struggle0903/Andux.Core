@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Andux.Core.EfTrack.Repository.Paged;
 
@@ -63,6 +64,21 @@ namespace Andux.Core.EfTrack
         Task<PagedResult<T>> GetPagedAsync(BasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null);
+
+        /// <summary>
+        /// 获取导出数据
+        /// 可直接用于 CSV / Excel 导出
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="batchSize"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public IAsyncEnumerable<T> GetExportAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int batchSize = 1000,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 分页查询数据（支持 Include 指定导航属性）

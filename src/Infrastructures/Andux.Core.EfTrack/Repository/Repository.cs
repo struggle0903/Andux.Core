@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
@@ -196,6 +198,54 @@ namespace Andux.Core.EfTrack
                 TotalPages = totalPages,
                 Items = items
             };
+        }
+
+        /// <summary>
+        /// 获取导出数据
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="batchSize"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async IAsyncEnumerable<T> GetExportAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int batchSize = 1000,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            if (orderBy == null)
+                throw new InvalidOperationException("导出必须指定 orderBy，否则可能导致数据重复或遗漏");
+
+            var page = 1;
+
+            while (true)
+            {
+                var query = ApplyFilter(_dbSet).AsNoTracking();
+
+                if (predicate != null)
+                    query = query.Where(predicate);
+
+                query = orderBy(query);
+
+                var items = await query
+                    .Skip((page - 1) * batchSize)
+                    .Take(batchSize)
+                    .ToListAsync(cancellationToken);
+
+                if (items.Count == 0)
+                    yield break;
+
+                foreach (var item in items)
+                    yield return item;
+
+                // 不足一页，说明已经到末尾
+                if (items.Count < batchSize)
+                    yield break;
+
+                page++;
+            }
         }
 
         /// <summary>
