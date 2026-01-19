@@ -47,6 +47,28 @@ namespace Andux.Core.RabbitMQ.Interfaces
         /// <param name="persistent"></param>
         void PublishTopic<T>(string exchangeName, string routingKey, T message, bool persistent = true) where T : class;
 
+        /// <summary>
+        /// 发布广播消息（Fanout 交换机，所有绑定队列都会收到）
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="exchangeName">目标交换机名称</param>
+        /// <param name="message">要广播的消息</param>
+        /// <param name="persistent">是否持久化消息</param>
+        void PublishBroadcast<T>(string exchangeName, T message, bool persistent = true) where T : class;
+
+        /// <summary>
+        /// 发布广播消息到临时广播交换机
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="exchangeName">交换机名称</param>
+        /// <param name="message">要广播的消息</param>
+        /// <param name="autoDelete">是否自动删除（临时广播设为true）</param>
+        /// <remarks>
+        /// 适用于临时广播场景，如实时通知、会话消息等
+        /// 连接断开后交换机会自动删除
+        /// </remarks>
+        void PublishTemporaryBroadcast<T>(string exchangeName, T message, bool autoDelete = true) where T : class;
+
         #region 根据Connection连接对象发布消息
 
         /// <summary>

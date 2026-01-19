@@ -1,6 +1,7 @@
 ﻿using Andux.Core.RabbitMQ.Exceptions;
 using Andux.Core.RabbitMQ.Interfaces;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -115,6 +116,7 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
         }
 
         /// <summary>
+        /// 发布主题消息
         /// 支持 Topic Exchange
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -127,6 +129,80 @@ namespace Andux.Core.RabbitMQ.Services.Publishers
             using var channel = _connectionProvider.CreateChannel();
             channel.ExchangeDeclare(exchangeName, ExchangeType.Topic, durable: true);
             PublishMessage(channel, exchangeName, routingKey, message, persistent);
+        }
+
+        /// <summary>
+        /// 发布广播消息（Fanout 交换机，所有绑定队列都会收到）, 持久化消息
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="exchangeName">目标交换机名称</param>
+        /// <param name="message">要广播的消息</param>
+        /// <param name="persistent">是否持久化消息</param>
+        public void PublishBroadcast<T>(string exchangeName, T message, bool persistent = true) where T : class
+        {
+            using var channel = _connectionProvider.CreateChannel();
+
+            // Fanout 交换机：忽略路由键，广播到所有绑定队列
+            // channel.ExchangeDeclare(exchangeName, ExchangeType.Fanout, durable: true);
+
+            try
+            {
+                // 1. 先尝试被动声明（只检查，不创建）
+                channel.ExchangeDeclarePassive(exchangeName);
+
+                // 如果执行到这里，说明交换机已存在
+                channel.ExchangeDeclare(
+                    exchange: exchangeName,
+                    type: ExchangeType.Fanout,
+                    durable: true,     // 与现有交换机参数保持一致很重要！
+                    autoDelete: false);
+            }
+            catch (OperationInterruptedException ex) when (ex.Message.Contains("NOT_FOUND"))
+            {
+                // 2. 交换机不存在，创建它（Fanout 类型）
+                channel.ExchangeDeclare(
+                    exchange: exchangeName,
+                    type: ExchangeType.Fanout,
+                    durable: true,     // 与现有交换机参数保持一致很重要！
+                    autoDelete: false);
+            }
+            catch (OperationInterruptedException ex) when (ex.Message.Contains("PRECONDITION_FAILED"))
+            {
+                // 3. 交换机已存在但参数不匹配
+                throw new InvalidOperationException(
+                    $"交换机 '{exchangeName}' 已存在，但参数与请求的不匹配。\n" +
+                    $"现有类型可能是 'topic'，而你在尝试创建 'fanout'。\n" +
+                    $"请删除或重命名交换机后再试。", ex);
+            }
+
+            // Fanout 交换机忽略 routingKey，传递空字符串
+            PublishMessage(channel, exchangeName, string.Empty, message, persistent);
+        }
+
+        /// <summary>
+        /// 发布广播消息到临时广播交换机，不持久化
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="exchangeName">交换机名称</param>
+        /// <param name="message">要广播的消息</param>
+        /// <param name="autoDelete">是否自动删除（临时广播设为true）</param>
+        /// <remarks>
+        /// 适用于临时广播场景，如实时通知、会话消息等
+        /// 连接断开后交换机会自动删除
+        /// </remarks>
+        public void PublishTemporaryBroadcast<T>(string exchangeName, T message, bool autoDelete = true) where T : class
+        {
+            using var channel = _connectionProvider.CreateChannel();
+
+            // autoDelete: 临时广播通常设为true，连接断开后自动清理
+            channel.ExchangeDeclare(
+                exchange: exchangeName,
+                type: ExchangeType.Fanout,
+                durable: false,    // 临时广播不需要持久化
+                autoDelete: autoDelete,
+                arguments: null);
+
+            PublishMessage(channel, exchangeName, string.Empty, message, persistent: false);
         }
 
         #region 根据Connection连接对象发布消息

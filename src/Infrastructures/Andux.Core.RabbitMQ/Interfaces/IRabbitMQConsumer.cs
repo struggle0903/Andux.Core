@@ -53,6 +53,24 @@ namespace Andux.Core.RabbitMQ.Interfaces
             Func<T, Task> handler,
             bool autoAck = false) where T : class;
 
+        /// <summary>
+        /// 开始消费广播消息（Fanout 交换机专用）
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="exchangeName">Fanout 交换机名称</param>
+        /// <param name="queueName">服务标识，用于生成队列名（如服务名）</param>
+        /// <param name="handler">消息处理方法</param>
+        /// <param name="autoAck">是否自动确认</param>
+        /// <param name="isExclusive">是否排他队列（建议true，广播通常是临时消费）</param>
+        /// <remarks>
+        /// 此方法专为 Fanout 广播设计：
+        /// 1. 每个消费者会创建唯一的临时队列
+        /// 2. 自动绑定到指定 Fanout 交换机
+        /// 3. routingKey 被忽略（传递空字符串）
+        /// </remarks>
+        void StartConsumingBroadcast<T>(string exchangeName, string queueName,
+            Func<T, Task> handler, bool autoAck = false, bool isExclusive = true) where T : class;
+
         #region 根据IModel订阅消息
 
         /// <summary>
@@ -103,6 +121,25 @@ namespace Andux.Core.RabbitMQ.Interfaces
         /// <param name="autoAck">是否自动确认</param>
         void StartConsumingExchange<T>(IModel channel, string exchangeName, string? queueName, string routingKey,
             Func<T, Task> handler, bool autoAck = false) where T : class;
+
+        /// <summary>
+        /// 开始消费广播消息（Fanout 交换机专用）
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="channel">消息通道</param>
+        /// <param name="exchangeName">Fanout 交换机名称</param>
+        /// <param name="queueName">服务标识，用于生成队列名（如服务名）</param>
+        /// <param name="handler">消息处理方法</param>
+        /// <param name="autoAck">是否自动确认</param>
+        /// <param name="isExclusive">是否排他队列（建议true，广播通常是临时消费）</param>
+        /// <remarks>
+        /// 此方法专为 Fanout 广播设计：
+        /// 1. 每个消费者会创建唯一的临时队列
+        /// 2. 自动绑定到指定 Fanout 交换机
+        /// 3. routingKey 被忽略（传递空字符串）
+        /// </remarks>
+        void StartConsumingBroadcast<T>(IModel channel, string exchangeName, string queueName,
+            Func<T, Task> handler, bool autoAck = false, bool isExclusive = true) where T : class;
 
         #endregion
 

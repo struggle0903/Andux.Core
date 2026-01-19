@@ -121,12 +121,6 @@ namespace Andux.Core.Testing.Controllers
             //    return Task.CompletedTask;
             //});
 
-            //_mqConsume.StartConsumingExchange<Order>("omp.biz.gateway", "omp.biz.log.queue", "omp.biz.log", order =>
-            //{
-            //    tcs.TrySetResult(order);
-            //    return Task.CompletedTask;
-            //});
-
             var yjxfhhTenant = _tenantServiceFactory.GetService("yjxfhh");
             yjxfhhTenant.Consumer.StartConsumingTopic<string>("andux2.iot.gateway", "andux.test.rkey", "biz.andux.test.queue", order =>
             {

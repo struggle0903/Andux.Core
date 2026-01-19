@@ -206,6 +206,34 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
                 _inner.PublishTopic(connection, GetTenantExchangeName(exchangeName), GetTenantRoutingKeyName(routingKey), message, persistent);
             }
 
+            /// <summary>
+            /// 发布广播消息（Fanout 交换机，所有绑定队列都会收到）
+            /// </summary>
+            /// <typeparam name="T">消息类型</typeparam>
+            /// <param name="exchangeName">目标交换机名称</param>
+            /// <param name="message">要广播的消息</param>
+            /// <param name="persistent">是否持久化消息</param>
+            public void PublishBroadcast<T>(string exchangeName, T message, bool persistent = true) where T : class
+            {
+                _inner.PublishBroadcast(GetTenantExchangeName(exchangeName), message, persistent);
+            }
+
+            /// <summary>
+            /// 发布广播消息到临时广播交换机
+            /// </summary>
+            /// <typeparam name="T">消息类型</typeparam>
+            /// <param name="exchangeName">交换机名称</param>
+            /// <param name="message">要广播的消息</param>
+            /// <param name="autoDelete">是否自动删除（临时广播设为true）</param>
+            /// <remarks>
+            /// 适用于临时广播场景，如实时通知、会话消息等
+            /// 连接断开后交换机会自动删除
+            /// </remarks>
+            public void PublishTemporaryBroadcast<T>(string exchangeName, T message, bool autoDelete = true) where T : class
+            {
+                _inner.PublishTemporaryBroadcast(GetTenantExchangeName(exchangeName), message, autoDelete);
+            }
+
             #endregion
         }
 
@@ -326,6 +354,26 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
                 _inner.StartConsumingExchange(tenantChannel, GetTenantExchangeName(exchangeName), GetTenantQueueName(queueName ?? "default"), GetTenantRoutingKeyName(routingKey), handler, autoAck);
             }
 
+            /// <summary>
+            /// 开始消费广播消息（Fanout 交换机专用）
+            /// </summary>
+            /// <typeparam name="T">消息类型</typeparam>
+            /// <param name="exchangeName">Fanout 交换机名称</param>
+            /// <param name="queueName">服务标识，用于生成队列名（如服务名）</param>
+            /// <param name="handler">消息处理方法</param>
+            /// <param name="autoAck">是否自动确认</param>
+            /// <param name="isExclusive">是否排他队列（建议true，广播通常是临时消费）</param>
+            /// <remarks>
+            /// 此方法专为 Fanout 广播设计：
+            /// 1. 每个消费者会创建唯一的临时队列
+            /// 2. 自动绑定到指定 Fanout 交换机
+            /// 3. routingKey 被忽略（传递空字符串）
+            /// </remarks>
+            public void StartConsumingBroadcast<T>(string exchangeName, string queueName, Func<T, Task> handler, bool autoAck = false, bool isExclusive = true) where T : class
+            {
+                _inner.StartConsumingBroadcast(GetTenantExchangeName(exchangeName), GetTenantQueueName(queueName ?? "default"), handler, autoAck);
+            }
+
             #region 根据指定通道订阅消息
             public void StartConsuming<T>(IModel channel, string queueName, Func<T, Task> handler, bool autoAck = false) where T : class
             {
@@ -345,6 +393,12 @@ namespace Andux.Core.RabbitMQ.Services.Tenant
             public void StartConsumingExchange<T>(IModel channel, string exchangeName, string? queueName, string routingKey, Func<T, Task> handler, bool autoAck = false) where T : class
             {
                 _inner.StartConsumingExchange(channel, GetTenantExchangeName(exchangeName), GetTenantQueueName(queueName ?? "default"), GetTenantRoutingKeyName(routingKey), handler, autoAck);
+            }
+
+            public void StartConsumingBroadcast<T>(IModel channel, string exchangeName, string queueName,
+                Func<T, Task> handler, bool autoAck = false, bool isExclusive = true) where T : class
+            {
+                _inner.StartConsumingBroadcast(channel, GetTenantExchangeName(exchangeName), GetTenantQueueName(queueName ?? "default"), handler, autoAck);
             }
             #endregion
 

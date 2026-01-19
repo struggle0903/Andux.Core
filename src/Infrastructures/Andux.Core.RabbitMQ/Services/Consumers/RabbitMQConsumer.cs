@@ -168,7 +168,7 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
         }
 
         /// <summary>
-        /// 开始消费 Exchange 消息（支持 Topic 或 Fanout）
+        /// 开始消费 Exchange 消息
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="exchangeName">Exchange 名称</param>
@@ -217,6 +217,89 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
+        }
+
+        /// <summary>
+        /// 开始消费广播消息（Fanout 交换机专用）
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="exchangeName">Fanout 交换机名称</param>
+        /// <param name="queueName">服务标识，用于生成队列名（如服务名）</param>
+        /// <param name="handler">消息处理方法</param>
+        /// <param name="autoAck">是否自动确认</param>
+        /// <param name="isExclusive">是否排他队列（建议true，广播通常是临时消费）</param>
+        /// <remarks>
+        /// 此方法专为 Fanout 广播设计：
+        /// 1. 每个消费者会创建唯一的临时队列
+        /// 2. 自动绑定到指定 Fanout 交换机
+        /// 3. routingKey 被忽略（传递空字符串）
+        /// </remarks>
+        public void StartConsumingBroadcast<T>(string exchangeName, string queueName,
+            Func<T, Task> handler, bool autoAck = false, bool isExclusive = true) where T : class
+        {
+            if (string.IsNullOrWhiteSpace(exchangeName))
+                throw new ArgumentException("Exchange 名称不能为 null 或空", nameof(exchangeName));
+
+            if (string.IsNullOrWhiteSpace(queueName))
+                throw new ArgumentException("服务标识不能为 null 或空", nameof(queueName));
+
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+
+            var channel = _connectionProvider.CreateChannel();
+
+            // 声明 Fanout 交换机
+            // 注意：这里假设生产者已经声明了相同的交换机
+            // 如果交换机不存在，这里会创建它
+            channel.ExchangeDeclare(
+                exchange: exchangeName,
+                type: ExchangeType.Fanout,
+                durable: true,        // 与生产者保持一致
+                autoDelete: false,
+                arguments: null);
+
+            // 声明临时队列
+            channel.QueueDeclare(
+                queue: queueName,
+                durable: false,           // 广播通常是临时队列
+                exclusive: isExclusive,   // 排他队列：连接断开自动删除
+                autoDelete: true,         // 没有消费者时自动删除
+                arguments: null);
+
+            // 绑定队列到 Fanout 交换机
+            // Fanout 忽略 routingKey，传递空字符串
+            channel.QueueBind(
+                queue: queueName,
+                exchange: exchangeName,
+                routingKey: string.Empty);
+
+            // 限流设置（根据业务需要调整）
+            channel.BasicQos(0, 1, false);
+
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                await HandleReceivedMessageAsync<T>(
+                    channel,
+                    ea.Body.ToArray(),
+                    handler,
+                    ea.DeliveryTag,
+                    autoAck);
+            };
+
+            consumer.Shutdown += (sender, args) =>
+            {
+                Console.WriteLine($"广播消费者关闭: 交换机={exchangeName}, 队列={queueName}");
+                return Task.CompletedTask;
+            };
+
+            channel.BasicConsume(
+                queue: queueName,
+                autoAck: autoAck,
+                consumer: consumer);
+
+            Console.WriteLine($"开始消费广播消息: 交换机={exchangeName}, 队列={queueName}");
         }
 
         #region 根据IModel订阅消息 
@@ -412,6 +495,87 @@ namespace Andux.Core.RabbitMQ.Services.Consumers
             };
 
             channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
+        }
+
+        /// <summary>
+        /// 开始消费广播消息（Fanout 交换机专用）
+        /// </summary>
+        /// <typeparam name="T">消息类型</typeparam>
+        /// <param name="channel">消息通道</param>
+        /// <param name="exchangeName">Fanout 交换机名称</param>
+        /// <param name="queueName">服务标识，用于生成队列名（如服务名）</param>
+        /// <param name="handler">消息处理方法</param>
+        /// <param name="autoAck">是否自动确认</param>
+        /// <param name="isExclusive">是否排他队列（建议true，广播通常是临时消费）</param>
+        /// <remarks>
+        /// 此方法专为 Fanout 广播设计：
+        /// 1. 每个消费者会创建唯一的临时队列
+        /// 2. 自动绑定到指定 Fanout 交换机
+        /// 3. routingKey 被忽略（传递空字符串）
+        /// </remarks>
+        public void StartConsumingBroadcast<T>(IModel channel, string exchangeName, string queueName, Func<T, Task> handler, bool autoAck = false, bool isExclusive = true) where T : class
+        {
+            if (string.IsNullOrWhiteSpace(exchangeName))
+                throw new ArgumentException("Exchange 名称不能为 null 或空", nameof(exchangeName));
+
+            if (string.IsNullOrWhiteSpace(queueName))
+                throw new ArgumentException("服务标识不能为 null 或空", nameof(queueName));
+
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+
+            // 声明 Fanout 交换机
+            // 注意：这里假设生产者已经声明了相同的交换机
+            // 如果交换机不存在，这里会创建它
+            channel.ExchangeDeclare(
+                exchange: exchangeName,
+                type: ExchangeType.Fanout,
+                durable: true,        // 与生产者保持一致
+                autoDelete: false,
+                arguments: null);
+
+            // 声明临时队列
+            channel.QueueDeclare(
+                queue: queueName,
+                durable: false,           // 广播通常是临时队列
+                exclusive: isExclusive,   // 排他队列：连接断开自动删除
+                autoDelete: true,         // 没有消费者时自动删除
+                arguments: null);
+
+            // 绑定队列到 Fanout 交换机
+            // Fanout 忽略 routingKey，传递空字符串
+            channel.QueueBind(
+                queue: queueName,
+                exchange: exchangeName,
+                routingKey: string.Empty);
+
+            // 限流设置（根据业务需要调整）
+            channel.BasicQos(0, 1, false);
+
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                await HandleReceivedMessageAsync<T>(
+                    channel,
+                    ea.Body.ToArray(),
+                    handler,
+                    ea.DeliveryTag,
+                    autoAck);
+            };
+
+            consumer.Shutdown += (sender, args) =>
+            {
+                Console.WriteLine($"广播消费者关闭: 交换机={exchangeName}, 队列={queueName}");
+                return Task.CompletedTask;
+            };
+
+            channel.BasicConsume(
+                queue: queueName,
+                autoAck: autoAck,
+                consumer: consumer);
+
+            Console.WriteLine($"开始消费广播消息: 交换机={exchangeName}, 队列={queueName}");
         }
 
         #endregion

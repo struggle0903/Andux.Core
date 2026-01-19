@@ -19,6 +19,8 @@ using Andux.Core.EventBus.Events;
 using Andux.Core.EventBus.Extensions;
 using Andux.Core.RabbitMQ.Models;
 using Andux.Core.Testing.Events;
+using Andux.Core.RabbitMQ.Interfaces;
+using Andux.Core.RabbitMQ.Services.Tenant;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,73 +112,73 @@ builder.Services.AddRedisService(builder.Configuration);
 #region Andux.Core.RabbitMQ
 
 // 注册AnduxRabbitMQ，普通模式
-//builder.Services.UseAnduxRabbitMQServices(new RabbitMQOptions()
-//{
-//    Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
-//    Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
-//    UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
-//    Password = builder.Configuration.GetValue("AnduxRabbitMQ:Password", "guest"),
-//    VirtualHost = builder.Configuration.GetValue("AnduxRabbitMQ:VirtualHost", "/"),
-//    NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
-//});
+builder.Services.UseAnduxRabbitMQServices(new RabbitMQOptions()
+{
+    Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
+    Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
+    UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
+    Password = builder.Configuration.GetValue("AnduxRabbitMQ:Password", "guest"),
+    VirtualHost = builder.Configuration.GetValue("AnduxRabbitMQ:VirtualHost", "/"),
+    NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+});
 
 // 注册AnduxRabbitMQ，租户模式
-var tenantOptions = new List<RabbitMQTenantOptions>
-{
-    new ()
-    {
-        TenantId = "andy",
-        EnableExchangePrefix = false,
-        EnableRoutingKeyPrefix = true,
-        EnableQueueNamePrefix = true,
-        Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
-        Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
-        UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
-        Password = builder.Configuration.GetValue("AnduxRabbitMQ:Password", "guest"),
-        VirtualHost = builder.Configuration.GetValue("AnduxRabbitMQ:VirtualHost", "/"),
-        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
-    },
-    new ()
-    {
-        TenantId = "yjxfhh",
-        EnableExchangePrefix = true,
-        EnableRoutingKeyPrefix = true,
-        EnableQueueNamePrefix = true,
-        Host = "111.22.145.236",
-        Port = 25704,
-        UserName = "yjxfhh",
-        Password = "yjxfhh@251204!..",
-        VirtualHost = "yj",
-        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
-    },
-    new ()
-    {
-        TenantId = "pro",
-        EnableExchangePrefix = true,
-        EnableRoutingKeyPrefix = true,
-        EnableQueueNamePrefix = true,
-        Host = "111.22.145.28",
-        Port = 7093,
-        UserName = "test",
-        Password = "test@123",
-        VirtualHost ="test",
-        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
-    },
-    //new ()
-    //{
-    //    TenantId = "hu",
-    //    EnableExchangePrefix = true,
-    //    EnableRoutingKeyPrefix = true,
-    //    EnableQueueNamePrefix = true,
-    //    Host = "111.22.145.236",
-    //    Port = 25704,
-    //    UserName = "log_test",
-    //    Password = "log_test",
-    //    VirtualHost ="/log",
-    //    NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
-    //},
-};
-builder.Services.UseAnduxTenantRabbitMQServices(tenantOptions);
+//var tenantOptions = new List<RabbitMQTenantOptions>
+//{
+//    new ()
+//    {
+//        TenantId = "andy",
+//        EnableExchangePrefix = false,
+//        EnableRoutingKeyPrefix = true,
+//        EnableQueueNamePrefix = true,
+//        Host = builder.Configuration.GetValue("AnduxRabbitMQ:Host", "localhost"),
+//        Port = builder.Configuration.GetValue("AnduxRabbitMQ:Port", 5672),
+//        UserName = builder.Configuration.GetValue("AnduxRabbitMQ:Username", "guest"),
+//        Password = builder.Configuration.GetValue("AnduxRabbitMQ:Password", "guest"),
+//        VirtualHost = builder.Configuration.GetValue("AnduxRabbitMQ:VirtualHost", "/"),
+//        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+//    },
+//    new ()
+//    {
+//        TenantId = "yjxfhh",
+//        EnableExchangePrefix = true,
+//        EnableRoutingKeyPrefix = true,
+//        EnableQueueNamePrefix = true,
+//        Host = "111.22.145.236",
+//        Port = 25704,
+//        UserName = "yjxfhh",
+//        Password = "yjxfhh@251204!..",
+//        VirtualHost = "yj",
+//        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+//    },
+//    new ()
+//    {
+//        TenantId = "pro",
+//        EnableExchangePrefix = true,
+//        EnableRoutingKeyPrefix = true,
+//        EnableQueueNamePrefix = true,
+//        Host = "111.22.145.28",
+//        Port = 7093,
+//        UserName = "test",
+//        Password = "test@123",
+//        VirtualHost ="test",
+//        NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+//    },
+//    //new ()
+//    //{
+//    //    TenantId = "hu",
+//    //    EnableExchangePrefix = true,
+//    //    EnableRoutingKeyPrefix = true,
+//    //    EnableQueueNamePrefix = true,
+//    //    Host = "111.22.145.236",
+//    //    Port = 25704,
+//    //    UserName = "log_test",
+//    //    Password = "log_test",
+//    //    VirtualHost ="/log",
+//    //    NetworkRecoveryInterval = builder.Configuration.GetValue("AnduxRabbitMQ:NetworkRecoveryInterval", 10)
+//    //},
+//};
+//builder.Services.UseAnduxTenantRabbitMQServices(tenantOptions);
 
 // 监听订单处理服务
 //builder.Services.AddHostedService<OrderProcessingService>();
