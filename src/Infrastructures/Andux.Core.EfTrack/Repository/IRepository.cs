@@ -74,7 +74,7 @@ namespace Andux.Core.EfTrack
         /// <param name="batchSize"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public IAsyncEnumerable<T> GetExportAsync(
+        IAsyncEnumerable<T> GetExportAsync(
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             int batchSize = 1000,
