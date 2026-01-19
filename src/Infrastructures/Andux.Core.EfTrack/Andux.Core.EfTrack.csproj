@@ -95,10 +95,21 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-		<PackageId>Andux.Core.EfTrack</PackageId>
+		<!-- 发布后未生效，弃用 -->
+		<!--<PackageId>Andux.Core.EfTrack</PackageId>
 		<Version>2.1.4</Version>
 		<Authors>andy.hu</Authors>
 		<Description>增加基于IAsyncEnumerable获取导出数据的方法</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>2.1.5</Version>
+		<Authors>andy.hu</Authors>
+		<Description>新增基于IAsyncEnumerable获取数据的仓储接口</Description>
 		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
 		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
