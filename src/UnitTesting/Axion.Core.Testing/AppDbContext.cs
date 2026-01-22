@@ -22,25 +22,26 @@ namespace Andux.Core.Testing
 
         }
 
+        /// <summary>
+        /// 启用 Base 自动扫描
+        /// </summary>
+        protected override bool AutoRegisterEntities => false;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             // 实体注册
-            RegisterEntities(modelBuilder, typeof(User));
-            RegisterEntities(modelBuilder, typeof(Role));
-
-            RegisterEntities(modelBuilder, typeof(Customer));
-            RegisterEntities(modelBuilder, typeof(Order));
-            RegisterEntities(modelBuilder, typeof(Product));
-            RegisterEntities(modelBuilder, typeof(OrderItem));
-
+            modelBuilder.Entity<User>();
+            modelBuilder.Entity<Role>();
+            modelBuilder.Entity<Customer>();
+            modelBuilder.Entity<Order>();
+            modelBuilder.Entity<Product>();
+            modelBuilder.Entity<OrderItem>();
 
             //RegisterEntities(modelBuilder, typeof(TestUser));
 
-
             modelBuilder.Ignore<TestUser>();
-
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Customer)

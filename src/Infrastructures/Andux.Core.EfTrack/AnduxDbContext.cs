@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,15 +32,35 @@ namespace Andux.Core.EfTrack
             IOptions<EntityBehaviorOptions> behaviorOptions)
             : base(options)
         {
-            _options = behaviorOptions.Value;
+            _options = behaviorOptions?.Value ?? new EntityBehaviorOptions();
         }
 
+        /// <summary>
+        /// 是否自动扫描并注册实体（默认 true）
+        /// 自动搜索并注入继承了 IEntity 泛型接口的所有实体
+        /// </summary>
+        protected virtual bool AutoRegisterEntities => true;
+
+        /// <summary>
+        /// 自动扫描的程序集（子类可 override 精确控制）
+        /// </summary>
+        protected virtual IEnumerable<Assembly> EntityAssemblies => [GetType().Assembly];
+
+        /// <summary>
+        /// 模型创建事件
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            if (AutoRegisterEntities)
+            {
+                RegisterEntities(modelBuilder, EntityAssemblies);
+            }
 
             // 加软删除查询过滤器
             ApplySoftDeleteQueryFilter(modelBuilder);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         /// <summary>
@@ -92,26 +113,26 @@ namespace Andux.Core.EfTrack
         }
 
         /// <summary>
-        /// 注册实体
+        /// 自动注入继承了IEntity泛型接口的所有实体
         /// </summary>
         /// <param name="modelBuilder"></param>
-        /// <param name="assemblyMarkerTypes"></param>
-        protected void RegisterEntities(ModelBuilder modelBuilder, params Type[] assemblyMarkerTypes)
+        /// <param name="assemblies"></param>
+        protected void RegisterEntities(ModelBuilder modelBuilder, IEnumerable<Assembly> assemblies)
         {
-            var allTypes = assemblyMarkerTypes
-                .SelectMany(t => t.Assembly.GetExportedTypes())
+            var entityTypes = assemblies
+                .SelectMany(a => a.GetExportedTypes())
                 .Where(t =>
                     t is { IsClass: true, IsAbstract: false } &&
                     t.GetInterfaces().Any(i =>
-                        i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>)))
+                        i.IsGenericType &&
+                        i.GetGenericTypeDefinition() == typeof(IEntity<>)))
                 .Distinct();
 
-            foreach (var type in allTypes)
+            foreach (var type in entityTypes)
             {
                 modelBuilder.Entity(type);
             }
         }
-
 
         #region ---------- 原生 SQL / 批量操作支持 ----------
 
