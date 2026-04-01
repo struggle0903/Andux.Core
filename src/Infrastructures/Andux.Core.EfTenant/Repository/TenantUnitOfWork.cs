@@ -12,7 +12,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// 工作单元实现类，封装 EF DbContext 的事务管理和保存操作
     /// </summary>
-    public class UnitOfWork : IUnitOfWork
+    public class TenantUnitOfWork : ITenantUnitOfWork
     {
         private readonly DbContext _context;
         private IDbContextTransaction? _transaction;
@@ -21,7 +21,7 @@ namespace Andux.Core.EfTenant
         /// 构造函数，注入 DbContext 实例
         /// </summary>
         /// <param name="context">EF 数据上下文</param>
-        public UnitOfWork(DbContext context)
+        public TenantUnitOfWork(DbContext context)
         {
             _context = context;
         }

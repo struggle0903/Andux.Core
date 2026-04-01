@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Andux.Core.EfTenant.Extensions
 {
+    /// <summary>
+    /// 服务集合扩展
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddMultiTenantKit<TContext>(
@@ -32,8 +35,8 @@ namespace Andux.Core.EfTenant.Extensions
             // 添加内存缓存
             services.AddMemoryCache();
 
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(ITenantRepository<>), typeof(EfTenantRepository<>));
+            services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
 
             return services;
         }

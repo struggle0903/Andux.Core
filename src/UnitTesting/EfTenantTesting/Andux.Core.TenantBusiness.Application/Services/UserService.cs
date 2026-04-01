@@ -18,12 +18,12 @@ namespace Andux.Core.TenantTesting.Application.Services
 
     public class UserService: IUserService
     {
-        private readonly IRepository<User> _repository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITenantRepository<User> _repository;
+        private readonly ITenantUnitOfWork _unitOfWork;
 
         public UserService(
-            IRepository<User> repository,
-            IUnitOfWork unitOfWork)
+            ITenantRepository<User> repository,
+            ITenantUnitOfWork unitOfWork)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;

@@ -9,7 +9,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// EF实现
     /// </summary>
-    public class EfRepository<T> : IRepository<T> where T : class
+    public class EfTenantRepository<T> : ITenantRepository<T> where T : class
     {
         protected readonly DbContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -22,7 +22,7 @@ namespace Andux.Core.EfTenant
         /// <param name="context"></param>
         /// <param name="options"></param>
         /// <param name="accessor"></param>
-        public EfRepository(DbContext context,
+        public EfTenantRepository(DbContext context,
             IOptions<EntityBehaviorOptions> options,
             IHttpContextAccessor accessor)
         {

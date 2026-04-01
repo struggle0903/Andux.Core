@@ -1,5 +1,4 @@
-﻿using Andux.Core.EfTenant.Tenant;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Andux.Core.EfTenant
 {
@@ -37,7 +36,7 @@ namespace Andux.Core.EfTenant
 
             modelBuilder.Entity<TenantDbConfig>(entity =>
             {
-                entity.ToTable("sys_tenant_db_configs");
+                entity.ToTable("tenant_db_configs");
 
                 entity.HasKey(x => x.TenantId);
 

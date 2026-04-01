@@ -11,7 +11,7 @@ namespace Andux.Core.EfTenant
     /// 泛型仓储接口，定义常见数据访问操作
     /// </summary>
     /// <typeparam name="T">实体类型</typeparam>
-    public interface IRepository<T> where T : class
+    public interface ITenantRepository<T> where T : class
     {
         /// <summary>
         /// 将当前仓储转换为异步可枚举集合

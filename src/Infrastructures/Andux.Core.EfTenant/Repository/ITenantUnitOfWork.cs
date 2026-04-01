@@ -9,7 +9,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// 工作单元
     /// </summary>
-    public interface IUnitOfWork : IDisposable
+    public interface ITenantUnitOfWork : IDisposable
     {
         /// <summary>
         /// 提交所有更改
