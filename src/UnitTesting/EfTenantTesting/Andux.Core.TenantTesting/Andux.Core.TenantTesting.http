@@ -1,0 +1,6 @@
+@Andux.Core.TenantTesting_HostAddress = http://localhost:5234
+
+GET {{Andux.Core.TenantTesting_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

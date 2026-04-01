@@ -3,16 +3,9 @@
 // 文件：IRepository.cs
 // 描述：泛型仓储接口定义，封装常见 CRUD 操作与条件查询、分页、聚合统计等
 // =======================================
-
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Andux.Core.EfTrack.Repository.Paged;
 
-namespace Andux.Core.EfTrack
+namespace Andux.Core.EfTenant
 {
     /// <summary>
     /// 泛型仓储接口，定义常见数据访问操作

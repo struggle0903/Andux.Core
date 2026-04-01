@@ -1,29 +1,15 @@
-﻿// =======================================
-// 作者：andy.hu
-// 文件：Repository.cs
-// 描述：泛型仓储接口实现，封装常见 CRUD 操作与条件查询、分页、聚合统计等
-// =======================================
-
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Andux.Core.EfTrack.Entities;
-using Andux.Core.EfTrack.Repository.Paged;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
-namespace Andux.Core.EfTrack
+namespace Andux.Core.EfTenant
 {
     /// <summary>
-    /// 泛型仓储实现类
+    /// EF实现
     /// </summary>
-    /// <typeparam name="T">实体类型</typeparam>
-    public class Repository<T> : IRepository<T> where T : class
+    public class EfRepository<T> : IRepository<T> where T : class
     {
         protected readonly DbContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -36,8 +22,8 @@ namespace Andux.Core.EfTrack
         /// <param name="context"></param>
         /// <param name="options"></param>
         /// <param name="accessor"></param>
-        public Repository(DbContext context, 
-            IOptions<EntityBehaviorOptions> options, 
+        public EfRepository(DbContext context,
+            IOptions<EntityBehaviorOptions> options,
             IHttpContextAccessor accessor)
         {
             _context = context;
@@ -753,7 +739,7 @@ namespace Andux.Core.EfTrack
 
             return null;
         }
-        
+
         #endregion
 
     }

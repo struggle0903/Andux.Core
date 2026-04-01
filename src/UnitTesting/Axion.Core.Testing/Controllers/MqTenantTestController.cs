@@ -1,5 +1,4 @@
-﻿using Andux.Core.Extensions;
-using Andux.Core.RabbitMQ.Interfaces;
+﻿using Andux.Core.RabbitMQ.Interfaces;
 using Andux.Core.Testing.Entitys;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
