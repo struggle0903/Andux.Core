@@ -32,11 +32,11 @@ namespace Andux.Core.EfTenant
         {
             base.OnModelCreating(modelBuilder);
 
-            //// 设计时（如执行迁移）不修改表名，确保迁移生成的表结构正确
-            //if (_isDesignTime)
-            //{
-            //    return;
-            //}
+            // 设计时（如执行迁移）不修改表名，确保迁移生成的表结构正确
+            if (!IsUpdateDatabase())
+            {
+                return;
+            }
 
             //// 运行时根据租户 ID 动态修改表名
             //if (_tenantProvider != null)
@@ -52,6 +52,21 @@ namespace Andux.Core.EfTenant
             //        System.Diagnostics.Debug.WriteLine($"租户表名修改失败: {ex.Message}");
             //    }
             //}
+        }
+
+        /// <summary>
+        /// 是否修改数据库
+        /// </summary>
+        /// <returns></returns>
+        private static bool IsUpdateDatabase()
+        {
+            // 检查命令行参数中是否包含 update-database
+            var args = Environment.GetCommandLineArgs();
+
+            return args.Any(arg =>
+                arg.Contains("update-database", StringComparison.OrdinalIgnoreCase) ||
+                arg.Contains("database update", StringComparison.OrdinalIgnoreCase) ||
+                (arg.Contains("ef") && args.Any(a => a.Contains("database") && a.Contains("update"))));
         }
 
         /// <summary>

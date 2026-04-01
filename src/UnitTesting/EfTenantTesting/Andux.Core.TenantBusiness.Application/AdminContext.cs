@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Andux.Core.TenantTesting.Application
 {
+    /// <summary>
+    /// AdminContext
+    /// </summary>
     public class AdminContext : MultiTenantDbContext
     {
         public AdminContext(DbContextOptions<AdminContext> options,

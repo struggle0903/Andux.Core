@@ -4,8 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	<!-- 指定默认的 DbContext -->
-	<DefaultDbContext>AdminContext</DefaultDbContext>
   </PropertyGroup>
 
   <ItemGroup>
