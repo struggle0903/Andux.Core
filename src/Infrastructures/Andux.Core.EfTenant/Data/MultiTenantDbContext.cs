@@ -32,11 +32,11 @@ namespace Andux.Core.EfTenant
         {
             base.OnModelCreating(modelBuilder);
 
-            // 设计时（如执行迁移）不修改表名，确保迁移生成的表结构正确
-            if (!IsUpdateDatabase())
-            {
-                return;
-            }
+            //// 设计时（如执行迁移）不修改表名，确保迁移生成的表结构正确
+            //if (!IsUpdateDatabase())
+            //{
+            //    return;
+            //}
 
             //// 运行时根据租户 ID 动态修改表名
             //if (_tenantProvider != null)

@@ -4,6 +4,21 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+	<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.0</Version>
+	<Authors>andy.hu</Authors>
+	<Description>
+		Andux.Core.EfTenant 是一个基于 .NET 8 与 Entity Framework Core 的轻量级多租户基础组件，
+		支持按租户分库的动态 DbContext 构建，提供租户连接字符串管理、TenantProvider 解析、
+		仓储模式（Repository）与工作单元（UnitOfWork）封装，并支持审计拦截器扩展。
+		适用于 SaaS 系统的多租户架构，具备良好的扩展性与高并发性能优化能力。
+	</Description>
+	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 	<ItemGroup>

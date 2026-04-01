@@ -1,6 +1,7 @@
 ﻿using Andux.Core.EfTenant;
 using Andux.Core.TenantTesting.Application;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace Andux.Core.EfTenantTesting
@@ -9,11 +10,20 @@ namespace Andux.Core.EfTenantTesting
     public sealed class InitTenantTenant
     {
         private TenantDbContext _tenantDb = null!;
+        private IConfiguration _configuration = null!;
 
         [TestInitialize]
         public void Setup()
         {
-            var conn = "Server=192.168.1.88;Port=7090;Database=business_tenant;Uid=root;Pwd=andy@930;CharSet=utf8;SslMode=None;AllowPublicKeyRetrieval=True;";
+            // 构建配置
+            _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Development.json", optional: true)
+                .AddEnvironmentVariables() // 支持环境变量覆盖
+                .Build();
+
+            var conn = _configuration.GetConnectionString("Default");
 
             var options = new DbContextOptionsBuilder<TenantDbContext>()
                 .UseMySql(conn, new MySqlServerVersion(new Version(8, 0, 36)))
@@ -29,8 +39,7 @@ namespace Andux.Core.EfTenantTesting
         [TestMethod]
         public async Task Should_Create_Tenant()
         {
-            //var tenantId = 1843473246985588888;
-            var tenantId = 1843473246985599999;
+            var tenantId = long.Parse(_configuration.GetConnectionString("DefaultTenantId") ?? "0");
 
             try
             {
@@ -44,7 +53,7 @@ namespace Andux.Core.EfTenantTesting
                 var tenantConn = BuildTenantConnectionString(baseConn, tenantDbName);
 
                 // 4️ 执行迁移（建表）
-                await MigrateTenantDb(tenantConn);
+                await MigrateTenantDb(tenantConn, tenantId);
 
                 // 5️ 保存租户信息
                 if (!await _tenantDb.TenantInfos.AnyAsync(a => a.TenantId == tenantId))
@@ -72,7 +81,8 @@ namespace Andux.Core.EfTenantTesting
         {
             var builder = new MySqlConnectionStringBuilder(baseConn);
 
-            var dbName = $"zhsl_tenant_{tenantId}";
+            // 拼接租户数据库名，格式：原数据库名_租户ID
+            var dbName = builder.Database += $"_{tenantId}";
 
             // 去掉数据库名（关键）
             builder.Database = "";
@@ -100,13 +110,13 @@ namespace Andux.Core.EfTenantTesting
         /// <summary>
         /// 按连接字符串执行 EF Migration
         /// </summary>
-        private async Task MigrateTenantDb(string conn)
+        private async Task MigrateTenantDb(string conn, long tenantId)
         {
             var options = new DbContextOptionsBuilder<AdminContext>()
                 .UseMySql(conn, new MySqlServerVersion(new Version(8, 0, 36)))
                 .Options;
 
-            using var db = new AdminContext(options, new DesignTimeTenantProvider());
+            using var db = new AdminContext(options, new DesignTimeTenantProvider(tenantId));
 
             await db.Database.MigrateAsync();
         }

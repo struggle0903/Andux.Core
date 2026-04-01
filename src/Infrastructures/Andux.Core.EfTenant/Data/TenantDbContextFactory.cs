@@ -55,7 +55,6 @@ namespace Andux.Core.EfTenant
         public TContext Create()
         {
             var tenantId = _tenantProvider.TenantId;
-            tenantId = 1843473246985599999;
 
             var options = _cache.GetOrCreate($"db_options_{tenantId}", entry =>
             {
