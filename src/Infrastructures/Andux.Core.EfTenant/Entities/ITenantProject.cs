@@ -9,7 +9,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// 项目数据隔离标识接口
     /// </summary>
-    public interface IProject
+    public interface ITenantProject
     {
         long? ProjectId { get; set; }
     }

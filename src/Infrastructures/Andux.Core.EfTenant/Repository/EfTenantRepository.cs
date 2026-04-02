@@ -188,8 +188,8 @@ namespace Andux.Core.EfTenant
         /// <param name="predicate"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        public async Task<PagedResult<T>> GetPagedAsync(
-            BasePageParam pageParam,
+        public async Task<TenantPagedResult<T>> GetPagedAsync(
+            TenantBasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null)
         {
@@ -206,7 +206,7 @@ namespace Andux.Core.EfTenant
 
             var items = await query.Skip((pageParam.Page - 1) * pageParam.Limit).Take(pageParam.Limit).ToListAsync();
 
-            return new PagedResult<T>
+            return new TenantPagedResult<T>
             {
                 TotalCount = totalCount,
                 TotalPages = totalPages,
@@ -270,8 +270,8 @@ namespace Andux.Core.EfTenant
         /// <param name="orderBy">排序条件</param>
         /// <param name="includes">导航属性 Include 表达式</param>
         /// <returns>分页结果</returns>
-        public async Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        public async Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             params Expression<Func<T, object>>[] includes)
@@ -298,7 +298,7 @@ namespace Andux.Core.EfTenant
                 .Take(pageParam.Limit)
                 .ToListAsync();
 
-            return new PagedResult<T>
+            return new TenantPagedResult<T>
             {
                 TotalCount = totalCount,
                 TotalPages = totalPages,
@@ -312,8 +312,8 @@ namespace Andux.Core.EfTenant
         /// <param name="pageParam">分页参数</param>
         /// <param name="includes">导航属性 Include 表达式</param>
         /// <returns>分页结果</returns>
-        public Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        public Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             params Expression<Func<T, object>>[] includes)
         {
             return GetPagedWithIncludesAsync(pageParam, null, null, includes);
@@ -327,8 +327,8 @@ namespace Andux.Core.EfTenant
         /// <param name="orderBy">排序条件</param>
         /// <param name="includes">要 Include 的导航属性名称</param>
         /// <returns>分页结果</returns>
-        public async Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        public async Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             params string[] includes)
@@ -358,7 +358,7 @@ namespace Andux.Core.EfTenant
                 .Take(pageParam.Limit)
                 .ToListAsync();
 
-            return new PagedResult<T>
+            return new TenantPagedResult<T>
             {
                 TotalCount = totalCount,
                 TotalPages = totalPages,
@@ -372,8 +372,8 @@ namespace Andux.Core.EfTenant
         /// <param name="pageParam">分页参数</param>
         /// <param name="includes">要 Include 的导航属性名称</param>
         /// <returns></returns>
-        public Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        public Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             params string[] includes)
         {
             return GetPagedWithIncludesAsync(pageParam, null, null, includes);
@@ -688,7 +688,7 @@ namespace Andux.Core.EfTenant
         /// </summary>
         private IQueryable<T> ApplyProjectFilter(IQueryable<T> query)
         {
-            if (typeof(IProject).IsAssignableFrom(typeof(T)) && _options.EnableProject)
+            if (typeof(ITenantProject).IsAssignableFrom(typeof(T)) && _options.EnableProject)
             {
                 // 超管标识为 101，如果是超管直接返回不过滤
                 if (IsSuperAdmin())
@@ -698,7 +698,7 @@ namespace Andux.Core.EfTenant
                 if (projectId == null)
                     return query; // 无效 ProjectId，不过滤
 
-                return query.Where(e => ((IProject)e).ProjectId == projectId);
+                return query.Where(e => ((ITenantProject)e).ProjectId == projectId);
             }
 
             return query;
@@ -709,9 +709,9 @@ namespace Andux.Core.EfTenant
         /// </summary>
         private IQueryable<T> ApplySoftDeleteFilter(IQueryable<T> query)
         {
-            if (typeof(ISoftDelete).IsAssignableFrom(typeof(T)) && _options.EnableSoftDelete)
+            if (typeof(ITenantSoftDelete).IsAssignableFrom(typeof(T)) && _options.EnableSoftDelete)
             {
-                return query.Where(e => !((ISoftDelete)e).IsDeleted);
+                return query.Where(e => !((ITenantSoftDelete)e).IsDeleted);
             }
 
             return query;

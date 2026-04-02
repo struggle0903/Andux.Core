@@ -7,7 +7,7 @@ namespace Andux.Core.EfTenant
     /// 租户db配置
     /// </summary>
     [Table("tenant_db_configs")]
-    public class TenantDbConfig: BaseEntity<long>
+    public class TenantDbConfig: TenantBaseEntity<long>
     {
         /// <summary>
         /// 租户ID

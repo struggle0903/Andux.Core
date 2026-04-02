@@ -10,7 +10,7 @@ namespace Andux.Core.EfTenant
     /// 分页结果
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PagedResult<T>
+    public class TenantPagedResult<T>
     {
         /// <summary>
         /// 当前页

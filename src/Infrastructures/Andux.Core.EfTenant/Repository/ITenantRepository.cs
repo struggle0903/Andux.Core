@@ -66,7 +66,7 @@ namespace Andux.Core.EfTenant
         /// <param name="predicate">筛选条件</param>
         /// <param name="orderBy">排序</param>
         /// <returns></returns>
-        Task<PagedResult<T>> GetPagedAsync(BasePageParam pageParam,
+        Task<TenantPagedResult<T>> GetPagedAsync(TenantBasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null);
 
@@ -93,8 +93,8 @@ namespace Andux.Core.EfTenant
         /// <param name="orderBy">排序条件</param>
         /// <param name="includes">导航属性 Include 表达式</param>
         /// <returns>分页结果</returns>
-        Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             params Expression<Func<T, object>>[] includes);
@@ -105,8 +105,8 @@ namespace Andux.Core.EfTenant
         /// <param name="pageParam">分页参数</param>
         /// <param name="includes">导航属性 Include 表达式</param>
         /// <returns>分页结果</returns>
-        Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             params Expression<Func<T, object>>[] includes);
 
         /// <summary>
@@ -117,8 +117,8 @@ namespace Andux.Core.EfTenant
         /// <param name="orderBy">排序条件</param>
         /// <param name="includes">要 Include 的导航属性名称</param>
         /// <returns>分页结果</returns>
-        Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             Expression<Func<T, bool>>? predicate = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             params string[] includes);
@@ -129,8 +129,8 @@ namespace Andux.Core.EfTenant
         /// <param name="pageParam">分页参数</param>
         /// <param name="includes">要 Include 的导航属性名称</param>
         /// <returns></returns>
-        Task<PagedResult<T>> GetPagedWithIncludesAsync(
-            BasePageParam pageParam,
+        Task<TenantPagedResult<T>> GetPagedWithIncludesAsync(
+            TenantBasePageParam pageParam,
             params string[] includes);
 
         /// <summary>

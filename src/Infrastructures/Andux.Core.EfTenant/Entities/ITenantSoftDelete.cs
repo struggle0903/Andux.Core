@@ -9,7 +9,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// 软删除标记接口
     /// </summary>
-    public interface ISoftDelete
+    public interface ITenantSoftDelete
     {
         /// <summary>
         /// 是否已删除

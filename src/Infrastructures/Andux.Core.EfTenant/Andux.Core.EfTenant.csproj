@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-	<PackageId>Andux.Core.EfTenant</PackageId>
+	<!--<PackageId>Andux.Core.EfTenant</PackageId>
 	<Version>1.0.0</Version>
 	<Authors>andy.hu</Authors>
 	<Description>
@@ -14,6 +14,26 @@
 		仓储模式（Repository）与工作单元（UnitOfWork）封装，并支持审计拦截器扩展。
 		适用于 SaaS 系统的多租户架构，具备良好的扩展性与高并发性能优化能力。
 	</Description>
+	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+  
+	<!--<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.1</Version>
+	<Authors>andy.hu</Authors>
+	<Description>基于1.0.0优化命名规范和缓存能力</Description>
+	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+  
+	<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.1.1</Version>
+	<Authors>andy.hu</Authors>
+	<Description>与1.0.1版本能力一致，修改了与Andux.Core.EfTrack同时使用时命名重复问题</Description>
 	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>

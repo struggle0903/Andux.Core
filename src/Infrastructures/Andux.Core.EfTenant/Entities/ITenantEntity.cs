@@ -10,7 +10,7 @@ namespace Andux.Core.EfTenant
     /// 实体基础接口，所有实体都应实现
     /// </summary>
     /// <typeparam name="TKey">主键类型</typeparam>
-    public interface IEntity<TKey>
+    public interface ITenantEntity<TKey>
     {
         TKey Id { get; set; }
     }

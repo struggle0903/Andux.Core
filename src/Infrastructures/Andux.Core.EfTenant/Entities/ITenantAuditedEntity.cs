@@ -11,7 +11,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// 审计字段接口
     /// </summary>
-    public interface IAuditedEntity
+    public interface ITenantAuditedEntity
     {
         /// <summary>
         /// 创建时间

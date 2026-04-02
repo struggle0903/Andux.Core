@@ -9,7 +9,7 @@ namespace Andux.Core.EfTenant
     /// <summary>
     /// 基础分页参数
     /// </summary>
-    public class BasePageParam
+    public class TenantBasePageParam
     {
         /// <summary>
         /// 当前页

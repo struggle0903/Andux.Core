@@ -55,7 +55,7 @@ namespace Andux.Core.EfTenant
                 // 从上下文中获取真实用户标识
                 var currentUser = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == _options.UserClaimsType)?.Value ?? string.Empty;
 
-                var entries = context.ChangeTracker.Entries<IAuditedEntity>();
+                var entries = context.ChangeTracker.Entries<ITenantAuditedEntity>();
                 foreach (var entry in entries)
                 {
                     if (entry.State == EntityState.Added)
@@ -76,7 +76,7 @@ namespace Andux.Core.EfTenant
             {
                 var currentProject = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == _options.ProjectClaimsType)?.Value ?? null;
 
-                var entries = context.ChangeTracker.Entries<IProject>();
+                var entries = context.ChangeTracker.Entries<ITenantProject>();
                 foreach (var entry in entries)
                 {
                     // 如果实体Entity的ProjectId字段已赋值则不自动赋值

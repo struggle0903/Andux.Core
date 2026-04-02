@@ -12,7 +12,7 @@ namespace Andux.Core.EfTenant
     /// 抽象实体基类，包含主键、创建时间、更新时间、创建人、修改人字段
     /// </summary>
     /// <typeparam name="TKey">主键类型</typeparam>
-    public abstract class BaseEntity<TKey> : IEntity<TKey>, IAuditedEntity, ISoftDelete
+    public abstract class TenantBaseEntity<TKey> : ITenantEntity<TKey>, ITenantAuditedEntity, ITenantSoftDelete
     {
         [Key]
         public TKey Id { get; set; } = default!;
