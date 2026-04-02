@@ -30,10 +30,20 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
   
-	<PackageId>Andux.Core.EfTenant</PackageId>
-	<Version>1.0.1.1</Version>
+	<!--<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.2</Version>
 	<Authors>andy.hu</Authors>
-	<Description>与1.0.1版本能力一致，修改了与Andux.Core.EfTrack同时使用时命名重复问题</Description>
+	<Description>修改了与Andux.Core.EfTrack同时使用时命名重复问题, 与1.0.1版本能力一致。</Description>
+	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+	  
+	<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.3</Version>
+	<Authors>andy.hu</Authors>
+	<Description>新增自动注入继承了ITenantEntity泛型接口的所有实体，以及软删除的自定义是否过滤</Description>
 	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>

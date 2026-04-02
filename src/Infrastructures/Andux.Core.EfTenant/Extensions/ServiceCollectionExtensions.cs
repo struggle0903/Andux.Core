@@ -10,6 +10,13 @@ namespace Andux.Core.EfTenant.Extensions
     /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// 添加多租户支持
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddMultiTenantKit<TContext>(
             this IServiceCollection services,
             IConfiguration configuration)

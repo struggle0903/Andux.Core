@@ -1,6 +1,7 @@
 ﻿using Andux.Core.EfTenant;
 using Andux.Core.TenantTesting.Application.Entitys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Andux.Core.TenantTesting.Application
 {
@@ -10,8 +11,9 @@ namespace Andux.Core.TenantTesting.Application
     public class AdminContext : MultiTenantDbContext
     {
         public AdminContext(DbContextOptions<AdminContext> options,
-            ITenantProvider tenantProvider)
-            : base(options, tenantProvider)
+            ITenantProvider tenantProvider,
+            IOptions<EntityBehaviorOptions> behaviorOptions)
+            : base(options, tenantProvider, behaviorOptions)
         {
 
         }
