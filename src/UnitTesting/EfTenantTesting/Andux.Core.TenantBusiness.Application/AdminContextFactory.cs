@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Andux.Core.EfTenant;
 using MySqlConnector;
+using Microsoft.Extensions.Options;
 
 namespace Andux.Core.TenantTesting.Application
 {
@@ -35,7 +36,8 @@ namespace Andux.Core.TenantTesting.Application
                 .UseMySql(conn, ServerVersion.AutoDetect(conn))
                 .Options;
 
-            return new AdminContext(options, new DesignTimeTenantProvider(DesignTimeTenantId));
+            var behaviorOptions = new EntityBehaviorOptions { EnableSoftDelete = false };
+            return new AdminContext(options, new DesignTimeTenantProvider(DesignTimeTenantId), Options.Create(behaviorOptions));
         }
     }
 

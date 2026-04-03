@@ -2,6 +2,7 @@
 using Andux.Core.TenantTesting.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MySqlConnector;
 
 namespace Andux.Core.EfTenantTesting
@@ -116,7 +117,8 @@ namespace Andux.Core.EfTenantTesting
                 .UseMySql(conn, new MySqlServerVersion(new Version(8, 0, 36)))
                 .Options;
 
-            using var db = new AdminContext(options, new DesignTimeTenantProvider(tenantId));
+            var behaviorOptions = new EntityBehaviorOptions { EnableSoftDelete = false };
+            using var db = new AdminContext(options, new DesignTimeTenantProvider(tenantId), Options.Create(behaviorOptions));
 
             await db.Database.MigrateAsync();
         }
