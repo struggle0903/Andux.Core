@@ -21,6 +21,11 @@ namespace Andux.Core.TenantTesting.Application.Services
         private readonly ITenantRepository<User> _repository;
         private readonly ITenantUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="unitOfWork"></param>
         public UserService(
             ITenantRepository<User> repository,
             ITenantUnitOfWork unitOfWork)
@@ -40,7 +45,6 @@ namespace Andux.Core.TenantTesting.Application.Services
             };
 
             await _repository.AddAsync(entity);
-
             await _unitOfWork.SaveChangesAsync();
 
             return entity.Id;

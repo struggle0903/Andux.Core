@@ -22,6 +22,12 @@ namespace Andux.Core.EfTenant
             _cache = cache;
         }
 
+        /// <summary>
+        /// 获取租户信息
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<TenantDbConfig> GetAsync(long tenantId)
         {
             var tenant = await _db.Set<TenantDbConfig>()
@@ -42,17 +48,18 @@ namespace Andux.Core.EfTenant
         /// <exception cref="Exception"></exception>
         public string GetConnectionString(long tenantId)
         {
-            return _cache.GetOrCreate(tenantId, entry =>
+            return _cache.GetOrCreate($"tenant_conn_{tenantId}", entry =>
             {
-                // 设置缓存过期时间为10分钟
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
 
                 var config = _db.Set<TenantDbConfig>()
                     .AsNoTracking()
                     .FirstOrDefault(x => x.TenantId == tenantId);
 
-                if (config == null)
-                    throw new Exception($"未找到租户ID（{tenantId}）的db配置");
+                if (config == null || string.IsNullOrWhiteSpace(config.ConnectionString))
+                {
+                    throw new InvalidOperationException($"租户 {tenantId} 未配置数据库连接");
+                }
 
                 return config.ConnectionString;
             });

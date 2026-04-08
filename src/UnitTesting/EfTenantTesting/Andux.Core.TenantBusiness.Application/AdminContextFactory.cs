@@ -13,7 +13,7 @@ namespace Andux.Core.TenantTesting.Application
     public class AdminContextFactory : IDesignTimeDbContextFactory<AdminContext>
     {
         // 手动更新时要执行迁移记录的租户ID
-        private const long DesignTimeTenantId = 1843473246985566666;
+        private const long DesignTimeTenantId = 1843473246985555555;
 
         /// <summary>
         /// 创建 AdminContext 实例，供 EF Core 设计时工具使用

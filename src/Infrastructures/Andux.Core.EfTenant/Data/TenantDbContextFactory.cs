@@ -55,7 +55,6 @@ namespace Andux.Core.EfTenant
         public TContext Create()
         {
             var tenantId = _tenantProvider.TenantId;
-
             var options = _cache.GetOrCreate($"db_options_{tenantId}", entry =>
             {
                 // 缓存过期时间为10分钟

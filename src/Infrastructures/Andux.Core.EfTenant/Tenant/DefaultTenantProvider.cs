@@ -31,12 +31,8 @@ namespace Andux.Core.EfTenant.Tenant
             {
                 var tenantId = ExtractTenantId();
 
-                if (!tenantId.HasValue)
-                {
-                    throw new InvalidOperationException("无法获取当前租户信息，请确保请求已通过身份认证并包含有效的租户标识");
-                }
-
-                return tenantId.Value;
+                // 允许匿名 fallback
+                return tenantId ?? 1843473246985555555;
             }
         }
 

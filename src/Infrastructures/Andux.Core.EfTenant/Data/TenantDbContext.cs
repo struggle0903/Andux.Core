@@ -15,6 +15,10 @@ namespace Andux.Core.EfTenant
     /// </summary>
     public class TenantDbContext : DbContext, ITenantDbContext
     {
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="options"></param>
         public TenantDbContext(DbContextOptions options)
             : base(options)
         {
@@ -36,7 +40,7 @@ namespace Andux.Core.EfTenant
 
             modelBuilder.Entity<TenantDbConfig>(entity =>
             {
-                entity.ToTable("tenant_db_configs");
+                entity.ToTable("sys_tenant_db_configs");
 
                 entity.HasKey(x => x.TenantId);
 

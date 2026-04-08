@@ -1,4 +1,5 @@
-﻿using Andux.Core.TenantTesting.Application.Services;
+﻿using Andux.Core.EfTenant;
+using Andux.Core.TenantTesting.Application.Services;
 using Andux.Core.TenantTesting.Application.Services.Request;
 using Andux.Core.TenantTesting.Controllers.Request;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +31,7 @@ namespace Andux.Core.TenantTesting.Controllers
         /// 创建用户
         /// </summary>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
         {
             var id = await _service.CreateAsync(request.Name);

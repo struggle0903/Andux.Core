@@ -40,10 +40,20 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 	  
-	<PackageId>Andux.Core.EfTenant</PackageId>
+	<!--<PackageId>Andux.Core.EfTenant</PackageId>
 	<Version>1.0.3</Version>
 	<Authors>andy.hu</Authors>
 	<Description>新增自动注入继承了ITenantEntity泛型接口的所有实体，以及软删除的自定义是否过滤</Description>
+	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+	<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.4</Version>
+	<Authors>andy.hu</Authors>
+	<Description>解决默认无租户id的数据的报错问题</Description>
 	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
