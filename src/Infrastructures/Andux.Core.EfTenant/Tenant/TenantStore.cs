@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Andux.Core.EfTenant
 {
@@ -8,51 +9,68 @@ namespace Andux.Core.EfTenant
     /// </summary>
     public class TenantStore : ITenantStore
     {
-        private readonly TenantDbContext _db;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IMemoryCache _cache;
+        private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1, 1);
 
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="cache"></param>
-        public TenantStore(TenantDbContext db, IMemoryCache cache)
+        public TenantStore(IServiceProvider serviceProvider, IMemoryCache cache)
         {
-            _db = db;
+            _serviceProvider = serviceProvider;
             _cache = cache;
         }
 
-        /// <summary>
-        /// 获取租户信息
-        /// </summary>
-        /// <param name="tenantId"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
         public async Task<TenantDbConfig> GetAsync(long tenantId)
         {
-            var tenant = await _db.Set<TenantDbConfig>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.TenantId == tenantId);
+            var cacheKey = $"tenant_config_{tenantId}";
 
-            if (tenant == null)
-                throw new Exception($"租户 {tenantId} 未找到");
+            if (!_cache.TryGetValue(cacheKey, out TenantDbConfig? config))
+            {
+                await _cacheLock.WaitAsync();
+                try
+                {
+                    if (!_cache.TryGetValue(cacheKey, out config))
+                    {
+                        // 在需要时创建 DbContext 作用域
+                        using var scope = _serviceProvider.CreateScope();
+                        var db = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
 
-            return tenant;
+                        config = await db.Set<TenantDbConfig>()
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(x => x.TenantId == tenantId);
+
+                        if (config == null)
+                            throw new Exception($"租户 {tenantId} 未找到");
+
+                        _cache.Set(cacheKey, config, new MemoryCacheEntryOptions
+                        {
+                            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
+                            Priority = CacheItemPriority.High
+                        });
+                    }
+                }
+                finally
+                {
+                    _cacheLock.Release();
+                }
+            }
+
+            return config!;
         }
 
-        /// <summary>
-        /// 获取租户连接字符串
-        /// </summary>
-        /// <param name="tenantId"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
         public string GetConnectionString(long tenantId)
         {
-            return _cache.GetOrCreate($"tenant_conn_{tenantId}", entry =>
+            var cacheKey = $"tenant_conn_{tenantId}";
+
+            return _cache.GetOrCreate(cacheKey, entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                entry.SetPriority(CacheItemPriority.High);
 
-                var config = _db.Set<TenantDbConfig>()
+                // 在需要时创建 DbContext 作用域
+                using var scope = _serviceProvider.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
+
+                var config = db.Set<TenantDbConfig>()
                     .AsNoTracking()
                     .FirstOrDefault(x => x.TenantId == tenantId);
 
@@ -62,7 +80,7 @@ namespace Andux.Core.EfTenant
                 }
 
                 return config.ConnectionString;
-            });
+            })!;
         }
 
     }

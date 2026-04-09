@@ -50,10 +50,20 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-	<PackageId>Andux.Core.EfTenant</PackageId>
+	<!--<PackageId>Andux.Core.EfTenant</PackageId>
 	<Version>1.0.4</Version>
 	<Authors>andy.hu</Authors>
 	<Description>解决默认无租户id的数据的报错问题</Description>
+	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
+	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+	<PackageId>Andux.Core.EfTenant</PackageId>
+	<Version>1.0.5</Version>
+	<Authors>andy.hu</Authors>
+	<Description>增加手动设置租户ID；和清除手动设置租户ID；优先使用手动设置的租户ID；支持高并发；其他性能优化</Description>
 	<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux;Tenant</PackageTags>
 	<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>

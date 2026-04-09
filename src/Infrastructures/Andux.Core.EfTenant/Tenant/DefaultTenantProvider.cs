@@ -10,6 +10,7 @@ namespace Andux.Core.EfTenant.Tenant
     public class DefaultTenantProvider : ITenantProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private static readonly AsyncLocal<long?> _manualTenantId = new AsyncLocal<long?>();
 
         /// <summary>
         /// 构造函数
@@ -29,10 +30,16 @@ namespace Andux.Core.EfTenant.Tenant
         {
             get
             {
+                // 优先使用手动设置的租户ID（AsyncLocal 天生支持异步流）
+                if (_manualTenantId.Value.HasValue)
+                {
+                    return _manualTenantId.Value.Value;
+                }
+
                 var tenantId = ExtractTenantId();
 
                 // 允许匿名 fallback
-                return tenantId ?? 1843473246985555555;
+                return tenantId ?? 10000;
             }
         }
 
@@ -42,8 +49,25 @@ namespace Andux.Core.EfTenant.Tenant
         /// <returns>租户ID，若获取失败则返回 null</returns>
         public long? TryGetTenantId()
         {
+            if (_manualTenantId.Value.HasValue)
+            {
+                return _manualTenantId.Value.Value;
+            }
+
             return ExtractTenantId();
         }
+
+
+        public void SetTenantId(long tenantId)
+        {
+            _manualTenantId.Value = tenantId;
+        }
+
+        public void ClearTenantId()
+        {
+            _manualTenantId.Value = null;
+        }
+
 
         /// <summary>
         /// 从 HttpContext 中提取租户ID

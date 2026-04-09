@@ -43,6 +43,7 @@ namespace Andux.Core.TenantTesting.Controllers
         /// 获取用户
         /// </summary>
         [HttpGet("{id:long}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(long id)
         {
             var result = await _service.GetAsync(id);
@@ -59,6 +60,26 @@ namespace Andux.Core.TenantTesting.Controllers
         [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] string? keyword)
         {
+            //// 处理多个租户
+            //var tenantIds = new[] { 10001L, 10002L, 10003L };
+
+            //foreach (var tenantId in tenantIds)
+            //{
+            //    // 为每个租户创建独立的 Scope
+            //    using (var scope = _serviceProvider.CreateScope())
+            //    {
+            //        var tenantProvider = scope.ServiceProvider.GetRequiredService<ITenantProvider>();
+            //        var userRepository = scope.ServiceProvider.GetRequiredService<ITenantRepository<User>>();
+
+            //        // 设置租户ID
+            //        tenantProvider.SetTenantId(tenantId);
+
+            //        // 执行操作
+            //        var users = await userRepository.GetListAsync();
+            //        // 处理数据...
+            //    }
+            //}
+
             var list = await _service.GetListAsync(keyword);
 
             return Ok(list);

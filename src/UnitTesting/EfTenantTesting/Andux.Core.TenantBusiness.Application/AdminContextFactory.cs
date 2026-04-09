@@ -58,5 +58,15 @@ namespace Andux.Core.TenantTesting.Application
         }
 
         public long TenantId => _tenantId;
+
+        public void ClearTenantId()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetTenantId(long tenantId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

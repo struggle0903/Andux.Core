@@ -13,7 +13,7 @@ namespace Andux.Core.EfTenant.Extensions
         /// <summary>
         /// 添加多租户支持
         /// </summary>
-        /// <typeparam name="TContext"></typeparam>
+        /// <typeparam name="TContext">DbContext 类型</typeparam>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
@@ -27,25 +27,23 @@ namespace Andux.Core.EfTenant.Extensions
             services.AddScoped<ITenantProvider, DefaultTenantProvider>();
             services.AddScoped<ITenantStore, TenantStore>();
 
+            // 注册 DbContext 工厂
             services.AddScoped<TenantDbContextFactory<TContext>>();
 
             services.Configure<EntityBehaviorOptions>(configuration.GetSection("EntityBehaviorOptions"));
             services.AddScoped<AuditingInterceptor>();
 
-            // DbContext 动态创建
-            services.AddScoped<DbContext>(sp =>
-            {
-                var factory = sp.GetRequiredService<TenantDbContextFactory<TContext>>();
-                return factory.Create();
-            });
+            // 注册工作单元（使用泛型实现）
+            services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork<TContext>>();
+
+            // 注册仓储
+            services.AddScoped(typeof(ITenantRepository<>), typeof(EfTenantRepository<>));
 
             // 添加内存缓存
             services.AddMemoryCache();
 
-            services.AddScoped(typeof(ITenantRepository<>), typeof(EfTenantRepository<>));
-            services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
-
             return services;
         }
+
     }
 }

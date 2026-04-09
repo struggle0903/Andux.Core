@@ -4,6 +4,8 @@
 // 描述：工作单元接口，支持事务控制
 // =======================================
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Andux.Core.EfTenant
 {
     /// <summary>
@@ -12,12 +14,17 @@ namespace Andux.Core.EfTenant
     public interface ITenantUnitOfWork : IDisposable
     {
         /// <summary>
-        /// 提交所有更改
+        /// 获取当前 DbContext
+        /// </summary>
+        DbContext GetDbContext();
+
+        /// <summary>
+        /// 保存更改
         /// </summary>
         Task<int> SaveChangesAsync();
 
         /// <summary>
-        /// 开启事务
+        /// 开始事务
         /// </summary>
         Task BeginTransactionAsync();
 
@@ -30,5 +37,10 @@ namespace Andux.Core.EfTenant
         /// 回滚事务
         /// </summary>
         Task RollbackTransactionAsync();
+
+        /// <summary>
+        /// 刷新 DbContext（强制重新创建）
+        /// </summary>
+        void RefreshContext();
     }
 }

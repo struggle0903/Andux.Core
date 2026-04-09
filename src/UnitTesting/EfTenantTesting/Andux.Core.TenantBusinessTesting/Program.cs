@@ -56,7 +56,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "http://192.168.1.88:16320"; 
+        options.Authority = "http://111.22.145.236:25710"; 
         options.TokenValidationParameters = new()
         {
             ValidateAudience = false

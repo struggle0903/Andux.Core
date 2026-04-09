@@ -11,27 +11,29 @@ namespace Andux.Core.EfTenant
     /// </summary>
     public class EfTenantRepository<T> : ITenantRepository<T> where T : class
     {
-        protected readonly DbContext _context;
-        protected readonly DbSet<T> _dbSet;
+        private readonly ITenantUnitOfWork _unitOfWork;
         private readonly EntityBehaviorOptions _options;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="options"></param>
-        /// <param name="accessor"></param>
-        public EfTenantRepository(DbContext context,
+        public EfTenantRepository(
+            ITenantUnitOfWork unitOfWork,  // 依赖接口，不依赖具体实现
             IOptions<EntityBehaviorOptions> options,
             IHttpContextAccessor accessor)
         {
-            _context = context;
-            _dbSet = context.Set<T>();
-
+            _unitOfWork = unitOfWork;
             _options = options.Value;
             _httpContextAccessor = accessor;
         }
+
+        /// <summary>
+        /// 获取当前 DbContext
+        /// </summary>
+        protected DbContext _context => _unitOfWork.GetDbContext(); // 需要添加这个方法
+
+        /// <summary>
+        /// 获取 DbSet
+        /// </summary>
+        protected DbSet<T> _dbSet => _context.Set<T>();
 
         /// <summary>
         /// 将当前仓储转换为异步可枚举集合

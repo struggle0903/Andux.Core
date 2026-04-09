@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Concurrent;
 
 namespace Andux.Core.EfTenant
 {
@@ -25,6 +26,9 @@ namespace Andux.Core.EfTenant
         private readonly ITenantStore _tenantStore;
         private readonly IMemoryCache _cache;
 
+        // 对象池和并发字典
+        private readonly ConcurrentDictionary<long, SemaphoreSlim> _connectionLocks = new();
+
         /// <summary>
         /// 初始化租户 DbContext 工厂实例
         /// </summary>
@@ -46,19 +50,30 @@ namespace Andux.Core.EfTenant
         /// <summary>
         /// 创建当前租户对应的 DbContext 实例
         /// </summary>
-        /// <returns>
-        /// 已配置好数据库连接和审计拦截器的 <typeparamref name="TContext"/> 实例
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// 当租户标识无效或无法获取连接字符串时抛出
-        /// </exception>
         public TContext Create()
         {
             var tenantId = _tenantProvider.TenantId;
-            var options = _cache.GetOrCreate($"db_options_{tenantId}", entry =>
+            return CreateForTenant(tenantId);
+        }
+
+        /// <summary>
+        /// 为指定租户创建 DbContext
+        /// </summary>
+        public TContext CreateForTenant(long tenantId)
+        {
+            var options = GetOrCreateOptions(tenantId);
+            return ActivatorUtilities.CreateInstance<TContext>(_sp, options);
+        }
+
+        private DbContextOptions<TContext> GetOrCreateOptions(long tenantId)
+        {
+            var cacheKey = $"db_options_{tenantId}";
+
+            #pragma warning disable CS8603 // 可能返回 null 引用。
+            return _cache.GetOrCreate(cacheKey, entry =>
             {
-                // 缓存过期时间为10分钟
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                entry.SetPriority(CacheItemPriority.High);
 
                 var conn = _tenantStore.GetConnectionString(tenantId);
                 var interceptor = _sp.GetRequiredService<AuditingInterceptor>();
@@ -66,10 +81,12 @@ namespace Andux.Core.EfTenant
                 return new DbContextOptionsBuilder<TContext>()
                     .UseMySql(conn, new MySqlServerVersion(new Version(8, 0, 36)))
                     .AddInterceptors(interceptor)
+                    .EnableDetailedErrors(false)  // 生产环境关闭
+                    .EnableSensitiveDataLogging(false)  // 关闭敏感数据日志
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)  // 提升性能
                     .Options;
             });
-
-            return ActivatorUtilities.CreateInstance<TContext>(_sp, options);
+            #pragma warning restore CS8603 // 可能返回 null 引用。
         }
 
     }
