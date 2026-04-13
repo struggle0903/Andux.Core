@@ -156,9 +156,9 @@ namespace Andux.Core.EfTrack
         IQueryable<T> IgnoreQueryFilters(Expression<Func<T, bool>>? predicate = null);
 
         /// <summary>
-        /// 忽略项目查询筛选器
+        /// 忽略底层数据筛查筛选器
         /// </summary>
-        IQueryable<T> IgnoreProjectQueryFilters(Expression<Func<T, bool>>? predicate = null);
+        IQueryable<T> IgnoreDataFilterQueryFilters(Expression<Func<T, bool>>? predicate = null);
 
         /// <summary>
         /// 忽略软删除查询筛选器

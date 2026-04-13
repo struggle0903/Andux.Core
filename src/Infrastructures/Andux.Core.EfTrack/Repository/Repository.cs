@@ -422,12 +422,12 @@ namespace Andux.Core.EfTrack
         }
 
         /// <summary>
-        /// 忽略项目查询筛选器
+        /// 忽略底层数据筛查筛选器
         /// </summary>
-        public IQueryable<T> IgnoreProjectQueryFilters(Expression<Func<T, bool>>? predicate = null)
+        public IQueryable<T> IgnoreDataFilterQueryFilters(Expression<Func<T, bool>>? predicate = null)
         {
             var query = _dbSet.AsQueryable();
-            return predicate != null ? ApplySoftDeleteFilter(query).Where(predicate) : query;
+            return predicate != null ? ApplySoftDeleteFilter(query).Where(predicate) : ApplySoftDeleteFilter(query);
         }
 
         /// <summary>
@@ -435,8 +435,17 @@ namespace Andux.Core.EfTrack
         /// </summary>
         public IQueryable<T> IgnoreSoftDeleteQueryFilters(Expression<Func<T, bool>>? predicate = null)
         {
-            var query = _dbSet.AsQueryable();
-            return predicate != null ? ApplyProjectFilter(query).Where(predicate) : query;
+            // 先应用所有必要的筛选器（项目、租户等）
+            var query = ApplyProjectFilter(_dbSet);
+            query = ApplyTenantFilter(query);
+
+            // 应用条件筛选
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return query;
         }
 
         /// <summary>
@@ -693,7 +702,13 @@ namespace Andux.Core.EfTrack
         /// <returns></returns>
         private IQueryable<T> ApplyFilter(IQueryable<T> query)
         {
+            // 应用 IProject 筛选
             var newQuery = ApplyProjectFilter(query);
+
+            // 应用 ITenant 筛选
+            newQuery = ApplyTenantFilter(query);
+
+            // 应用 ISoftDelete 筛选
             return ApplySoftDeleteFilter(newQuery);
         }
 
@@ -702,17 +717,36 @@ namespace Andux.Core.EfTrack
         /// </summary>
         private IQueryable<T> ApplyProjectFilter(IQueryable<T> query)
         {
-            if (typeof(IProject).IsAssignableFrom(typeof(T)) && _options.EnableProject)
+            if (typeof(IProject).IsAssignableFrom(typeof(T)))
             {
-                // 超管标识为 101，如果是超管直接返回不过滤
-                if (IsSuperAdmin())
+                if (!EnableDataFilter())
                     return query;
 
                 var projectId = GetCurrentProjectId();
-                if (projectId == null)
+                if (projectId == null || projectId <= 0)
                     return query; // 无效 ProjectId，不过滤
 
                 return query.Where(e => ((IProject)e).ProjectId == projectId);
+            }
+
+            return query;
+        }
+
+        /// <summary>
+        /// 自动添加租户ID过滤
+        /// </summary>
+        private IQueryable<T> ApplyTenantFilter(IQueryable<T> query)
+        {
+            if (typeof(ITenant).IsAssignableFrom(typeof(T)))
+            {
+                if (!EnableDataFilter())
+                    return query;
+
+                var tenantId = GetCurrentTenantId();
+                if (tenantId == null || tenantId <= 0)
+                    return query; // 无效 tenantId，不过滤
+
+                return query.Where(e => ((ITenant)e).TenantId == tenantId);
             }
 
             return query;
@@ -732,12 +766,14 @@ namespace Andux.Core.EfTrack
         }
 
         /// <summary>
-        /// 判断当前用户是否为超级管理员
+        /// 是否启用数据筛查
         /// </summary>
-        private bool IsSuperAdmin()
+        private bool EnableDataFilter()
         {
-            return _httpContextAccessor.HttpContext?.User.Claims
-                .FirstOrDefault(c => c.Type == "identityType")?.Value == "101";
+            var enableDataFilter = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(c => c.Type == "enableDataFilter")?.Value;
+
+            return enableDataFilter == "true";
         }
 
         /// <summary>
@@ -753,7 +789,21 @@ namespace Andux.Core.EfTrack
 
             return null;
         }
-        
+
+        /// <summary>
+        /// 获取当前用户的 TenantId
+        /// </summary>
+        private long? GetCurrentTenantId()
+        {
+            var currentProjectStr = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(c => c.Type == _options.TenantClaimsType)?.Value;
+
+            if (long.TryParse(currentProjectStr, out var projectIdValue))
+                return projectIdValue;
+
+            return null;
+        }
+
         #endregion
 
     }

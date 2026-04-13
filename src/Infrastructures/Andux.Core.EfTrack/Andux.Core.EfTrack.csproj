@@ -116,10 +116,20 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-		<PackageId>Andux.Core.EfTrack</PackageId>
+		<!--<PackageId>Andux.Core.EfTrack</PackageId>
 		<Version>2.1.6</Version>
 		<Authors>andy.hu</Authors>
 		<Description>新增设计期 DbContext 工厂基类，增加属性控制是否需要自动注入实体</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>2.1.7</Version>
+		<Authors>andy.hu</Authors>
+		<Description>增加EnableTenant，仓储部分接口优化</Description>
 		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
 		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>

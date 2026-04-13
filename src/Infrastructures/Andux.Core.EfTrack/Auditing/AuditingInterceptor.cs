@@ -92,6 +92,22 @@ namespace Andux.Core.EfTrack
                 }
             }
 
+            // 项目数据隔离字段
+            if (_options.EnableTenant)
+            {
+                var currentTenant = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == _options.TenantClaimsType)?.Value ?? null;
+
+                var entries = context.ChangeTracker.Entries<ITenant>();
+                foreach (var entry in entries)
+                {
+                    // 如果实体Entity的ProjectId字段已赋值则不自动赋值
+                    if (entry is { State: EntityState.Added, Entity.TenantId: <= 0 })
+                    {
+                        entry.Entity.TenantId = currentTenant != null ? long.Parse(currentTenant) : entry.Entity.TenantId;
+                    }
+                }
+            }
+
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 

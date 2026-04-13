@@ -19,10 +19,28 @@ namespace Andux.Core.EfTrack
         public bool EnableProject { get; set; } = false;
 
         /// <summary>
-        /// 启用数据隔离后需要的字段，必须准确，否则数据隔离失败
+        /// 是否启用数据隔离。隔离实体需继承 ITenant 接口
+        /// 若为 true，则启用ITenant接口字段的数据隔离；
+        /// 若为 false，则不进行任何数据隔离。
+        /// </summary>
+        public bool EnableTenant { get; set; } = false;
+
+        /// <summary>
+        /// 启用数据隔离后需要的项目ID字段，必须准确，否则数据隔离失败
         /// 该字段用于从 IHttpContextAccessor.HttpContext.User.Claims 中提取当前登录用户所拥有的 IProject 的字段唯一标识，
         /// </summary>
         public string ProjectClaimsType { get; set; } = "projectId";
+
+        /// <summary>
+        /// 启用数据隔离后需要的租户ID字段，必须准确，否则数据隔离失败
+        /// 该字段用于从 IHttpContextAccessor.HttpContext.User.Claims 中提取当前登录用户所拥有的 IProject 的字段唯一标识，
+        /// </summary>
+        public string TenantClaimsType { get; set; } = "tenantId";
+
+        /// <summary>
+        /// 是否启用数据过滤
+        /// </summary>
+        public bool EnableDataFilter { get; set; } = true;
 
         /// <summary>
         /// 是否启用审计功能。
