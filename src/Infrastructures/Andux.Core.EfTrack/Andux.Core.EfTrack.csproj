@@ -126,7 +126,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
 
-		<PackageId>Andux.Core.EfTrack</PackageId>
+		<!--<PackageId>Andux.Core.EfTrack</PackageId>
 		<Version>2.1.7</Version>
 		<Authors>andy.hu</Authors>
 		<Description>增加EnableTenant，仓储部分接口优化</Description>
@@ -134,7 +134,18 @@
 		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+		
+		<PackageId>Andux.Core.EfTrack</PackageId>
+		<Version>2.1.8</Version>
+		<Authors>andy.hu</Authors>
+		<Description>增加EnableTenant，仓储部分接口优化（fix 2.1.7 nuget服务bug，更新了下载包后相关代码没更新）</Description>
+		<PackageTags>EFCore;Repository;UnitOfWork;SoftDelete;Audit;Andux</PackageTags>
+		<RepositoryUrl>https://github.com/struggle0903/Andux.Core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	
 	</PropertyGroup>
 
 	<ItemGroup>
